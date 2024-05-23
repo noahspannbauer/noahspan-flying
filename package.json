@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "workspaces": [
     "api",
-    "client"
+    "client",
+    "tests"
   ],
   "scripts": {
     "format": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\"",
