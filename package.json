@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "workspaces": [
     "api",
-    "client",
+    "app",
     "tests"
   ],
   "scripts": {
     "format": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\"",
-    "lint": "npm run lint -w api && npm run lint -w client",
+    "lint": "npm run lint -w api && npm run lint -w app",
     "prepare": "husky"
   },
   "devDependencies": {
