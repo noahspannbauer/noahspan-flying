@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AzAppConfigModule } from '@noahspan/noahspan-modules';
+import { AppConfigModule, AuthModule } from '@noahspan/noahspan-modules';
 
 @Module({
   imports: [
-    AzAppConfigModule.register({
-      connectionString: process.env.AZ_APP_CONFIG_CONNECTION_STRING
+    AppConfigModule.register({
+      url: process.env.APP_CONFIG_URL
+    }),
+    AuthModule.register({
+      tenantId: process.env.TENANT_ID
     })
   ],
   controllers: [AppController],
