@@ -4,8 +4,9 @@ import { MsalProvider } from '@azure/msal-react';
 import { Configuration, PublicClientApplication } from '@azure/msal-browser';
 import { NextUIProvider } from '@nextui-org/react';
 import App from './App.tsx';
-import './index.css';
 import { BrowserRouter } from 'react-router-dom';
+import AppContextProvider from './context/appContext/AppContextProvider.tsx';
+import './index.css';
 
 const configuration: Configuration = {
   auth: {
@@ -21,11 +22,13 @@ const pca = new PublicClientApplication(configuration);
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <MsalProvider instance={pca}>
-      <NextUIProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </NextUIProvider>
+      <AppContextProvider>
+        <NextUIProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </NextUIProvider>
+      </AppContextProvider>
     </MsalProvider>
   </React.StrictMode>
 );

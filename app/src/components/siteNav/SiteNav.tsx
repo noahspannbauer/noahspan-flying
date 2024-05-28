@@ -9,6 +9,7 @@ import {
 } from '@nextui-org/react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import { useAppContext } from '../../hooks/appContext/UseAppContext';
 
 const SiteNav: React.FC<unknown> = () => {
   const isAuthenticated = useIsAuthenticated();
@@ -16,6 +17,7 @@ const SiteNav: React.FC<unknown> = () => {
   const initializeLogin = () => {
     instance.loginRedirect();
   };
+  const appContext = useAppContext();
 
   console.log(accounts);
 
@@ -24,24 +26,13 @@ const SiteNav: React.FC<unknown> = () => {
       <NavbarBrand>Site Logo Goes Here</NavbarBrand>
       <NavbarContent justify="center">
         <NavbarItem>
-          <Link>
-            <ReactRouterLink to="/">Flights</ReactRouterLink>
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link>
-            <ReactRouterLink to="/logbook">Logbook</ReactRouterLink>
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link>
-            <ReactRouterLink to="/checklists">Checklists</ReactRouterLink>
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link>
-            <ReactRouterLink to="/pilots">Pilots</ReactRouterLink>
-          </Link>
+          {appContext.state.featureFlags.find(
+            (featureFlag) => featureFlag.id === 'flying-pilots'
+          )?.enabled && (
+            <Link>
+              <ReactRouterLink to="/">Pilots</ReactRouterLink>
+            </Link>
+          )}
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">

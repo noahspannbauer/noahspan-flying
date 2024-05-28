@@ -26,6 +26,7 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@noahspan/noahspan-modules": "^0.1.2",
     "@schematics/angular": "^17.3.7",
     "dotenv": "^16.4.5",
     "reflect-metadata": "0.1.13",
