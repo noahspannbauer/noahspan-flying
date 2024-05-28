@@ -10,8 +10,8 @@ export class AppController {
     private readonly authService: AuthService
   ) {}
 
-  @Get('featureFlag')
-  async getFeatureFlag(@Query() query: any): Promise<FeatureFlagValue[]> {
+  @Get('featureFlags')
+  async getFeatureFlags(@Query() query: any): Promise<FeatureFlagValue[]> {
     try {
       const token: string = await this.authService.getToken(
         'client_credentials',
