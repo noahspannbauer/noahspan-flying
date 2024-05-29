@@ -7,6 +7,7 @@ import App from './App.tsx';
 import { BrowserRouter } from 'react-router-dom';
 import AppContextProvider from './context/appContext/AppContextProvider.tsx';
 import './index.css';
+import '@noahspan/noahspan-components/noahspan-components.css';
 
 const configuration: Configuration = {
   auth: {

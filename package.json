@@ -24,8 +24,5 @@
   },
   "lint-staged": {
     "**/*": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\" --ignore-unknown"
-  },
-  "dependencies": {
-    "@azure/app-configuration": "^1.6.0"
   }
 }
