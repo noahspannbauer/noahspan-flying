@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "e2e": "cucumber-js ./e2e/features/**/*.feature",
+    "e2e:debug": "PWDEBUG=1 cucumber-js",
+    "e2e:feature": "cucumber-js",
+    "e2e:report": "node ./e2e/support/support.js",
+    "e2e:rerun": "cucumber-js ./e2e/results/@rerun.txt"
   },
   "author": "",
   "license": "ISC",

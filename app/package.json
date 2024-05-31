@@ -16,7 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@nextui-org/react": "^2.3.6",
-    "@noahspan/noahspan-components": "^0.2.0",
+    "@noahspan/noahspan-components": "^0.2.4",
     "axios": "^1.7.2",
     "framer-motion": "^11.1.7",
     "react": "^18.2.0",

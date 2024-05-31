@@ -29,9 +29,10 @@ const SiteNav: React.FC<unknown> = () => {
       }}
       isBlurred={false}
       maxWidth="full"
+      data-testid="flying-navbar"
     >
       <NavbarBrand>
-        <Logo className="pr-3" height={50} width={50} />
+        <Logo className="pr-3" height={50} width={50} data-testid="logo" />
         <Plane size="2xl" />
       </NavbarBrand>
       <NavbarContent justify="center">
@@ -47,7 +48,13 @@ const SiteNav: React.FC<unknown> = () => {
       </NavbarContent>
       <NavbarContent justify="end">
         {!isAuthenticated && (
-          <Button as={Link} color="primary" href="#" onClick={initializeLogin}>
+          <Button
+            as={Link}
+            color="primary"
+            href="#"
+            onClick={initializeLogin}
+            data-testid="login-link"
+          >
             Login
           </Button>
         )}

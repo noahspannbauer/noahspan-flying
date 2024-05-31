@@ -22,6 +22,31 @@ import { ITestCaseHookParameter } from '@cucumber/cucumber/lib/support_code_libr
 import { ensureDir } from 'fs-extra';
 
 const tracesDir = './e2e/results/traces';
+const getStorageState = (
+  pickleName: string
+):
+  | string
+  | {
+      cookies: {
+        name: string;
+        value: string;
+        domain: string;
+        path: string;
+        expires: number;
+        httpOnly: boolean;
+        secure: boolean;
+        sameSite: 'Strict' | 'Lax' | 'None';
+      }[];
+      origins: {
+        origin: string;
+        localStorage: { name: string; value: string }[];
+      }[];
+    }
+  | undefined => {
+  if (pickleName.endsWith('admin')) {
+    return './auth/write.json';
+  }
+};
 let browser: ChromiumBrowser | FirefoxBrowser | WebKitBrowser;
 
 declare global {
@@ -58,6 +83,37 @@ Before({ tags: '@debug' }, async function (this: ICustomWorld) {
   this.debug = true;
 });
 
+Before(
+  { tags: '@noAuth' },
+  async function (this: ICustomWorld, { pickle }: ITestCaseHookParameter) {
+    const viewportSize: ViewportSize = {
+      height: Number(1080),
+      width: Number(1920)
+    };
+
+    this.startTime = new Date();
+    this.testName = pickle.name.replace(/\W/g, '-');
+    this.context = await browser.newContext({
+      acceptDownloads: true,
+      viewport: viewportSize,
+      userAgent: config.userAgent
+    });
+
+    await this.context.tracing.start({
+      screenshots: true,
+      snapshots: true
+    });
+
+    this.page = await this.context.newPage();
+    this.page.on('console', async (msg: ConsoleMessage) => {
+      if (msg.type() === 'log') {
+        await this.attach(msg.text());
+      }
+    });
+    this.feature = pickle;
+  }
+);
+
 Before(async function (this: ICustomWorld, { pickle }: ITestCaseHookParameter) {
   const viewportSize: ViewportSize = {
     height: Number(1080),
@@ -67,6 +123,7 @@ Before(async function (this: ICustomWorld, { pickle }: ITestCaseHookParameter) {
   this.startTime = new Date();
   this.testName = pickle.name.replace(/\W/g, '-');
   this.context = await browser.newContext({
+    storageState: getStorageState(pickle.name),
     acceptDownloads: true,
     viewport: viewportSize,
     userAgent: config.userAgent
