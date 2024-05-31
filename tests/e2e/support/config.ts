@@ -21,7 +21,7 @@ const desktopChrome = devices['Desktop Chrome'];
 export const config = {
   browser: process.env.BROWSER || 'chromium',
   browserOptions,
-  baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+  baseUrl: process.env.BASE_URL || 'http://localhost:5173',
   username: process.env.TEST_USERNAME,
   password: process.env.TEST_PASSWORD,
   viewportHeight: process.env.VIEWPORT_HEIGHT || desktopChrome.viewport.height,

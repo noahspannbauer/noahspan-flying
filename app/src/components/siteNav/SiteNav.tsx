@@ -10,6 +10,7 @@ import {
 import { Link as ReactRouterLink } from 'react-router-dom';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
+import { Logo, Plane } from '@noahspan/noahspan-components';
 
 const SiteNav: React.FC<unknown> = () => {
   const isAuthenticated = useIsAuthenticated();
@@ -22,8 +23,18 @@ const SiteNav: React.FC<unknown> = () => {
   console.log(accounts);
 
   return (
-    <Navbar isBordered>
-      <NavbarBrand>Site Logo Goes Here</NavbarBrand>
+    <Navbar
+      classNames={{
+        base: 'bg-transparent z-0'
+      }}
+      isBlurred={false}
+      maxWidth="full"
+      data-testid="flying-navbar"
+    >
+      <NavbarBrand>
+        <Logo className="pr-3" height={50} width={50} data-testid="logo" />
+        <Plane size="2xl" />
+      </NavbarBrand>
       <NavbarContent justify="center">
         <NavbarItem>
           {appContext.state.featureFlags.find(
@@ -37,7 +48,13 @@ const SiteNav: React.FC<unknown> = () => {
       </NavbarContent>
       <NavbarContent justify="end">
         {!isAuthenticated && (
-          <Button as={Link} color="primary" href="#" onClick={initializeLogin}>
+          <Button
+            as={Link}
+            color="primary"
+            href="#"
+            onClick={initializeLogin}
+            data-testid="login-link"
+          >
             Login
           </Button>
         )}
