@@ -1,24 +1,25 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { AppService } from './app.service';
-import { AppConfigService, AuthService } from '@noahspan/noahspan-modules';
+import {
+  AppConfigService,
+  MsGraphService,
+  MsGraphClient
+} from '@noahspan/noahspan-modules';
 import { FeatureFlagValue } from '@azure/app-configuration';
+import { Public } from '@noahspan/noahspan-modules';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appConfigService: AppConfigService,
-    private readonly authService: AuthService
+    private readonly msGraphService: MsGraphService
   ) {}
 
+  @Public()
   @Get('featureFlags')
   async getFeatureFlags(@Query() query: any): Promise<FeatureFlagValue[]> {
+    console.log(process.env.CLIENT_ID);
     try {
-      const token: string = await this.authService.getToken(
-        'client_credentials',
-        process.env.CLIENT_ID,
-        process.env.CLIENT_SECRET,
-        'https://azconfig.io'
-      );
+      const token: string = await this.appConfigService.getToken();
       const featureFlags: FeatureFlagValue[] =
         await this.appConfigService.getFeatureFlags(
           token,
@@ -28,7 +29,25 @@ export class AppController {
 
       return featureFlags;
     } catch (error) {
-      console.log(error);
+      return error;
+    }
+  }
+
+  @Public()
+  @Get('profilePhoto')
+  async getProfilePhoto(@Query() query: any): Promise<any> {}
+
+  @Get('userProfile')
+  async getUserProfile(@Query() query: any) {
+    try {
+      const username: string = query.username;
+      const client: MsGraphClient =
+        await this.msGraphService.getMsGraphClient();
+      const userProfile = await client.api(`users/${username}`).get();
+
+      return userProfile;
+    } catch (error) {
+      return error;
     }
   }
 }
