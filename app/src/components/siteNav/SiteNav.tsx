@@ -38,7 +38,7 @@ const SiteNav: React.FC<unknown> = () => {
       <NavbarContent justify="center">
         <NavbarItem>
           {appContext.state.featureFlags.find(
-            (featureFlag) => featureFlag.id === 'flying-pilots'
+            (featureFlag) => featureFlag.key === 'flying-pilots'
           )?.enabled && (
             <Link>
               <ReactRouterLink to="/">Pilots</ReactRouterLink>
