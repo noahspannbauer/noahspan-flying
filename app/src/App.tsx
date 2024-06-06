@@ -2,17 +2,19 @@ import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Pilots from './components/pilots/Pilots';
 import { useAppContext } from './hooks/appContext/UseAppContext';
-import axios, { AxiosResponse } from 'axios';
+import { AxiosInstance, AxiosResponse } from 'axios';
+import { useHttpClient } from './hooks/httpClient/UseHttpClient';
 import { useFeatureFlag } from './hooks/featureFlag/UseFeatureFlag';
 
 const App: React.FC<unknown> = () => {
+  const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
 
   useEffect(() => {
     const getFeatureFlags = async () => {
       try {
         const featureFlagKeys: string = 'flying-pilots';
-        const response: AxiosResponse = await axios.get(
+        const response: AxiosResponse = await httpClient.get(
           `api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
         );
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
