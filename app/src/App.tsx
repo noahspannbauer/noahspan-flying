@@ -11,10 +11,12 @@ const App: React.FC<unknown> = () => {
   useEffect(() => {
     const getFeatureFlags = async () => {
       try {
+        const featureFlagKeys: string = 'flying-pilots';
         const response: AxiosResponse = await axios.get(
-          `http://localhost:7071/api/featureFlags?key=flying*&label=${process.env.NODE_ENV}`
+          `http://localhost:7071/api/featureFlags?keys=${featureFlagKeys}&label=${process.env.NODE_ENV}`
         );
-        const featureFlags: unknown[] = response.data;
+        const featureFlags: { key: string; enabled: boolean }[] = response.data;
+        console.log(featureFlags);
 
         if (featureFlags.length > 0) {
           appContext.dispatch({

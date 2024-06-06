@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SiteNav from '../siteNav/SiteNav';
-import PilotForm from '../pilotForm/PilotForm';
+// import PilotForm from '../pilotForm/PilotForm';
 import { Button } from '@nextui-org/react';
 import {
   Drawer,
@@ -37,9 +37,7 @@ const Pilots: React.FC<unknown> = () => {
             <DrawerHeader>
               <h2>Add Pilot</h2>
             </DrawerHeader>
-            <DrawerBody>
-              <PilotForm />
-            </DrawerBody>
+            <DrawerBody>{/* <PilotForm /> */}</DrawerBody>
             <DrawerFooter>
               <div className="flex gap-4 justify-end justify-self-center">
                 <div>

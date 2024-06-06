@@ -1,3 +1,3 @@
 export interface IAppContextState {
-  featureFlags: unknown[];
+  featureFlags: { key: string; enabled: boolean }[];
 }
