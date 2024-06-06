@@ -11,7 +11,7 @@ const App: React.FC<unknown> = () => {
   useEffect(() => {
     const getFeatureFlags = async () => {
       console.log(
-        `${import.meta.env.VITE_API_URL}/api/featureFlags?keys=flying-pilots&label=${import.meta.env.MODE}`
+        `${import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL : ''}/api/featureFlags?keys=flying-pilots&label=${import.meta.env.MODE}`
       );
       try {
         const featureFlagKeys: string = 'flying-pilots';
