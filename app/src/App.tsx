@@ -13,7 +13,7 @@ const App: React.FC<unknown> = () => {
       try {
         const featureFlagKeys: string = 'flying-pilots';
         const response: AxiosResponse = await axios.get(
-          `${import.meta.env.MODE === 'development' ? import.meta.env.VITE_API_URL : ''}/api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
+          `api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
         );
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
 
