@@ -28,7 +28,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
-    "@noahspan/noahspan-modules": "^0.2.4",
+    "@noahspan/noahspan-modules": "^0.2.7",
     "@schematics/angular": "^17.3.7",
     "dotenv": "^16.4.5",
     "reflect-metadata": "0.1.13",

@@ -16,15 +16,19 @@ export class AppController {
 
   @Public()
   @Get('featureFlags')
-  async getFeatureFlags(@Query() query: any): Promise<FeatureFlagValue[]> {
-    console.log(process.env.CLIENT_ID);
+  async getFeatureFlags(
+    @Query() query: any
+  ): Promise<{ key: string; enabled: boolean }[]> {
     try {
-      const token: string = await this.appConfigService.getToken();
-      const featureFlags: FeatureFlagValue[] =
+      const featureFlagKeys: string[] =
+        query.keys && query.keys.toString().includes(';')
+          ? query.keys.split(';')
+          : [query.keys];
+      const featureFlagLabel: string = query.label;
+      const featureFlags: { key: string; enabled: boolean }[] =
         await this.appConfigService.getFeatureFlags(
-          token,
-          `${query.key}`,
-          query.label
+          featureFlagKeys,
+          featureFlagLabel
         );
 
       return featureFlags;

@@ -1,9 +1,9 @@
 import { useAppContext } from '../appContext/UseAppContext';
 
-export const useFeatureFlag = (featureFlagId: string) => {
+export const useFeatureFlag = (featureFlagKey: string) => {
   const appContext = useAppContext();
   const featureFlag = appContext.state.featureFlags.find(
-    (featureFlag) => featureFlag.id === featureFlagId
+    (featureFlag) => featureFlag.key === featureFlagKey
   );
 
   return featureFlag;

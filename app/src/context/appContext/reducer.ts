@@ -1,9 +1,8 @@
-import { IFeatureFlagValue } from '../../hooks/featureFlag/IFeatureFlagValue';
 import { IAppContextState } from './IAppContextState';
 
 export type Action = {
   type: 'SET_FEATURE_FLAGS';
-  payload: IFeatureFlagValue[];
+  payload: { key: string; enabled: boolean }[];
 };
 
 export const reducer = (
