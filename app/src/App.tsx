@@ -10,13 +10,15 @@ const App: React.FC<unknown> = () => {
 
   useEffect(() => {
     const getFeatureFlags = async () => {
+      console.log(
+        `${import.meta.env.VITE_API_URL}/api/featureFlags?keys=flying-pilots&label=${import.meta.env.MODE}`
+      );
       try {
         const featureFlagKeys: string = 'flying-pilots';
         const response: AxiosResponse = await axios.get(
-          `${process.env.API_URL}/api/featureFlags?keys=${featureFlagKeys}&label=${process.env.NODE_ENV}`
+          `${import.meta.env.VITE_API_URL}/api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
         );
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
-        console.log(featureFlags);
 
         if (featureFlags.length > 0) {
           appContext.dispatch({

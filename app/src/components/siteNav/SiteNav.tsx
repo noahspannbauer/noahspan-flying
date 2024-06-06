@@ -20,8 +20,6 @@ const SiteNav: React.FC<unknown> = () => {
   };
   const appContext = useAppContext();
 
-  console.log(accounts);
-
   return (
     <Navbar
       classNames={{
