@@ -1,6 +1,10 @@
+import { IFeatureFlagValue } from '../../hooks/featureFlag/IFeatureFlagValue';
 import { IAppContextState } from './IAppContextState';
 
-export type Action = { type: 'SET_FEATURE_FLAGS'; payload: unknown[] };
+export type Action = {
+  type: 'SET_FEATURE_FLAGS';
+  payload: IFeatureFlagValue[];
+};
 
 export const reducer = (
   state: IAppContextState,
