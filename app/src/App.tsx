@@ -13,7 +13,7 @@ const App: React.FC<unknown> = () => {
       try {
         const featureFlagKeys: string = 'flying-pilots';
         const response: AxiosResponse = await axios.get(
-          `http://localhost:7071/api/featureFlags?keys=${featureFlagKeys}&label=${process.env.NODE_ENV}`
+          `${process.env.API_URL}/api/featureFlags?keys=${featureFlagKeys}&label=${process.env.NODE_ENV}`
         );
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
         console.log(featureFlags);
