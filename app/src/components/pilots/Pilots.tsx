@@ -10,7 +10,6 @@ const Pilots: React.FC<unknown> = () => {
 
   return (
     <div className="container mx-auto">
-      blah
       <div className="px-6">
         <h1 role="heading">Pilots</h1>
         <Button
