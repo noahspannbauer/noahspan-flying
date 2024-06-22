@@ -1,16 +1,6 @@
 import { useState } from 'react';
-import SiteNav from '../siteNav/SiteNav';
 // import PilotForm from '../pilotForm/PilotForm';
-import { Button } from '@nextui-org/react';
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader
-} from '@noahspan/noahspan-components';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Drawer } from '@noahspan/noahspan-components';
 
 const Pilots: React.FC<unknown> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -20,24 +10,26 @@ const Pilots: React.FC<unknown> = () => {
 
   return (
     <div className="container mx-auto">
-      <SiteNav />
+      blah
       <div className="px-6">
         <h1 role="heading">Pilots</h1>
         <Button
-          color="default"
-          variant="light"
+          variant="filled"
           onClick={onOpenCloseDrawer}
-          startContent={<FontAwesomeIcon icon={faPlus} />}
+          // startContent={<FontAwesomeIcon icon={faPlus} />}
           data-testid="new-pilot-button"
         >
           New
         </Button>
-        <Drawer isOpen={isDrawerOpen} data-testid="pilot-drawer">
-          <DrawerContent>
+        <Drawer open={isDrawerOpen} data-testid="pilot-drawer">
+          Blah
+          {/* <DrawerContent>
             <DrawerHeader>
               <h2>Add Pilot</h2>
             </DrawerHeader>
-            <DrawerBody>{/* <PilotForm /> */}</DrawerBody>
+            <DrawerBody>
+              <PilotForm />
+            </DrawerBody>
             <DrawerFooter>
               <div className="flex gap-4 justify-end justify-self-center">
                 <div>
@@ -56,7 +48,7 @@ const Pilots: React.FC<unknown> = () => {
                 </div>
               </div>
             </DrawerFooter>
-          </DrawerContent>
+          </DrawerContent> */}
         </Drawer>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Headers, Query } from '@nestjs/common';
 import {
   AppConfigService,
   MsGraphService,
@@ -42,12 +42,14 @@ export class AppController {
   async getProfilePhoto(@Query() query: any): Promise<any> {}
 
   @Get('userProfile')
-  async getUserProfile(@Query() query: any) {
+  async getUserProfile(@Headers() headers: any) {
     try {
-      const username: string = query.username;
+      const graphToken: string = await this.msGraphService.getMsGraphAuth(
+        headers.authorization.replace('Bearer ', '')
+      );
       const client: MsGraphClient =
-        await this.msGraphService.getMsGraphClient();
-      const userProfile = await client.api(`users/${username}`).get();
+        await this.msGraphService.getMsGraphClientDelegated(graphToken);
+      const userProfile = await client.api(`me`).get();
 
       return userProfile;
     } catch (error) {

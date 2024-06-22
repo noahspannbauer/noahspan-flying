@@ -9,6 +9,8 @@ import {
 } from '@noahspan/noahspan-modules';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { PilotModule } from './pilot/pilot.module';
+import { PilotController } from './pilot/pilot.controller';
 
 @Module({
   imports: [
@@ -28,9 +30,10 @@ import { APP_GUARD } from '@nestjs/core';
       tenantId: process.env.TENANT_ID,
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET
-    })
+    }),
+    PilotModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, PilotController],
   providers: [
     {
       provide: APP_GUARD,

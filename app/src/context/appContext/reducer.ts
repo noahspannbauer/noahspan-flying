@@ -1,9 +1,9 @@
+import { User } from '@microsoft/microsoft-graph-types';
 import { IAppContextState } from './IAppContextState';
 
-export type Action = {
-  type: 'SET_FEATURE_FLAGS';
-  payload: { key: string; enabled: boolean }[];
-};
+export type Action =
+  | { type: 'SET_FEATURE_FLAGS'; payload: { key: string; enabled: boolean }[] }
+  | { type: 'SET_USER_PROFILE'; payload: User };
 
 export const reducer = (
   state: IAppContextState,
@@ -14,6 +14,12 @@ export const reducer = (
       return {
         ...state,
         featureFlags: action.payload
+      };
+    }
+    case 'SET_USER_PROFILE': {
+      return {
+        ...state,
+        userProfile: action.payload
       };
     }
     default: {
