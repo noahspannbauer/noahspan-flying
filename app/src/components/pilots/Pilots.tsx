@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import PilotForm from '../pilotForm/PilotForm';
+import PilotForm from '../pilotForm/PilotForm';
 import { Button, Drawer } from '@noahspan/noahspan-components';
 
 const Pilots: React.FC<unknown> = () => {
@@ -20,8 +20,13 @@ const Pilots: React.FC<unknown> = () => {
         >
           New
         </Button>
-        <Drawer open={isDrawerOpen} data-testid="pilot-drawer">
-          Blah
+        <Drawer
+          open={isDrawerOpen}
+          placement="right"
+          size={1000}
+          data-testid="pilot-drawer"
+        >
+          <PilotForm />
           {/* <DrawerContent>
             <DrawerHeader>
               <h2>Add Pilot</h2>
