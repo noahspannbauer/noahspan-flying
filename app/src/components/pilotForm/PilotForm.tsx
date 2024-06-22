@@ -27,75 +27,84 @@ const PilotForm: React.FC<unknown> = () => {
           <AccordionHeader onClick={() => handleOpen(1)}>Info</AccordionHeader>
           <AccordionBody>
             <div className="grid grid-cols-3 gap-4">
-              <div className="self-center">
-                <label>First Name</label>
-              </div>
               <div className="col-span-2">
                 <Controller
                   name="firstName"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="First Name"
+                      value={field.value}
+                      variant="standard"
+                    />
                   )}
                 />
-              </div>
-              <div className="self-center">
-                <label>Last Name</label>
               </div>
               <div className="col-span-2">
                 <Controller
                   name="lastName"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="Last Name"
+                      value={field.value}
+                      variant="standard"
+                    />
                   )}
                 />
-              </div>
-              <div className="self-center">
-                <label>Address</label>
               </div>
               <div className="col-span-2">
                 <Controller
                   name="address"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="Address"
+                      value={field.value}
+                      variant="standard"
+                    />
                   )}
                 />
-              </div>
-              <div className="self-center">
-                <label>City</label>
               </div>
               <div className="col-span-2">
                 <Controller
                   name="city"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="City"
+                      value={field.value}
+                    />
                   )}
                 />
-              </div>
-              <div className="self-center">
-                <label>State</label>
               </div>
               <div className="col-span-2">
                 <Controller
                   name="state"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="State"
+                      value={field.value}
+                    />
                   )}
                 />
-              </div>
-              <div className="self-center">
-                <label>Postal Code</label>
               </div>
               <div className="col-span-2">
                 <Controller
                   name="postalCode"
                   control={control}
                   render={({ field }) => (
-                    <Input disabled={field.disabled} value={field.value} />
+                    <Input
+                      disabled={field.disabled}
+                      label="Postal Code"
+                      value={field.value}
+                    />
                   )}
                 />
               </div>
