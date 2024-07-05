@@ -88,9 +88,9 @@ const App: React.FC<unknown> = () => {
     <>
       <SiteNav handleSignIn={handleSignIn} handleSignOut={handleSignOut} />
       <Routes>
-        {/* {useFeatureFlag('flying-pilots')?.enabled && ( */}
-        <Route path="/" element={<Pilots />} />
-        {/* )} */}
+        {useFeatureFlag('flying-pilots')?.enabled && (
+          <Route path="/" element={<Pilots />} />
+        )}
       </Routes>
     </>
   );
