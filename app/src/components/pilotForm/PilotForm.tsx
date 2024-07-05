@@ -166,7 +166,7 @@ const PilotForm: React.FC<unknown> = () => {
               <Controller
                 name="medicalExpiration"
                 control={control}
-                render={({ field }) => <DatePicker />}
+                render={() => <DatePicker />}
               />
             </div>
           </AccordionBody>

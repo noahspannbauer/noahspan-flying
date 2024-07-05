@@ -65,7 +65,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
               <Controller
                 name={`endorsements.${index}.dateOfIssue`}
                 control={control}
-                render={({ field }) => {
+                render={() => {
                   return <DatePicker />;
                 }}
               />

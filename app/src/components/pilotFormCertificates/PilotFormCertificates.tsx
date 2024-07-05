@@ -59,7 +59,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
               <Controller
                 name={`certificates.${index}.number`}
                 control={control}
-                render={({ field }) => {
+                render={() => {
                   return <Input label="Number" {...field} />;
                 }}
               />
@@ -68,7 +68,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
               <Controller
                 name={`certificates.${index}.dateOfIssue`}
                 control={control}
-                render={({ field }) => {
+                render={() => {
                   return <DatePicker />;
                 }}
               />
