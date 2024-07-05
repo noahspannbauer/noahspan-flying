@@ -1,30 +1,35 @@
 name: Feature
 
 on:
-    push:
-        branches:
-            - feature/**
+  push:
+    branches:
+      - feature/**
+
+env:
+  VITE_API_URL: ${{ vars.VITE_API_URL }}
+  VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
+  VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
+  VITE_REDIRECT_URL: ${{ vars.VITE_REDIRECT_URL }}
 
 jobs:
-    build_and_deploy_job:
-        runs-on: ubuntu-latest
-        name: Build and Deploy Job
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                submodules: true
-            
-            - name: Build and Deploy
-              id: builddeploy
-              uses: Azure/static-web-apps-deploy@v1
-              with:
-                azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-                repo_token: ${{ secrets.GITHUB_TOKEN }}
-                action: "upload"
-                app_build_command: ${{ vars.APP_BUILD_COMMAND }}
-                app_location: ${{ vars.APP_LOCATION }}
-                api_build_command: ${{ vars.API_BUILD_COMMAND }}
-                api_location: ${{ vars.API_LOCATION}}
-                output_location: ${{ vars.OUTPUT_LOCATION }}
-                deployment_environment: "development"
-                
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build and Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_build_command: ${{ vars.APP_BUILD_COMMAND }}
+          app_location: ${{ vars.APP_LOCATION }}
+          api_build_command: ${{ vars.API_BUILD_COMMAND }}
+          api_location: ${{ vars.API_LOCATION}}
+          output_location: ${{ vars.OUTPUT_LOCATION }}
+          deployment_environment: 'development'
