@@ -4,9 +4,15 @@ import {
   Accordion,
   AccordionBody,
   AccordionHeader,
-  Input
+  ChevronDown,
+  ChevronUp,
+  DatePicker,
+  Input,
+  Option,
+  Select
 } from '@noahspan/noahspan-components';
-// import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
+import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
+import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
 
 const PilotForm: React.FC<unknown> = () => {
   const [open, setOpen] = useState<number>(0);
@@ -23,25 +29,28 @@ const PilotForm: React.FC<unknown> = () => {
   return (
     <FormProvider {...methods}>
       <form className="m-10" onSubmit={handleSubmit(onSubmit)}>
-        <Accordion open={open === 1}>
+        <Accordion
+          open={open === 1}
+          icon={open === 1 ? <ChevronDown /> : <ChevronUp />}
+        >
           <AccordionHeader onClick={() => handleOpen(1)}>Info</AccordionHeader>
           <AccordionBody>
             <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="firstName"
                   control={control}
                   render={({ field }) => (
                     <Input
+                      className="w-full"
                       disabled={field.disabled}
                       label="First Name"
                       value={field.value}
-                      variant="standard"
                     />
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="lastName"
                   control={control}
@@ -50,12 +59,11 @@ const PilotForm: React.FC<unknown> = () => {
                       disabled={field.disabled}
                       label="Last Name"
                       value={field.value}
-                      variant="standard"
                     />
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="address"
                   control={control}
@@ -64,12 +72,11 @@ const PilotForm: React.FC<unknown> = () => {
                       disabled={field.disabled}
                       label="Address"
                       value={field.value}
-                      variant="standard"
                     />
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="city"
                   control={control}
@@ -82,7 +89,7 @@ const PilotForm: React.FC<unknown> = () => {
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="state"
                   control={control}
@@ -95,7 +102,7 @@ const PilotForm: React.FC<unknown> = () => {
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="postalCode"
                   control={control}
@@ -111,58 +118,59 @@ const PilotForm: React.FC<unknown> = () => {
             </div>
           </AccordionBody>
         </Accordion>
-
-        {/* <Accordion>
-            <AccordionItem title='Certificates'>
-                <PilotFormCertificates certificates={[]}/>
-            </AccordionItem>
+        <Accordion
+          open={open === 2}
+          icon={open === 2 ? <ChevronDown /> : <ChevronUp />}
+        >
+          <AccordionHeader onClick={() => handleOpen(2)}>
+            Certificates
+          </AccordionHeader>
+          <AccordionBody>
+            <PilotFormCertificates certificates={[]} />
+          </AccordionBody>
         </Accordion>
-        <Accordion>
-            <AccordionItem title='Endorsements'>
-
-            </AccordionItem>
+        <Accordion
+          open={open === 3}
+          icon={open === 3 ? <ChevronDown /> : <ChevronUp />}
+        >
+          <AccordionHeader onClick={() => handleOpen(3)}>
+            Endorsements
+          </AccordionHeader>
+          <AccordionBody>
+            <PilotFormEndorsements endorsements={[]} />
+          </AccordionBody>
         </Accordion>
-        <Accordion>
-            <AccordionItem title="Medical">
-            <div className="grid grid-cols-2 gap-4">
-                <div className="self-center">
-                <label>Class</label>
-                </div>
-                <div>
-                <Controller
-                    name="medicalClass"
-                    control={control}
-                    render={({ field }) => (
-                    <Select value={field.value}>
-                        <Option value={first}>
-                        First
-                        </Option>
-                        <Option>
-                        Second
-                        </Option>
-                        <Option>
-                        Third
-                        </Option>
-                        <Option>
-                        Basic Med
-                        </Option>
-                    </Select>
-                    )}
-                />
-                </div>
-                <div className="self-center">
-                <label>Expires</label>
-                </div>
-                <div>
-                <Controller
-                    name="medicalExpiration"
-                    control={control}
-                    render={({ field }) => <DatePicker />}
-                />
-                </div>
+        <Accordion
+          open={open === 4}
+          icon={open === 4 ? <ChevronDown /> : <ChevronUp />}
+        >
+          <AccordionHeader onClick={() => handleOpen(4)}>
+            Medical
+          </AccordionHeader>
+          <AccordionBody>
+            <div className="grid grid-cols-3 gap-4">
+              <Controller
+                name="medicalClass"
+                control={control}
+                render={({ field }) => (
+                  <Select label="Class" value={field.value}>
+                    <Option>First</Option>
+                    <Option>Second</Option>
+                    <Option>Third</Option>
+                    <Option>Basic Med</Option>
+                  </Select>
+                )}
+              />
             </div>
-            </AccordionItem>
-        </Accordion> */}
+            <div className="col-span-3">
+              <Controller
+                name="medicalExpiration"
+                control={control}
+                render={({ field }) => <DatePicker />}
+              />
+            </div>
+          </AccordionBody>
+        </Accordion>
       </form>
     </FormProvider>
   );

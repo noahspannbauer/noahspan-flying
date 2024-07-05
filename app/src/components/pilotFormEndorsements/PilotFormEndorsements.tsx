@@ -1,4 +1,4 @@
-import { IPilotFormCertificates } from './IPilotFormCertificates';
+import { IPilotFormEndorsements } from './IPilotFormEndorsements';
 // import { Button, DatePicker, Input, Select, SelectItem } from '@nextui-org/react';
 import {
   Button,
@@ -9,16 +9,16 @@ import {
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
-const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
-  certificates
-}: IPilotFormCertificates) => {
+const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
+  endorsements
+}: IPilotFormEndorsements) => {
   const {
     control,
     formState: { errors }
   } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
-    name: 'certificates',
+    name: 'endorsements',
     control
   });
 
@@ -30,25 +30,22 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
             {/* // <div key={field.id}> */}
             <div>
               <Controller
-                name={`certificates.${index}.type`}
+                name={`endorsements.${index}.type`}
                 control={control}
                 render={({ field }) => {
                   return (
                     <Select label="Type" {...field}>
                       <Option key="student" value="Student">
-                        Student
+                        Complex
                       </Option>
                       <Option key="private" value="Private">
-                        Private
+                        High Performance
                       </Option>
                       <Option key="instrument" value="Instrument">
-                        Instrument
+                        High Altitude
                       </Option>
                       <Option key="recreational" value="Recreational">
-                        Recreational
-                      </Option>
-                      <Option key="sport" value="Sport">
-                        Sport
+                        Tailwheel
                       </Option>
                     </Select>
                   );
@@ -57,7 +54,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
             </div>
             <div>
               <Controller
-                name={`certificates.${index}.number`}
+                name={`endorsements.${index}.number`}
                 control={control}
                 render={({ field }) => {
                   return <Input label="Number" {...field} />;
@@ -66,7 +63,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
             </div>
             <div>
               <Controller
-                name={`certificates.${index}.dateOfIssue`}
+                name={`endorsements.${index}.dateOfIssue`}
                 control={control}
                 render={({ field }) => {
                   return <DatePicker />;
@@ -95,4 +92,4 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
   );
 };
 
-export default PilotFormCertificates;
+export default PilotFormEndorsements;

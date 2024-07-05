@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
-import { Button, Drawer } from '@noahspan/noahspan-components';
+import { Button, DatePicker, Drawer } from '@noahspan/noahspan-components';
 
 const Pilots: React.FC<unknown> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -20,6 +20,7 @@ const Pilots: React.FC<unknown> = () => {
         >
           New
         </Button>
+        <DatePicker />
         <Drawer
           open={isDrawerOpen}
           placement="right"
@@ -27,6 +28,7 @@ const Pilots: React.FC<unknown> = () => {
           data-testid="pilot-drawer"
         >
           <PilotForm />
+
           {/* <DrawerContent>
             <DrawerHeader>
               <h2>Add Pilot</h2>
