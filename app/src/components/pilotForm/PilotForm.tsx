@@ -4,8 +4,8 @@ import {
   Accordion,
   AccordionBody,
   AccordionHeader,
-  ChevronDown,
-  ChevronUp,
+  ChevronDownIcon,
+  ChevronUpIcon,
   DatePicker,
   Input,
   Option,
@@ -31,7 +31,7 @@ const PilotForm: React.FC<unknown> = () => {
       <form className="m-10" onSubmit={handleSubmit(onSubmit)}>
         <Accordion
           open={open === 1}
-          icon={open === 1 ? <ChevronDown /> : <ChevronUp />}
+          icon={open === 1 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
           <AccordionHeader onClick={() => handleOpen(1)}>Info</AccordionHeader>
           <AccordionBody>
@@ -120,7 +120,7 @@ const PilotForm: React.FC<unknown> = () => {
         </Accordion>
         <Accordion
           open={open === 2}
-          icon={open === 2 ? <ChevronDown /> : <ChevronUp />}
+          icon={open === 2 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
           <AccordionHeader onClick={() => handleOpen(2)}>
             Certificates
@@ -131,7 +131,7 @@ const PilotForm: React.FC<unknown> = () => {
         </Accordion>
         <Accordion
           open={open === 3}
-          icon={open === 3 ? <ChevronDown /> : <ChevronUp />}
+          icon={open === 3 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
           <AccordionHeader onClick={() => handleOpen(3)}>
             Endorsements
@@ -142,7 +142,7 @@ const PilotForm: React.FC<unknown> = () => {
         </Accordion>
         <Accordion
           open={open === 4}
-          icon={open === 4 ? <ChevronDown /> : <ChevronUp />}
+          icon={open === 4 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
           <AccordionHeader onClick={() => handleOpen(4)}>
             Medical
