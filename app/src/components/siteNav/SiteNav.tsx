@@ -11,7 +11,7 @@ import {
   NavbarLinks,
   NavbarMenu,
   NavbarItemProps,
-  Plane,
+  PlaneIcon,
   Typography
 } from '@noahspan/noahspan-components';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -38,7 +38,7 @@ const SiteNav: React.FC<SiteNavProps> = ({
     <Navbar>
       <NavbarBrand>
         <img height={40} width={40} src="noahspan-logo.png" />{' '}
-        <Plane size="2x" />
+        <PlaneIcon size="2x" />
       </NavbarBrand>
       <NavbarLinks items={navItems} />
       <NavbarMenu>
