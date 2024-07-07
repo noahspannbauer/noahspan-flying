@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
-import { Button, DatePicker, Drawer } from '@noahspan/noahspan-components';
+import {
+  Button,
+  DatePicker,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerFooter
+} from '@noahspan/noahspan-components';
 
 const Pilots: React.FC<unknown> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -27,34 +34,29 @@ const Pilots: React.FC<unknown> = () => {
           size={1000}
           data-testid="pilot-drawer"
         >
-          <PilotForm />
+          {/* <DrawerHeader text='Add Pilot' onClose={onOpenCloseDrawer} /> */}
 
-          {/* <DrawerContent>
-            <DrawerHeader>
-              <h2>Add Pilot</h2>
-            </DrawerHeader>
-            <DrawerBody>
-              <PilotForm />
-            </DrawerBody>
-            <DrawerFooter>
-              <div className="flex gap-4 justify-end justify-self-center">
-                <div>
-                  <Button
-                    color="default"
-                    onClick={onOpenCloseDrawer}
-                    data-testid="pilot-drawer-cancel-button"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div>
-                  <Button color="primary" onClick={onOpenCloseDrawer}>
-                    Save
-                  </Button>
-                </div>
+          <DrawerBody>
+            <PilotForm />
+          </DrawerBody>
+          <DrawerFooter>
+            <div className="flex gap-4 justify-end justify-self-center">
+              <div>
+                <Button
+                  variant="outlined"
+                  onClick={onOpenCloseDrawer}
+                  data-testid="pilot-drawer-cancel-button"
+                >
+                  Cancel
+                </Button>
               </div>
-            </DrawerFooter>
-          </DrawerContent> */}
+              <div>
+                <Button variant="filled" onClick={onOpenCloseDrawer}>
+                  Save
+                </Button>
+              </div>
+            </div>
+          </DrawerFooter>
         </Drawer>
       </div>
     </div>
