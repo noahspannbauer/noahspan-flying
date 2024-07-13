@@ -27,9 +27,5 @@
   },
   "lint-staged": {
     "**/*": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\" --ignore-unknown"
-  },
-  "dependencies": {
-    "@microsoft/mgt-element": "^4.2.2",
-    "@microsoft/mgt-msal2-provider": "^4.2.2"
   }
 }

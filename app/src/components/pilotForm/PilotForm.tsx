@@ -9,13 +9,23 @@ import {
   DatePicker,
   Input,
   Option,
+  PeoplePicker,
   Select
 } from '@noahspan/noahspan-components';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
+import { Person } from '@microsoft/microsoft-graph-types';
+import { AxiosInstance, AxiosResponse } from 'axios';
+import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
+import { useAccount } from '@azure/msal-react';
 
 const PilotForm: React.FC<unknown> = () => {
+  const httpClient: AxiosInstance = useHttpClient();
+  const accountInfo = useAccount();
   const [open, setOpen] = useState<number>(0);
+  const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
+  const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
+    useState<boolean>(false);
   const handleOpen = (value: number) => {
     setOpen(open === value ? 0 : value);
   };
@@ -26,44 +36,46 @@ const PilotForm: React.FC<unknown> = () => {
     console.log(data);
   };
 
+  const handlePeoplePickerOnChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const searchString: string = event.target.value;
+    const response: AxiosResponse = await httpClient.get(
+      `api/personSearch?search=${searchString}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accountInfo?.idToken}`
+        }
+      }
+    );
+  };
+
   return (
     <FormProvider {...methods}>
       <form className="m-10" onSubmit={handleSubmit(onSubmit)}>
-        <Accordion
+        {/* <Accordion
           open={open === 1}
           icon={open === 1 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
           <AccordionHeader onClick={() => handleOpen(1)}>Info</AccordionHeader>
           <AccordionBody>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-3">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="col-span-1">
                 <Controller
-                  name="firstName"
+                  name="name"
                   control={control}
                   render={({ field }) => (
-                    <Input
-                      className="w-full"
-                      disabled={field.disabled}
-                      label="First Name"
-                      value={field.value}
+                    <PeoplePicker 
+                      results={peoplePickerResults}
+                      inputProps={{
+                        onChange: handlePeoplePickerOnChange
+                      }}
+                      loading={isPeoplePickerLoading}
                     />
                   )}
                 />
               </div>
-              <div className="col-span-3">
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      disabled={field.disabled}
-                      label="Last Name"
-                      value={field.value}
-                    />
-                  )}
-                />
-              </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
                 <Controller
                   name="address"
                   control={control}
@@ -76,7 +88,7 @@ const PilotForm: React.FC<unknown> = () => {
                   )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
                 <Controller
                   name="city"
                   control={control}
@@ -89,7 +101,7 @@ const PilotForm: React.FC<unknown> = () => {
                   )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
                 <Controller
                   name="state"
                   control={control}
@@ -102,7 +114,7 @@ const PilotForm: React.FC<unknown> = () => {
                   )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
                 <Controller
                   name="postalCode"
                   control={control}
@@ -117,7 +129,7 @@ const PilotForm: React.FC<unknown> = () => {
               </div>
             </div>
           </AccordionBody>
-        </Accordion>
+        </Accordion> */}
         <Accordion
           open={open === 2}
           icon={open === 2 ? <ChevronDownIcon /> : <ChevronUpIcon />}
@@ -148,26 +160,28 @@ const PilotForm: React.FC<unknown> = () => {
             Medical
           </AccordionHeader>
           <AccordionBody>
-            <div className="grid grid-cols-3 gap-4">
-              <Controller
-                name="medicalClass"
-                control={control}
-                render={({ field }) => (
-                  <Select label="Class" value={field.value}>
-                    <Option>First</Option>
-                    <Option>Second</Option>
-                    <Option>Third</Option>
-                    <Option>Basic Med</Option>
-                  </Select>
-                )}
-              />
-            </div>
-            <div className="col-span-3">
-              <Controller
-                name="medicalExpiration"
-                control={control}
-                render={() => <DatePicker />}
-              />
+            <div className="grid grid-cols-1 gap-4">
+              <div className="col-span1">
+                <Controller
+                  name="medicalClass"
+                  control={control}
+                  render={({ field }) => (
+                    <Select label="Class" value={field.value}>
+                      <Option>First</Option>
+                      <Option>Second</Option>
+                      <Option>Third</Option>
+                      <Option>Basic Med</Option>
+                    </Select>
+                  )}
+                />
+              </div>
+              <div className="col-span-1">
+                <Controller
+                  name="medicalExpiration"
+                  control={control}
+                  render={() => <DatePicker />}
+                />
+              </div>
             </div>
           </AccordionBody>
         </Accordion>

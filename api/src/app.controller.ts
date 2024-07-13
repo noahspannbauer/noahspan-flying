@@ -6,6 +6,7 @@ import {
 } from '@noahspan/noahspan-modules';
 import { FeatureFlagValue } from '@azure/app-configuration';
 import { Public } from '@noahspan/noahspan-modules';
+import { Person } from '@microsoft/microsoft-graph-types';
 
 @Controller()
 export class AppController {
@@ -52,6 +53,28 @@ export class AppController {
       const userProfile = await client.api(`me`).get();
 
       return userProfile;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Get('personSearch')
+  async searchUsers(
+    @Headers() headers: any,
+    @Query('search') search: any
+  ): Promise<Person[]> {
+    try {
+      const graphToken: string = await this.msGraphService.getMsGraphAuth(
+        headers.authorization.replace('Bearer ', '')
+      );
+      const client: MsGraphClient =
+        await this.msGraphService.getMsGraphClientDelegated(graphToken);
+      const results: any = await client
+        .api(`me/people/?$search=${search}`)
+        .get();
+      const personResults: Person[] = results.values ? results.values : [];
+
+      return personResults;
     } catch (error) {
       return error;
     }
