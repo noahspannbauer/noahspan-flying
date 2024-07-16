@@ -21,6 +21,7 @@ export class AppController {
     @Query() query: any
   ): Promise<{ key: string; enabled: boolean }[]> {
     try {
+      console.log(query);
       const featureFlagKeys: string[] =
         query.keys && query.keys.toString().includes(';')
           ? query.keys.split(';')
@@ -46,7 +47,8 @@ export class AppController {
   async getUserProfile(@Headers() headers: any) {
     try {
       const graphToken: string = await this.msGraphService.getMsGraphAuth(
-        headers.authorization.replace('Bearer ', '')
+        headers.authorization.replace('Bearer ', ''),
+        ['user.read']
       );
       const client: MsGraphClient =
         await this.msGraphService.getMsGraphClientDelegated(graphToken);
@@ -64,17 +66,10 @@ export class AppController {
     @Query('search') search: any
   ): Promise<Person[]> {
     try {
-      const graphToken: string = await this.msGraphService.getMsGraphAuth(
-        headers.authorization.replace('Bearer ', '')
-      );
-      const client: MsGraphClient =
-        await this.msGraphService.getMsGraphClientDelegated(graphToken);
-      const results: any = await client
-        .api(`me/people/?$search=${search}`)
-        .get();
-      const personResults: Person[] = results.values ? results.values : [];
+      const personSearchResults: Person[] =
+        await getPersonSearshResults(search);
 
-      return personResults;
+      return personSearchResults;
     } catch (error) {
       return error;
     }

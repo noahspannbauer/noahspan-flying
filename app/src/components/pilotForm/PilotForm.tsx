@@ -14,18 +14,18 @@ import {
 } from '@noahspan/noahspan-components';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
-import { Person } from '@microsoft/microsoft-graph-types';
+// import { Person } from '@microsoft/microsoft-graph-types';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
-import { useAccount } from '@azure/msal-react';
+import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 
 const PilotForm: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
-  const accountInfo = useAccount();
   const [open, setOpen] = useState<number>(0);
-  const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
+  const [peoplePickerResults, setPeoplePickerResults] = useState<any[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
+  const { getAccessToken } = useAccessToken();
   const handleOpen = (value: number) => {
     setOpen(open === value ? 0 : value);
   };
@@ -39,21 +39,32 @@ const PilotForm: React.FC<unknown> = () => {
   const handlePeoplePickerOnChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const searchString: string = event.target.value;
-    const response: AxiosResponse = await httpClient.get(
-      `api/personSearch?search=${searchString}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accountInfo?.idToken}`
+    setIsPeoplePickerLoading(true);
+
+    try {
+      const searchString: string = event.target.value;
+      const accessToken: string = await getAccessToken();
+      const response: AxiosResponse = await httpClient.get(
+        `api/personSearch?search=${searchString}`,
+        {
+          headers: {
+            Authorization: accessToken
+          }
         }
-      }
-    );
+      );
+      console.log(response);
+      setPeoplePickerResults(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsPeoplePickerLoading(false);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <form className="m-10" onSubmit={handleSubmit(onSubmit)}>
-        {/* <Accordion
+        <Accordion
           open={open === 1}
           icon={open === 1 ? <ChevronDownIcon /> : <ChevronUpIcon />}
         >
@@ -64,8 +75,8 @@ const PilotForm: React.FC<unknown> = () => {
                 <Controller
                   name="name"
                   control={control}
-                  render={({ field }) => (
-                    <PeoplePicker 
+                  render={() => (
+                    <PeoplePicker
                       results={peoplePickerResults}
                       inputProps={{
                         onChange: handlePeoplePickerOnChange
@@ -129,7 +140,7 @@ const PilotForm: React.FC<unknown> = () => {
               </div>
             </div>
           </AccordionBody>
-        </Accordion> */}
+        </Accordion>
         <Accordion
           open={open === 2}
           icon={open === 2 ? <ChevronDownIcon /> : <ChevronUpIcon />}
