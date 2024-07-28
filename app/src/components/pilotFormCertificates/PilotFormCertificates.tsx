@@ -28,7 +28,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
       {fields.map((field, index) => {
         return (
           <>
-            <div>
+            <div className="col-span-1">
               <Controller
                 name={`certificates.${index}.type`}
                 control={control}
@@ -55,7 +55,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
                 }}
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <Controller
                 name={`certificates.${index}.number`}
                 control={control}
@@ -64,7 +64,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
                 }}
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <Controller
                 name={`certificates.${index}.dateOfIssue`}
                 control={control}
@@ -82,7 +82,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
                 }}
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <Button onClick={() => remove(index)}>Remove</Button>
             </div>
           </>

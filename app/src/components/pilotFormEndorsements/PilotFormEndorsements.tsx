@@ -28,7 +28,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
       {fields.map((field, index) => {
         return (
           <>
-            <div>
+            <div className="col-span-1">
               <Controller
                 name={`endorsements.${index}.type`}
                 control={control}
@@ -52,7 +52,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
                 }}
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <Controller
                 name={`endorsements.${index}.dateOfIssue`}
                 control={control}
@@ -70,7 +70,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
                 }}
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <Button onClick={() => remove(index)}>Remove</Button>
             </div>
           </>
