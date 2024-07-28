@@ -84,7 +84,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DrawerBody>
             <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Typography variant="h5">Info</Typography>
                 <hr className="my-3" />
               </div>
@@ -100,7 +100,9 @@ const PilotForm: React.FC<PilotFormProps> = ({
                       results={peoplePickerResults}
                       inputProps={{
                         disabled: disabled,
-                        // label: 'Name',
+                        labelProps: {
+                          className: 'before:content-none after:content-none'
+                        },
                         onChange: (event) => handlePeoplePickerOnChange(event),
                         value: value
                       }}
@@ -110,27 +112,37 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 />
               </div>
               <div className="col-span-1">
+                <Typography>Name</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="address"
                   control={methods.control}
-                  render={({ field }) => <Input label="Address" {...field} />}
+                  render={({ field }) => (
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
+                  )}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Controller
                   name="city"
                   control={methods.control}
                   render={({ field }) => <Input label="City" {...field} />}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Controller
                   name="state"
                   control={methods.control}
                   render={({ field }) => <Input label="State" {...field} />}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Controller
                   name="postalCode"
                   control={methods.control}
@@ -139,14 +151,14 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   )}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Controller
                   name="email"
                   control={methods.control}
                   render={({ field }) => <Input label="Email" {...field} />}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Controller
                   name="phone"
                   control={methods.control}
