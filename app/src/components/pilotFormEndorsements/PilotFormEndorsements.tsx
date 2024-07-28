@@ -4,6 +4,7 @@ import {
   DatePicker,
   Input,
   Option,
+  PlusIcon,
   Select
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -77,6 +78,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
       })}
       <div className="col-span-4">
         <Button
+          className="flex items-center gap-3"
           onClick={() => {
             append({
               type: '',
@@ -84,7 +86,9 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
               dateOfIssue: null
             });
           }}
+          variant="outlined"
         >
+          <PlusIcon size="lg" />
           Add
         </Button>
       </div>

@@ -4,6 +4,7 @@ import {
   DatePicker,
   Input,
   Option,
+  PlusIcon,
   Select
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -89,6 +90,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
       })}
       <div className="col-span-4">
         <Button
+          className="flex items-center gap-3"
           onClick={() => {
             append({
               type: '',
@@ -96,8 +98,10 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
               dateOfIssue: null
             });
           }}
+          variant="outlined"
         >
-          Add
+          <PlusIcon size="lg" />
+          Add Certificate
         </Button>
       </div>
     </>
