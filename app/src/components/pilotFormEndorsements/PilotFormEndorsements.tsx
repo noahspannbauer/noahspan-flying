@@ -1,5 +1,4 @@
 import { IPilotFormEndorsements } from './IPilotFormEndorsements';
-// import { Button, DatePicker, Input, Select, SelectItem } from '@nextui-org/react';
 import {
   Button,
   DatePicker,
@@ -24,7 +23,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
   });
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <>
       {fields.map((field, index) => {
         return (
           <>
@@ -76,18 +75,20 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
           </>
         );
       })}
-      <Button
-        onClick={() => {
-          append({
-            type: '',
-            number: '',
-            dateOfIssue: null
-          });
-        }}
-      >
-        Add
-      </Button>
-    </div>
+      <div className="col-span-4">
+        <Button
+          onClick={() => {
+            append({
+              type: '',
+              number: '',
+              dateOfIssue: null
+            });
+          }}
+        >
+          Add
+        </Button>
+      </div>
+    </>
   );
 };
 

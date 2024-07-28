@@ -1,5 +1,4 @@
 import { IPilotFormCertificates } from './IPilotFormCertificates';
-// import { Button, DatePicker, Input, Select, SelectItem } from '@nextui-org/react';
 import {
   Button,
   DatePicker,
@@ -24,7 +23,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
   });
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <>
       {fields.map((field, index) => {
         return (
           <>
@@ -88,18 +87,20 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
           </>
         );
       })}
-      <Button
-        onClick={() => {
-          append({
-            type: '',
-            number: '',
-            dateOfIssue: null
-          });
-        }}
-      >
-        Add
-      </Button>
-    </div>
+      <div className="col-span-4">
+        <Button
+          onClick={() => {
+            append({
+              type: '',
+              number: '',
+              dateOfIssue: null
+            });
+          }}
+        >
+          Add
+        </Button>
+      </div>
+    </>
   );
 };
 
