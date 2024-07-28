@@ -89,7 +89,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <hr className="my-3" />
               </div>
               <div className="col-span-1">
-                <Typography>Name</Typography>
+                <Typography variant="h6">Name</Typography>
               </div>
               <div className="col-span-2">
                 <Controller
@@ -112,7 +112,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 />
               </div>
               <div className="col-span-1">
-                <Typography>Name</Typography>
+                <Typography variant="h6">Address</Typography>
               </div>
               <div className="col-span-2">
                 <Controller
@@ -128,49 +128,97 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
+                <Typography variant="h6">City</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="city"
                   control={methods.control}
-                  render={({ field }) => <Input label="City" {...field} />}
+                  render={({ field }) => (
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
+                  )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
+                <Typography variant="h6">State</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="state"
                   control={methods.control}
-                  render={({ field }) => <Input label="State" {...field} />}
+                  render={({ field }) => (
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
+                  )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1">
+                <Typography variant="h6">Postal Code</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="postalCode"
                   control={methods.control}
                   render={({ field }) => (
-                    <Input label="Postal Code" {...field} />
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+              <div className="col-span-1">
+                <Typography variant="h6">Email</Typography>
+              </div>
+              <div className="col-span-2">
+                <Controller
+                  name="email"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+              <div className="col-span-1">
+                <Typography variant="h6">Phone Number</Typography>
+              </div>
+              <div className="col-span-2">
+                <Controller
+                  name="phone"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <Input
+                      labelProps={{
+                        className: 'before:content-none after:content-none'
+                      }}
+                      {...field}
+                    />
                   )}
                 />
               </div>
               <div className="col-span-3">
-                <Controller
-                  name="email"
-                  control={methods.control}
-                  render={({ field }) => <Input label="Email" {...field} />}
-                />
-              </div>
-              <div className="col-span-3">
-                <Controller
-                  name="phone"
-                  control={methods.control}
-                  render={({ field }) => <Input label="Phone" {...field} />}
-                />
-              </div>
-              <div className="col-span-1">
                 <Typography variant="h5">Certificates</Typography>
                 <hr className="my-3" />
               </div>
               <PilotFormCertificates certificates={[]} />
-              <div className="col-span-1">
+              <div className="col-span-3">
                 <Typography variant="h5">Endorsements</Typography>
                 <hr className="my-3" />
               </div>
@@ -179,13 +227,16 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Typography variant="h5">Medical</Typography>
                 <hr className="my-3" />
               </div>
-              <div className="col-span1">
+              <div className="col-span-1">
+                <Typography variant="h6">Class</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="medicalClass"
                   control={methods.control}
                   render={({ field }) => {
                     return (
-                      <Select label="Class" {...field}>
+                      <Select {...field}>
                         <Option key="first" value="First">
                           First
                         </Option>
@@ -204,6 +255,9 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 />
               </div>
               <div className="col-span-1">
+                <Typography variant="h6">Class</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="medicalExpiration"
                   control={methods.control}
