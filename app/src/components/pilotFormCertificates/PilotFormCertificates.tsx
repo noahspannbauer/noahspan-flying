@@ -14,7 +14,8 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
 }: IPilotFormCertificates) => {
   const {
     control,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -69,7 +70,16 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
                 name={`certificates.${index}.dateOfIssue`}
                 control={control}
                 render={({ field }) => {
-                  return <DatePicker />;
+                  return (
+                    <DatePicker
+                      handleDateChanged={(date: string) => {
+                        setValue(`certificates.${index}.dateOfIssue`, date);
+                      }}
+                      inputProps={{
+                        value: field.value
+                      }}
+                    />
+                  );
                 }}
               />
             </div>

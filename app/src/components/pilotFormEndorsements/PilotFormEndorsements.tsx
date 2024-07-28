@@ -14,7 +14,8 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
 }: IPilotFormEndorsements) => {
   const {
     control,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
@@ -56,8 +57,17 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
               <Controller
                 name={`endorsements.${index}.dateOfIssue`}
                 control={control}
-                render={() => {
-                  return <DatePicker />;
+                render={({ field }) => {
+                  return (
+                    <DatePicker
+                      handleDateChanged={(date: string) => {
+                        setValue(`endorsements.${index}.dateOfIssue`, date);
+                      }}
+                      inputProps={{
+                        value: field.value
+                      }}
+                    />
+                  );
                 }}
               />
             </div>

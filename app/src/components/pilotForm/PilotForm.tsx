@@ -192,7 +192,18 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="medicalExpiration"
                   control={methods.control}
-                  render={() => <DatePicker />}
+                  render={({ field }) => {
+                    return (
+                      <DatePicker
+                        handleDateChanged={(date: string) => {
+                          methods.setValue('medicalExpiration', date);
+                        }}
+                        inputProps={{
+                          value: field.value
+                        }}
+                      />
+                    );
+                  }}
                 />
               </div>
             </div>
