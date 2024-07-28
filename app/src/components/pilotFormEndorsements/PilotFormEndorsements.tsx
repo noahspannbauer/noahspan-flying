@@ -24,7 +24,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
   });
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div>
       {fields.map((field, index) => {
         return (
           <>

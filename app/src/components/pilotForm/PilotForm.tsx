@@ -83,15 +83,15 @@ const PilotForm: React.FC<PilotFormProps> = ({
         <DrawerHeader text="Add Pilot" onClose={onOpenCloseDrawer} />
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DrawerBody>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-3">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-4">
                 <Typography variant="h5">Info</Typography>
                 <hr className="my-3" />
               </div>
               <div className="col-span-1">
                 <Typography variant="h6">Name</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="name"
                   control={methods.control}
@@ -114,7 +114,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Address</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="address"
                   control={methods.control}
@@ -131,7 +131,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">City</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="city"
                   control={methods.control}
@@ -148,7 +148,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">State</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="state"
                   control={methods.control}
@@ -165,7 +165,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Postal Code</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="postalCode"
                   control={methods.control}
@@ -182,7 +182,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Email</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="email"
                   control={methods.control}
@@ -199,7 +199,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Phone Number</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="phone"
                   control={methods.control}
@@ -213,12 +213,12 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   )}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-4">
                 <Typography variant="h5">Certificates</Typography>
                 <hr className="my-3" />
               </div>
               <PilotFormCertificates certificates={[]} />
-              <div className="col-span-3">
+              <div className="col-span-4">
                 <Typography variant="h5">Endorsements</Typography>
                 <hr className="my-3" />
               </div>
@@ -230,7 +230,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Class</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="medicalClass"
                   control={methods.control}
@@ -257,7 +257,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
               <div className="col-span-1">
                 <Typography variant="h6">Class</Typography>
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <Controller
                   name="medicalExpiration"
                   control={methods.control}
