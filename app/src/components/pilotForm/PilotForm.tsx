@@ -223,7 +223,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <hr className="my-3" />
               </div>
               <PilotFormEndorsements endorsements={[]} />
-              <div className="col-span-1">
+              <div className="col-span-4">
                 <Typography variant="h5">Medical</Typography>
                 <hr className="my-3" />
               </div>
@@ -236,7 +236,12 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   control={methods.control}
                   render={({ field }) => {
                     return (
-                      <Select {...field}>
+                      <Select
+                        labelProps={{
+                          className: 'before:content-none after:content-none'
+                        }}
+                        {...field}
+                      >
                         <Option key="first" value="First">
                           First
                         </Option>
@@ -255,7 +260,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">Class</Typography>
+                <Typography variant="h6">Expiration Date</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
