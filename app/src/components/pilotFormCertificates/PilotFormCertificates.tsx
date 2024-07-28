@@ -24,7 +24,7 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
   });
 
   return (
-    <div>
+    <div className="grid grid-cols-4 gap-4">
       {fields.map((field, index) => {
         return (
           <>
