@@ -5,7 +5,8 @@ import {
   Input,
   Option,
   PlusIcon,
-  Select
+  Select,
+  TrashIcon
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -71,7 +72,13 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
               />
             </div>
             <div className="col-span-1">
-              <Button onClick={() => remove(index)}>Remove</Button>
+              <Button
+                className="flex items-center gap-3"
+                onClick={() => remove(index)}
+              >
+                <TrashIcon size="lg" />
+                Delete
+              </Button>
             </div>
           </>
         );
@@ -89,7 +96,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
           variant="outlined"
         >
           <PlusIcon size="lg" />
-          Add
+          Add Endorsement
         </Button>
       </div>
     </>
