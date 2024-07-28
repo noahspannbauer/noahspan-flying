@@ -28,7 +28,6 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
       {fields.map((field, index) => {
         return (
           <>
-            {/* // <div key={field.id}> */}
             <div>
               <Controller
                 name={`certificates.${index}.type`}
@@ -86,7 +85,6 @@ const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
             <div>
               <Button onClick={() => remove(index)}>Remove</Button>
             </div>
-            {/* </div> */}
           </>
         );
       })}

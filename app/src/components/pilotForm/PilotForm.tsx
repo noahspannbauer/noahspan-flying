@@ -83,12 +83,15 @@ const PilotForm: React.FC<PilotFormProps> = ({
         <DrawerHeader text="Add Pilot" onClose={onOpenCloseDrawer} />
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DrawerBody>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="col-span-1">
                 <Typography variant="h5">Info</Typography>
                 <hr className="my-3" />
               </div>
               <div className="col-span-1">
+                <Typography>Name</Typography>
+              </div>
+              <div className="col-span-2">
                 <Controller
                   name="name"
                   control={methods.control}
@@ -97,7 +100,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                       results={peoplePickerResults}
                       inputProps={{
                         disabled: disabled,
-                        label: 'Name',
+                        // label: 'Name',
                         onChange: (event) => handlePeoplePickerOnChange(event),
                         value: value
                       }}

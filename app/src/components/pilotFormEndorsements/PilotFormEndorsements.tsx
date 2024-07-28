@@ -28,7 +28,6 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
       {fields.map((field, index) => {
         return (
           <>
-            {/* // <div key={field.id}> */}
             <div>
               <Controller
                 name={`endorsements.${index}.type`}
@@ -74,7 +73,6 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
             <div>
               <Button onClick={() => remove(index)}>Remove</Button>
             </div>
-            {/* </div> */}
           </>
         );
       })}
