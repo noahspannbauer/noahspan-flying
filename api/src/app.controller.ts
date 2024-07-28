@@ -7,10 +7,12 @@ import {
 import { FeatureFlagValue } from '@azure/app-configuration';
 import { Public } from '@noahspan/noahspan-modules';
 import { Person } from '@microsoft/microsoft-graph-types';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(
+    private readonly appService: AppService,
     private readonly appConfigService: AppConfigService,
     private readonly msGraphService: MsGraphService
   ) {}
@@ -66,9 +68,10 @@ export class AppController {
     @Query('search') search: any
   ): Promise<Person[]> {
     try {
+      const accessToken: string = headers.authorization.replace('Bearer ', '');
       const personSearchResults: Person[] =
-        await getPersonSearshResults(search);
-
+        await this.appService.getPersonSearchResults(accessToken, search);
+      console.log(personSearchResults);
       return personSearchResults;
     } catch (error) {
       return error;

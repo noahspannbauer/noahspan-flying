@@ -10,18 +10,35 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async getPersonSearchResults(accessToken: string): Person[] {
-    const graphToken: string = await this.msGraphService.getMsGraphAuth(
-      accessToken,
-      ['user.read']
-    );
-    console.log(graphToken);
-    const client: MsGraphClient =
-      await this.msGraphService.getMsGraphClientDelegated(graphToken);
-    const results: any = await client.api(`me/people/?$search=${search}`).get();
-    console.log(results);
-    const personResults: Person[] = results.values ? results.values : [];
+  async getPersonSearchResults(
+    accessToken: string,
+    search: string
+  ): Promise<Person[]> {
+    try {
+      const graphToken: string = await this.msGraphService.getMsGraphAuth(
+        accessToken,
+        ['user.read']
+      );
+      const client: MsGraphClient =
+        await this.msGraphService.getMsGraphClientDelegated(graphToken);
+      const results: any = await client
+        .api(`me/people/?$search=${search}`)
+        .get();
+      let personResults: Person[];
 
-    return personResults;
+      if (results.value) {
+        personResults = results.value.filter((result: Person) => {
+          if (result.userPrincipalName !== null) {
+            return result;
+          }
+        });
+      } else {
+        personResults = [];
+      }
+
+      return personResults;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

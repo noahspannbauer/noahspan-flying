@@ -4,33 +4,42 @@ import {
   Accordion,
   AccordionBody,
   AccordionHeader,
+  Button,
   ChevronDownIcon,
   ChevronUpIcon,
   DatePicker,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerFooter,
   Input,
   Option,
   PeoplePicker,
-  Select
+  Select,
+  Typography
 } from '@noahspan/noahspan-components';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
-// import { Person } from '@microsoft/microsoft-graph-types';
+import { Person } from '@microsoft/microsoft-graph-types';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 
-const PilotForm: React.FC<unknown> = () => {
+interface PilotFormProps {
+  isDrawerOpen: boolean;
+  onOpenCloseDrawer: () => void;
+}
+
+const PilotForm: React.FC<PilotFormProps> = ({
+  isDrawerOpen,
+  onOpenCloseDrawer
+}: PilotFormProps) => {
   const httpClient: AxiosInstance = useHttpClient();
-  const [open, setOpen] = useState<number>(0);
-  const [peoplePickerResults, setPeoplePickerResults] = useState<any[]>([]);
+  const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
-  const handleOpen = (value: number) => {
-    setOpen(open === value ? 0 : value);
-  };
   const methods = useForm();
-  const { control, handleSubmit } = methods;
 
   const onSubmit = (data: unknown) => {
     console.log(data);
@@ -42,6 +51,8 @@ const PilotForm: React.FC<unknown> = () => {
     setIsPeoplePickerLoading(true);
 
     try {
+      methods.setValue('name', event.target.value);
+
       const searchString: string = event.target.value;
       const accessToken: string = await getAccessToken();
       const response: AxiosResponse = await httpClient.get(
@@ -62,24 +73,33 @@ const PilotForm: React.FC<unknown> = () => {
   };
 
   return (
-    <FormProvider {...methods}>
-      <form className="m-10" onSubmit={handleSubmit(onSubmit)}>
-        <Accordion
-          open={open === 1}
-          icon={open === 1 ? <ChevronDownIcon /> : <ChevronUpIcon />}
-        >
-          <AccordionHeader onClick={() => handleOpen(1)}>Info</AccordionHeader>
-          <AccordionBody>
+    <Drawer
+      open={isDrawerOpen}
+      placement="right"
+      size={1000}
+      data-testid="pilot-drawer"
+    >
+      <FormProvider {...methods}>
+        <DrawerHeader text="Add Pilot" onClose={onOpenCloseDrawer} />
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <DrawerBody>
             <div className="grid grid-cols-1 gap-4">
+              <div className="col-span-1">
+                <Typography variant="h5">Info</Typography>
+                <hr className="my-3" />
+              </div>
               <div className="col-span-1">
                 <Controller
                   name="name"
-                  control={control}
-                  render={() => (
+                  control={methods.control}
+                  render={({ field: { disabled, value } }) => (
                     <PeoplePicker
                       results={peoplePickerResults}
                       inputProps={{
-                        onChange: handlePeoplePickerOnChange
+                        disabled: disabled,
+                        label: 'Name',
+                        onChange: (event) => handlePeoplePickerOnChange(event),
+                        value: value
                       }}
                       loading={isPeoplePickerLoading}
                     />
@@ -89,115 +109,115 @@ const PilotForm: React.FC<unknown> = () => {
               <div className="col-span-1">
                 <Controller
                   name="address"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      disabled={field.disabled}
-                      label="Address"
-                      value={field.value}
-                    />
-                  )}
+                  control={methods.control}
+                  render={({ field }) => <Input label="Address" {...field} />}
                 />
               </div>
               <div className="col-span-1">
                 <Controller
                   name="city"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      disabled={field.disabled}
-                      label="City"
-                      value={field.value}
-                    />
-                  )}
+                  control={methods.control}
+                  render={({ field }) => <Input label="City" {...field} />}
                 />
               </div>
               <div className="col-span-1">
                 <Controller
                   name="state"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      disabled={field.disabled}
-                      label="State"
-                      value={field.value}
-                    />
-                  )}
+                  control={methods.control}
+                  render={({ field }) => <Input label="State" {...field} />}
                 />
               </div>
               <div className="col-span-1">
                 <Controller
                   name="postalCode"
-                  control={control}
+                  control={methods.control}
                   render={({ field }) => (
-                    <Input
-                      disabled={field.disabled}
-                      label="Postal Code"
-                      value={field.value}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </AccordionBody>
-        </Accordion>
-        <Accordion
-          open={open === 2}
-          icon={open === 2 ? <ChevronDownIcon /> : <ChevronUpIcon />}
-        >
-          <AccordionHeader onClick={() => handleOpen(2)}>
-            Certificates
-          </AccordionHeader>
-          <AccordionBody>
-            <PilotFormCertificates certificates={[]} />
-          </AccordionBody>
-        </Accordion>
-        <Accordion
-          open={open === 3}
-          icon={open === 3 ? <ChevronDownIcon /> : <ChevronUpIcon />}
-        >
-          <AccordionHeader onClick={() => handleOpen(3)}>
-            Endorsements
-          </AccordionHeader>
-          <AccordionBody>
-            <PilotFormEndorsements endorsements={[]} />
-          </AccordionBody>
-        </Accordion>
-        <Accordion
-          open={open === 4}
-          icon={open === 4 ? <ChevronDownIcon /> : <ChevronUpIcon />}
-        >
-          <AccordionHeader onClick={() => handleOpen(4)}>
-            Medical
-          </AccordionHeader>
-          <AccordionBody>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="col-span1">
-                <Controller
-                  name="medicalClass"
-                  control={control}
-                  render={({ field }) => (
-                    <Select label="Class" value={field.value}>
-                      <Option>First</Option>
-                      <Option>Second</Option>
-                      <Option>Third</Option>
-                      <Option>Basic Med</Option>
-                    </Select>
+                    <Input label="Postal Code" {...field} />
                   )}
                 />
               </div>
               <div className="col-span-1">
                 <Controller
+                  name="email"
+                  control={methods.control}
+                  render={({ field }) => <Input label="Email" {...field} />}
+                />
+              </div>
+              <div className="col-span-1">
+                <Controller
+                  name="phone"
+                  control={methods.control}
+                  render={({ field }) => <Input label="Phone" {...field} />}
+                />
+              </div>
+              <div className="col-span-1">
+                <Typography variant="h5">Certificates</Typography>
+                <hr className="my-3" />
+              </div>
+              <PilotFormCertificates certificates={[]} />
+              <div className="col-span-1">
+                <Typography variant="h5">Endorsements</Typography>
+                <hr className="my-3" />
+              </div>
+              <PilotFormEndorsements endorsements={[]} />
+              <div className="col-span-1">
+                <Typography variant="h5">Medical</Typography>
+                <hr className="my-3" />
+              </div>
+              <div className="col-span1">
+                <Controller
+                  name="medicalClass"
+                  control={methods.control}
+                  render={({ field }) => {
+                    return (
+                      <Select label="Class" {...field}>
+                        <Option key="first" value="First">
+                          First
+                        </Option>
+                        <Option key="second" value="Second">
+                          Second
+                        </Option>
+                        <Option key="third" value="Third">
+                          Third
+                        </Option>
+                        <Option key="basicMed" value="Basic Med">
+                          Basic Med
+                        </Option>
+                      </Select>
+                    );
+                  }}
+                />
+              </div>
+              <div className="col-span-1">
+                <Controller
                   name="medicalExpiration"
-                  control={control}
+                  control={methods.control}
                   render={() => <DatePicker />}
                 />
               </div>
             </div>
-          </AccordionBody>
-        </Accordion>
-      </form>
-    </FormProvider>
+          </DrawerBody>
+          <DrawerFooter>
+            <div className="flex gap-2 justify-end justify-self-center">
+              <div>
+                <Button
+                  variant="outlined"
+                  onClick={onOpenCloseDrawer}
+                  data-testid="pilot-drawer-cancel-button"
+                >
+                  Cancel
+                </Button>
+              </div>
+              <div>
+                <Button variant="filled" type="submit">
+                  Save
+                </Button>
+              </div>
+            </div>
+          </DrawerFooter>
+        </form>
+      </FormProvider>
+    </Drawer>
   );
 };
 

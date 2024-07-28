@@ -23,7 +23,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
   });
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-3 gap-4">
       {fields.map((field, index) => {
         return (
           <>
@@ -35,29 +35,20 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
                 render={({ field }) => {
                   return (
                     <Select label="Type" {...field}>
-                      <Option key="student" value="Student">
+                      <Option key="complex" value="Complex">
                         Complex
                       </Option>
-                      <Option key="private" value="Private">
+                      <Option key="highPerformance" value="High Performance">
                         High Performance
                       </Option>
-                      <Option key="instrument" value="Instrument">
+                      <Option key="highAltitude" value="High Altitude">
                         High Altitude
                       </Option>
-                      <Option key="recreational" value="Recreational">
+                      <Option key="tailwheel" value="Tailwheel">
                         Tailwheel
                       </Option>
                     </Select>
                   );
-                }}
-              />
-            </div>
-            <div>
-              <Controller
-                name={`endorsements.${index}.number`}
-                control={control}
-                render={({ field }) => {
-                  return <Input label="Number" {...field} />;
                 }}
               />
             </div>
