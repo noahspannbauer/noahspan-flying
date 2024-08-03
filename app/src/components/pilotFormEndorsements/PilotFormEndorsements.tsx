@@ -6,7 +6,8 @@ import {
   Option,
   PlusIcon,
   Select,
-  TrashIcon
+  TrashIcon,
+  Typography
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -26,6 +27,18 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
 
   return (
     <>
+      {fields.length > 0 && (
+        <>
+          <div className="col-span-1">
+            <Typography variant="h6">Type</Typography>
+          </div>
+          <div className="col-span-1">
+            <Typography variant="h6">Date of Issue</Typography>
+          </div>
+          <div className="col-span-1"></div>
+          <div className="col-span-1"></div>
+        </>
+      )}
       {fields.map((field, index) => {
         return (
           <>
@@ -75,6 +88,7 @@ const PilotFormEndorsements: React.FC<IPilotFormEndorsements> = ({
               <Button
                 className="flex items-center gap-3"
                 onClick={() => remove(index)}
+                variant="outlined"
               >
                 <TrashIcon size="lg" />
                 Delete

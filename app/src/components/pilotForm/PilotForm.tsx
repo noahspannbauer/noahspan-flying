@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
-  Accordion,
-  AccordionBody,
-  AccordionHeader,
   Button,
-  ChevronDownIcon,
-  ChevronUpIcon,
   DatePicker,
   Drawer,
   DrawerBody,
@@ -24,6 +19,40 @@ import { Person } from '@microsoft/microsoft-graph-types';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { IPilotFormCertificates } from '../pilotFormCertificates/IPilotFormCertificates';
+import { IPilotFormEndorsements } from '../pilotFormEndorsements/IPilotFormEndorsements';
+
+interface PilotFormSchema {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  email: string;
+  phone: string;
+  certificates: IPilotFormCertificates[];
+  endorsements: IPilotFormEndorsements[];
+  medicalClass: string;
+  medicalExpiration: string;
+}
+
+const schema = z.object({
+  id: z.string(),
+  name: z.string(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  postalCode: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  // certificates: z.array(),
+  // endorsements: z.array(),
+  medicalClass: z.string(),
+  medicalExpiration: z.string()
+});
 
 interface PilotFormProps {
   isDrawerOpen: boolean;
@@ -39,9 +68,11 @@ const PilotForm: React.FC<PilotFormProps> = ({
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
-  const methods = useForm();
+  const methods = useForm<PilotFormSchema>({
+    resolver: zodResolver(schema)
+  });
 
-  const onSubmit = (data: unknown) => {
+  const onSubmit = (data: PilotFormSchema) => {
     console.log(data);
   };
 
@@ -120,6 +151,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   control={methods.control}
                   render={({ field }) => (
                     <Input
+                      className="!border-t-blue-gray-200 focus:!border-t-gray-900"
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
@@ -211,6 +243,27 @@ const PilotForm: React.FC<PilotFormProps> = ({
                       {...field}
                     />
                   )}
+                />
+              </div>
+              <div className="col-span-1">
+                <Typography variant="h6">Last Review</Typography>
+              </div>
+              <div className="col-span-3">
+                <Controller
+                  name="lastReview"
+                  control={methods.control}
+                  render={({ field }) => {
+                    return (
+                      <DatePicker
+                        handleDateChanged={(date: string) => {
+                          methods.setValue('lastReview', date);
+                        }}
+                        inputProps={{
+                          value: field.value
+                        }}
+                      />
+                    );
+                  }}
                 />
               </div>
               <div className="col-span-4">
