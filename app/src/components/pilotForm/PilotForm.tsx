@@ -33,6 +33,7 @@ interface PilotFormSchema {
   postalCode: string;
   email: string;
   phone: string;
+  lastReview: string;
   certificates: IPilotFormCertificates[];
   endorsements: IPilotFormEndorsements[];
   medicalClass: string;
@@ -48,6 +49,7 @@ const schema = z.object({
   postalCode: z.string(),
   email: z.string(),
   phone: z.string(),
+  lastReview: z.string(),
   // certificates: z.array(),
   // endorsements: z.array(),
   medicalClass: z.string(),
