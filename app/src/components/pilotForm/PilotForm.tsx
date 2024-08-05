@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  FormProvider,
+  FieldValues
+} from 'react-hook-form';
 import {
   Button,
   DatePicker,
@@ -11,70 +16,31 @@ import {
   Option,
   PeoplePicker,
   Select,
+  StateSelect,
   Typography
 } from '@noahspan/noahspan-components';
+import { IPilotFormProps } from './IPilotFormProps';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
 import { Person } from '@microsoft/microsoft-graph-types';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { IPilotFormCertificates } from '../pilotFormCertificates/IPilotFormCertificates';
 import { IPilotFormEndorsements } from '../pilotFormEndorsements/IPilotFormEndorsements';
 
-interface PilotFormSchema {
-  id: string;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  email: string;
-  phone: string;
-  lastReview: string;
-  certificates: IPilotFormCertificates[];
-  endorsements: IPilotFormEndorsements[];
-  medicalClass: string;
-  medicalExpiration: string;
-}
-
-const schema = z.object({
-  id: z.string(),
-  name: z.string(),
-  address: z.string(),
-  city: z.string(),
-  state: z.string(),
-  postalCode: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  lastReview: z.string(),
-  // certificates: z.array(),
-  // endorsements: z.array(),
-  medicalClass: z.string(),
-  medicalExpiration: z.string()
-});
-
-interface PilotFormProps {
-  isDrawerOpen: boolean;
-  onOpenCloseDrawer: () => void;
-}
-
-const PilotForm: React.FC<PilotFormProps> = ({
+const PilotForm: React.FC<IPilotFormProps> = ({
   isDrawerOpen,
   onOpenCloseDrawer
-}: PilotFormProps) => {
+}: IPilotFormProps) => {
   const httpClient: AxiosInstance = useHttpClient();
   const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
-  const methods = useForm<PilotFormSchema>({
-    resolver: zodResolver(schema)
-  });
+  const methods = useForm();
 
-  const onSubmit = (data: PilotFormSchema) => {
+  const onSubmit = (data) => {
     console.log(data);
   };
 
@@ -122,7 +88,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <hr className="my-3" />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">Name</Typography>
+                <Typography variant="h6">Name *</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
@@ -151,6 +117,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="address"
                   control={methods.control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       className="!border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -169,6 +136,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="city"
                   control={methods.control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       labelProps={{
@@ -187,12 +155,13 @@ const PilotForm: React.FC<PilotFormProps> = ({
                   name="state"
                   control={methods.control}
                   render={({ field }) => (
-                    <Input
-                      labelProps={{
-                        className: 'before:content-none after:content-none'
-                      }}
-                      {...field}
-                    />
+                    // <Input
+                    //   labelProps={{
+                    //     className: 'before:content-none after:content-none'
+                    //   }}
+                    //   {...field}
+                    // />
+                    <StateSelect variant="outlined" />
                   )}
                 />
               </div>
@@ -203,6 +172,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="postalCode"
                   control={methods.control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       labelProps={{
@@ -220,6 +190,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="email"
                   control={methods.control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       labelProps={{
@@ -237,6 +208,7 @@ const PilotForm: React.FC<PilotFormProps> = ({
                 <Controller
                   name="phone"
                   control={methods.control}
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <Input
                       labelProps={{
