@@ -40,7 +40,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const { getAccessToken } = useAccessToken();
   const methods = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: unknown) => {
     console.log(data);
   };
 
