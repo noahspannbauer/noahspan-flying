@@ -16,7 +16,7 @@ const Pilots: React.FC<unknown> = () => {
   const [date, setDate] = useState();
 
   return (
-    <Card>
+    <Card className="pt-10">
       <div className="px-6">
         <Typography variant="h3">Pilots</Typography>
         <Button
