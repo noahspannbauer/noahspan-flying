@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Post,
-  Query,
-  UnprocessableEntityException
-} from '@nestjs/common';
+import { Controller, Get, Headers, Query } from '@nestjs/common';
 import {
   AppConfigService,
   MsGraphService,
@@ -16,8 +8,6 @@ import { FeatureFlagValue } from '@azure/app-configuration';
 import { Public } from '@noahspan/noahspan-modules';
 import { Person } from '@microsoft/microsoft-graph-types';
 import { AppService } from './app.service';
-import { PilotDTO } from './pilot/pilot.dto';
-import { PilotService } from './pilot/pilot.service';
 
 @Controller()
 export class AppController {

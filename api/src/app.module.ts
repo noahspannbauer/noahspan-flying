@@ -10,7 +10,6 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { PilotModule } from './pilot/pilot.module';
-import { PilotController } from './pilot/pilot.controller';
 
 @Module({
   imports: [
@@ -33,7 +32,7 @@ import { PilotController } from './pilot/pilot.controller';
     }),
     PilotModule
   ],
-  controllers: [AppController, PilotController],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

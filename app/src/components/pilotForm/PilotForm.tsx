@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useForm,
   Controller,
@@ -15,9 +15,11 @@ import {
   Input,
   Option,
   PeoplePicker,
+  SaveIcon,
   Select,
   StateSelect,
-  Typography
+  Typography,
+  XmarkIcon
 } from '@noahspan/noahspan-components';
 import { IPilotFormProps } from './IPilotFormProps';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
@@ -28,8 +30,10 @@ import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { IPilotFormCertificates } from '../pilotFormCertificates/IPilotFormCertificates';
 import { IPilotFormEndorsements } from '../pilotFormEndorsements/IPilotFormEndorsements';
+import { EventMessage, EventPayload, EventType } from '@azure/msal-browser';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
+  pilotId,
   isDrawerOpen,
   onOpenCloseDrawer
 }: IPilotFormProps) => {
@@ -40,8 +44,14 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const { getAccessToken } = useAccessToken();
   const methods = useForm();
 
-  const onSubmit = (data: unknown) => {
-    console.log(data);
+  const handlePeoplePickerOnClick = (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    const divElement: HTMLDivElement = event.target as HTMLDivElement;
+
+    methods.setValue('id', divElement.id);
+    methods.setValue('name', divElement.textContent);
+    setPeoplePickerResults([]);
   };
 
   const handlePeoplePickerOnChange = async (
@@ -71,6 +81,21 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     }
   };
 
+  const onSubmit = async (data: unknown) => {
+    console.log(data);
+
+    const accessToken: string = await getAccessToken();
+    const response: AxiosResponse = await httpClient.post(`api/pilots`, data, {
+      headers: {
+        Authorization: accessToken
+      }
+    });
+  };
+
+  useEffect(() => {
+    console.log(methods.formState.errors);
+  }, [methods.formState.errors]);
+
   return (
     <Drawer
       open={isDrawerOpen}
@@ -83,10 +108,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <DrawerBody>
             <div className="grid grid-cols-4 gap-4">
-              <div className="col-span-4">
-                <Typography variant="h5">Info</Typography>
-                <hr className="my-3" />
-              </div>
               <div className="col-span-1">
                 <Typography variant="h6">Name *</Typography>
               </div>
@@ -94,6 +115,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 <Controller
                   name="name"
                   control={methods.control}
+                  rules={{ required: 'A name must be selected' }}
                   render={({ field: { disabled, value } }) => (
                     <PeoplePicker
                       results={peoplePickerResults}
@@ -103,7 +125,15 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                           className: 'before:content-none after:content-none'
                         },
                         onChange: (event) => handlePeoplePickerOnChange(event),
+                        error: methods.formState.errors.name ? true : false,
+                        helperText: methods.formState.errors.name
+                          ? methods.formState.errors.name.message?.toString()
+                          : undefined,
                         value: value
+                      }}
+                      listItemProps={{
+                        children: null,
+                        onClick: handlePeoplePickerOnClick
                       }}
                       loading={isPeoplePickerLoading}
                     />
@@ -111,74 +141,104 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">Address</Typography>
+                <Typography variant="h6">Address *</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
                   name="address"
                   control={methods.control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
+                  rules={{ required: 'An address is required' }}
+                  render={({ field: { disabled, onChange, value } }) => (
                     <Input
                       className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                      disabled={disabled}
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
-                      {...field}
+                      error={methods.formState.errors.address ? true : false}
+                      helperText={
+                        methods.formState.errors.address
+                          ? methods.formState.errors.address.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">City</Typography>
+                <Typography variant="h6">City *</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
                   name="city"
                   control={methods.control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
+                  rules={{ required: 'A city is required' }}
+                  render={({ field: { disabled, onChange, value } }) => (
                     <Input
+                      disabled={disabled}
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
-                      {...field}
+                      error={methods.formState.errors.city ? true : false}
+                      helperText={
+                        methods.formState.errors.city
+                          ? methods.formState.errors.city.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">State</Typography>
+                <Typography variant="h6">State *</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
                   name="state"
                   control={methods.control}
-                  render={({ field }) => (
-                    // <Input
-                    //   labelProps={{
-                    //     className: 'before:content-none after:content-none'
-                    //   }}
-                    //   {...field}
-                    // />
-                    <StateSelect variant="outlined" />
+                  rules={{ required: 'A state must be selected' }}
+                  render={({ field: { disabled, onChange, value } }) => (
+                    <StateSelect
+                      disabled={disabled}
+                      error={methods.formState.errors.state ? true : false}
+                      helperText={
+                        methods.formState.errors.state
+                          ? methods.formState.errors.state.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
+                      variant="outlined"
+                    />
                   )}
                 />
               </div>
               <div className="col-span-1">
-                <Typography variant="h6">Postal Code</Typography>
+                <Typography variant="h6">Postal Code *</Typography>
               </div>
               <div className="col-span-3">
                 <Controller
                   name="postalCode"
                   control={methods.control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
+                  rules={{ required: 'A postal code is required' }}
+                  render={({ field: { disabled, onChange, value } }) => (
                     <Input
+                      disabled={disabled}
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
-                      {...field}
+                      error={methods.formState.errors.postalCode ? true : false}
+                      helperText={
+                        methods.formState.errors.postalCode
+                          ? methods.formState.errors.postalCode.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
@@ -190,13 +250,26 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 <Controller
                   name="email"
                   control={methods.control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
+                  rules={{
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Invalid email address'
+                    }
+                  }}
+                  render={({ field: { disabled, onChange, value } }) => (
                     <Input
+                      disabled={disabled}
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
-                      {...field}
+                      error={methods.formState.errors.email ? true : false}
+                      helperText={
+                        methods.formState.errors.email
+                          ? methods.formState.errors.email.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
@@ -208,120 +281,157 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 <Controller
                   name="phone"
                   control={methods.control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
+                  rules={{
+                    pattern: {
+                      value: /^[0-9]{3}[-\s\.][0-9]{3}[-\s\.][0-9]{4}$/i,
+                      message: 'Enter phone number as 123-456-7890'
+                    }
+                  }}
+                  render={({ field: { disabled, onChange, value } }) => (
                     <Input
+                      disabled={disabled}
                       labelProps={{
                         className: 'before:content-none after:content-none'
                       }}
-                      {...field}
+                      error={methods.formState.errors.phone ? true : false}
+                      helperText={
+                        methods.formState.errors.phone
+                          ? methods.formState.errors.phone.message?.toString()
+                          : undefined
+                      }
+                      onChange={onChange}
+                      value={value}
                     />
                   )}
                 />
               </div>
-              <div className="col-span-1">
-                <Typography variant="h6">Last Review</Typography>
-              </div>
-              <div className="col-span-3">
-                <Controller
-                  name="lastReview"
-                  control={methods.control}
-                  render={({ field }) => {
-                    return (
-                      <DatePicker
-                        handleDateChanged={(date: string) => {
-                          methods.setValue('lastReview', date);
-                        }}
-                        inputProps={{
-                          value: field.value
-                        }}
-                      />
-                    );
-                  }}
-                />
-              </div>
-              <div className="col-span-4">
-                <Typography variant="h5">Certificates</Typography>
-                <hr className="my-3" />
-              </div>
-              <PilotFormCertificates certificates={[]} />
-              <div className="col-span-4">
-                <Typography variant="h5">Endorsements</Typography>
-                <hr className="my-3" />
-              </div>
-              <PilotFormEndorsements endorsements={[]} />
-              <div className="col-span-4">
-                <Typography variant="h5">Medical</Typography>
-                <hr className="my-3" />
-              </div>
-              <div className="col-span-1">
-                <Typography variant="h6">Class</Typography>
-              </div>
-              <div className="col-span-3">
-                <Controller
-                  name="medicalClass"
-                  control={methods.control}
-                  render={({ field }) => {
-                    return (
-                      <Select
-                        labelProps={{
-                          className: 'before:content-none after:content-none'
-                        }}
-                        {...field}
-                      >
-                        <Option key="first" value="First">
-                          First
-                        </Option>
-                        <Option key="second" value="Second">
-                          Second
-                        </Option>
-                        <Option key="third" value="Third">
-                          Third
-                        </Option>
-                        <Option key="basicMed" value="Basic Med">
-                          Basic Med
-                        </Option>
-                      </Select>
-                    );
-                  }}
-                />
-              </div>
-              <div className="col-span-1">
-                <Typography variant="h6">Expiration Date</Typography>
-              </div>
-              <div className="col-span-3">
-                <Controller
-                  name="medicalExpiration"
-                  control={methods.control}
-                  render={({ field }) => {
-                    return (
-                      <DatePicker
-                        handleDateChanged={(date: string) => {
-                          methods.setValue('medicalExpiration', date);
-                        }}
-                        inputProps={{
-                          value: field.value
-                        }}
-                      />
-                    );
-                  }}
-                />
-              </div>
+              {pilotId && (
+                <>
+                  <div className="col-span-1">
+                    <Typography variant="h6">Last Review</Typography>
+                  </div>
+                  <div className="col-span-3">
+                    <Controller
+                      name="lastReview"
+                      control={methods.control}
+                      render={({ field }) => {
+                        return (
+                          <DatePicker
+                            handleDateChanged={(date: string) => {
+                              methods.setValue('lastReview', date);
+                            }}
+                            inputProps={{
+                              value: field.value
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+              {pilotId && (
+                <>
+                  <div className="col-span-4">
+                    <Typography variant="h5">Medical</Typography>
+                    <hr className="my-3" />
+                  </div>
+                  <div className="col-span-1">
+                    <Typography variant="h6">Class</Typography>
+                  </div>
+                  <div className="col-span-3">
+                    <Controller
+                      name="medicalClass"
+                      control={methods.control}
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            labelProps={{
+                              className:
+                                'before:content-none after:content-none'
+                            }}
+                            {...field}
+                          >
+                            <Option key="first" value="First">
+                              First
+                            </Option>
+                            <Option key="second" value="Second">
+                              Second
+                            </Option>
+                            <Option key="third" value="Third">
+                              Third
+                            </Option>
+                            <Option key="basicMed" value="Basic Med">
+                              Basic Med
+                            </Option>
+                          </Select>
+                        );
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <Typography variant="h6">Expiration Date</Typography>
+                  </div>
+                  <div className="col-span-3">
+                    <Controller
+                      name="medicalExpiration"
+                      control={methods.control}
+                      render={({ field }) => {
+                        return (
+                          <DatePicker
+                            handleDateChanged={(date: string) => {
+                              methods.setValue('medicalExpiration', date);
+                            }}
+                            inputProps={{
+                              value: field.value
+                            }}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+              {pilotId && (
+                <>
+                  <div className="col-span-4">
+                    <Typography variant="h5">Certificates</Typography>
+                    <hr className="my-3" />
+                  </div>
+                  <PilotFormCertificates certificates={[]} />
+                </>
+              )}
+              {pilotId && (
+                <>
+                  <div className="col-span-4">
+                    <Typography variant="h5">Endorsements</Typography>
+                    <hr className="my-3" />
+                  </div>
+                  <PilotFormEndorsements endorsements={[]} />
+                </>
+              )}
             </div>
           </DrawerBody>
           <DrawerFooter>
-            <div className="flex gap-2 justify-end justify-self-center">
+            <div className="flex gap-2 justify-end justify-self-center pt-4">
               <div>
                 <Button
+                  className="flex items-center gap-3"
                   variant="outlined"
                   onClick={onOpenCloseDrawer}
                   data-testid="pilot-drawer-cancel-button"
                 >
+                  <XmarkIcon size="lg" />
                   Cancel
                 </Button>
               </div>
               <div>
-                <Button variant="filled" type="submit">
+                <Button
+                  className="flex items-center gap-3"
+                  variant="filled"
+                  type="submit"
+                >
+                  <SaveIcon size="lg" />
                   Save
                 </Button>
               </div>

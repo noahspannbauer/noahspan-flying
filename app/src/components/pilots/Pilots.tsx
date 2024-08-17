@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
-import { Button, PlusIcon, DatePicker } from '@noahspan/noahspan-components';
+import {
+  Button,
+  Card,
+  PlusIcon,
+  DatePicker,
+  Typography
+} from '@noahspan/noahspan-components';
 
 const Pilots: React.FC<unknown> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -10,10 +16,9 @@ const Pilots: React.FC<unknown> = () => {
   const [date, setDate] = useState();
 
   return (
-    <div className="container mx-auto">
+    <Card>
       <div className="px-6">
-        <h1 role="heading">Pilots</h1>
-        <PlusIcon size="2xl" />
+        <Typography variant="h3">Pilots</Typography>
         <Button
           className="flex items-center gap-3"
           variant="filled"
@@ -24,19 +29,12 @@ const Pilots: React.FC<unknown> = () => {
           Add Pilot
         </Button>
 
-        <DatePicker
-          handleDateChanged={(date) => console.log(date)}
-          inputProps={{
-            value: date
-          }}
-        />
-
         <PilotForm
           isDrawerOpen={isDrawerOpen}
           onOpenCloseDrawer={onOpenCloseDrawer}
         />
       </div>
-    </div>
+    </Card>
   );
 };
 
