@@ -86,14 +86,14 @@ const App: React.FC<unknown> = () => {
   }, []);
 
   return (
-    <>
+    <div className="container mx-auto">
       <SiteNav handleSignIn={handleSignIn} handleSignOut={handleSignOut} />
       <Routes>
         {useFeatureFlag('flying-pilots')?.enabled && (
           <Route path="/" element={<Pilots />} />
         )}
       </Routes>
-    </>
+    </div>
   );
 };
 
