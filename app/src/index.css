@@ -4,12 +4,9 @@
 
 @layer base {
   body {
-    @apply bg-black;
+    @apply bg-['#ECEFF1'];
   }
-  h1 {
-    @apply text-2xl font-bold leading-7 text-gray-900;
-  }
-  h2 {
-    @apply text-2xl font-bold leading-7 text-gray-900;
+  color {
+    @apply text-black;
   }
 }
