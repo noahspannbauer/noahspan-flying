@@ -22,7 +22,7 @@ const Pilots: React.FC<unknown> = () => {
           variant="filled"
           onClick={onOpenCloseDrawer}
           data-testid="add-pilot-button"
-          fullWidth={false}
+          fullWidth={true}
         >
           <PlusIcon size="lg" />
           Add Pilot
