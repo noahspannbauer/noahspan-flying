@@ -14,9 +14,9 @@ const Pilots: React.FC<unknown> = () => {
   };
 
   return (
-    <Card className="mt-6 px-6 py-6">
+    <Card className="mt-6 p-6">
       <div className="grid grid-cols-1 gap-4">
-        <Typography variant="h3">Pilots</Typography>
+        <Typography variant="h2">Pilots</Typography>
         <Button
           className="flex items-center gap-3"
           variant="filled"
