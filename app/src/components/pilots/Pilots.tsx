@@ -14,22 +14,24 @@ const Pilots: React.FC<unknown> = () => {
   };
 
   return (
-    <Card className="mt-6 px-6">
-      <Typography variant="h3">Pilots</Typography>
-      <Button
-        className="flex items-center gap-3"
-        variant="filled"
-        onClick={onOpenCloseDrawer}
-        data-testid="add-pilot-button"
-      >
-        <PlusIcon size="lg" />
-        Add Pilot
-      </Button>
+    <Card className="mt-6 px-6 py-6">
+      <div className="grid grid-cols-1 gap-4">
+        <Typography variant="h3">Pilots</Typography>
+        <Button
+          className="flex items-center gap-3"
+          variant="filled"
+          onClick={onOpenCloseDrawer}
+          data-testid="add-pilot-button"
+        >
+          <PlusIcon size="lg" />
+          Add Pilot
+        </Button>
 
-      <PilotForm
-        isDrawerOpen={isDrawerOpen}
-        onOpenCloseDrawer={onOpenCloseDrawer}
-      />
+        <PilotForm
+          isDrawerOpen={isDrawerOpen}
+          onOpenCloseDrawer={onOpenCloseDrawer}
+        />
+      </div>
     </Card>
   );
 };

@@ -35,7 +35,7 @@ const SiteNav: React.FC<SiteNavProps> = ({
   ];
 
   return (
-    <Navbar>
+    <Navbar className="mt-6">
       <NavbarBrand>
         <img height={40} width={40} src="noahspan-logo.png" />{' '}
         <PlaneIcon size="2x" />
