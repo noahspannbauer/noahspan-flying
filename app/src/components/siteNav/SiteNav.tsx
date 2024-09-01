@@ -52,7 +52,8 @@ const SiteNav: React.FC<ISiteNavProps> = ({
                 </div>
               </MenuHandler>
               <MenuList>
-                <MenuItem onClick={handleSignOut}>
+                {/* <MenuItem onClick={handleSignOut}> */}
+                <MenuItem>
                   <Typography variant="small">Sign Out</Typography>
                 </MenuItem>
               </MenuList>
