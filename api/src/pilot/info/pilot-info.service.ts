@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 // import { Repository, InjectRepository } from '@nestjs/azure-database';
 import { PilotInfoDto } from './pilot-info.dto';
 import { PilotInfoEntity } from './pilot-info.entity';
 import { TableClient, TableService } from '@noahspan/noahspan-modules';
+import { RestError, TableInsertEntityHeaders } from '@azure/data-tables';
+import { CustomError } from '../../customError/CustomError';
 
 @Injectable()
 export class PilotInfoService {
@@ -22,7 +24,7 @@ export class PilotInfoService {
   //   return await this.pilotInfoRepository.findAll();
   // }
 
-  async create(pilotInfoData: PilotInfoDto): Promise<void> {
+  async create(pilotInfoData: PilotInfoDto): Promise<TableInsertEntityHeaders> {
     const client: TableClient =
       await this.tableService.getTableClient('Pilots');
     const pilotInfo: PilotInfoEntity = new PilotInfoEntity();
@@ -30,11 +32,17 @@ export class PilotInfoService {
     Object.assign(pilotInfo, pilotInfoData);
     pilotInfo.partitionKey = 'pilot';
     pilotInfo.rowKey = pilotInfo.id;
-    console.log(pilotInfo);
+
     try {
-      await client.createEntity(pilotInfo);
+      return await client.createEntity(pilotInfo);
     } catch (error) {
-      return error;
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
     }
   }
 

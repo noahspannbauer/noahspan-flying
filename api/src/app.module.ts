@@ -10,6 +10,8 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { PilotModule } from './pilot/pilot.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -37,6 +39,10 @@ import { PilotModule } from './pilot/pilot.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter
     },
     AppService
   ]

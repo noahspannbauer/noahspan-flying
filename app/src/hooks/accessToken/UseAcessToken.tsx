@@ -15,7 +15,7 @@ export const useAccessToken = () => {
     try {
       const response: AuthenticationResult =
         await instance.acquireTokenSilent(tokenRequest);
-      console.log(response.accessToken);
+
       return `Bearer ${response.accessToken}`;
     } catch (error) {
       if (error instanceof InteractionRequiredAuthError) {

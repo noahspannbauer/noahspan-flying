@@ -15,7 +15,7 @@ type EventPayloadExtended = EventPayload & { accessToken: string };
 const App: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
-  const { instance } = useMsal();
+  const { inProgress, instance } = useMsal();
   const handleSignIn = async () => {
     await instance.loginRedirect({
       scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
@@ -32,7 +32,6 @@ const App: React.FC<unknown> = () => {
         const response: AxiosResponse = await httpClient.get(
           `api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
         );
-        console.log(response.data);
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
 
         if (featureFlags.length > 0) {
@@ -87,7 +86,11 @@ const App: React.FC<unknown> = () => {
 
   return (
     <div className="container mx-auto">
-      <SiteNav handleSignIn={handleSignIn} handleSignOut={handleSignOut} />
+      <SiteNav
+        handleSignIn={handleSignIn}
+        handleSignOut={handleSignOut}
+        inProgress={inProgress}
+      />
       <Routes>
         {useFeatureFlag('flying-pilots')?.enabled && (
           <Route path="/" element={<Pilots />} />

@@ -1,3 +1,4 @@
+import { ISiteNavProps } from './ISiteNavProps';
 // import { Link as ReactRouterLink } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import {
@@ -12,19 +13,17 @@ import {
   NavbarMenu,
   NavbarItemProps,
   PlaneIcon,
+  Spinner,
   Typography
 } from '@noahspan/noahspan-components';
 import { useIsAuthenticated } from '@azure/msal-react';
+import { InteractionStatus } from '@azure/msal-browser';
 
-interface SiteNavProps {
-  handleSignIn: () => void;
-  handleSignOut: () => void;
-}
-
-const SiteNav: React.FC<SiteNavProps> = ({
+const SiteNav: React.FC<ISiteNavProps> = ({
   handleSignIn,
-  handleSignOut
-}: SiteNavProps) => {
+  handleSignOut,
+  inProgress
+}: ISiteNavProps) => {
   const appContext = useAppContext();
   const isAuthenticated = useIsAuthenticated();
   const navItems: NavbarItemProps[] = [
@@ -47,22 +46,25 @@ const SiteNav: React.FC<SiteNavProps> = ({
             <Menu placement="bottom-end">
               <MenuHandler>
                 <div>
-                  <Typography>
+                  <Button variant="text" size="sm">
                     {appContext.state.userProfile.displayName}
-                  </Typography>
+                  </Button>
                 </div>
               </MenuHandler>
               <MenuList>
-                <MenuItem>
-                  <Button variant="text" size="sm" onClick={handleSignOut}>
-                    Sign Out
-                  </Button>
+                <MenuItem onClick={handleSignOut}>
+                  <Typography variant="small">Sign Out</Typography>
                 </MenuItem>
               </MenuList>
             </Menu>
           )}
           {!isAuthenticated && (
-            <Button variant="text" size="sm" onClick={handleSignIn}>
+            <Button
+              variant="text"
+              size="sm"
+              onClick={handleSignIn}
+              loading={inProgress === InteractionStatus.Login ? true : false}
+            >
               Sign In
             </Button>
           )}

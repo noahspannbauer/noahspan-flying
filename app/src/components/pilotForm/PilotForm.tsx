@@ -25,7 +25,7 @@ import { IPilotFormProps } from './IPilotFormProps';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
 import { Person } from '@microsoft/microsoft-graph-types';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { IPilotFormCertificates } from '../pilotFormCertificates/IPilotFormCertificates';
@@ -41,6 +41,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
   const methods = useForm();
 
@@ -82,14 +83,31 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   };
 
   const onSubmit = async (data: unknown) => {
-    console.log(data);
+    try {
+      setIsLoading(true);
 
-    const accessToken: string = await getAccessToken();
-    const response: AxiosResponse = await httpClient.post(`api/pilots`, data, {
-      headers: {
-        Authorization: accessToken
+      const accessToken: string = await getAccessToken();
+      const response: AxiosResponse = await httpClient.post(
+        `api/pilots`,
+        data,
+        {
+          headers: {
+            Authorization: accessToken
+          }
+        }
+      );
+
+      if (response) console.log(response);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errResp = error.response;
+
+        console.log(errResp?.data.message);
+      } else {
       }
-    });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -428,6 +446,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
               <div>
                 <Button
                   className="flex items-center gap-3"
+                  loading={isLoading}
                   variant="filled"
                   type="submit"
                 >

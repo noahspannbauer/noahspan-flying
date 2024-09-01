@@ -1,14 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Query,
-  UnprocessableEntityException
-} from '@nestjs/common';
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
 import { PilotInfoService } from './info/pilot-info.service';
 import { PilotInfoDto } from './info/pilot-info.dto';
+import { TableInsertEntityHeaders } from '@azure/data-tables';
+import { CustomError } from '../customError/CustomError';
 
 @Controller('pilots')
 export class PilotController {
@@ -17,9 +11,23 @@ export class PilotController {
   @Post()
   async createPilot(@Body() pilotInfoData: PilotInfoDto): Promise<void> {
     try {
-      return await this.pilotInfoService.create(pilotInfoData);
+      const response: TableInsertEntityHeaders =
+        await this.pilotInfoService.create(pilotInfoData);
+
+      console.log(`Not Broken: ${response}`);
     } catch (error) {
-      throw new UnprocessableEntityException(error);
+      const customError = error as CustomError;
+      console.log(customError.name);
+      throw new HttpException(customError.message, customError.statusCode, {
+        cause: customError.name
+      });
+
+      // throw new HttpException({
+      //   status: customError.statusCode,
+      //   error: customError.message
+      // }, customError.statusCode, {
+      //   cause: customError.name
+      // });
     }
   }
 }
