@@ -33,9 +33,11 @@ const Pilots: React.FC<unknown> = () => {
           <PlusIcon size="lg" />
           Add Pilot
         </Button>
-        <Menu>
+        <Menu placement="bottom-end">
           <MenuHandler>
-            <Button>Menu</Button>
+            <div>
+              <Button>Menu</Button>
+            </div>
           </MenuHandler>
           <MenuList>
             <MenuItem>List Item 1</MenuItem>
