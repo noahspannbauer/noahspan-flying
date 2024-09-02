@@ -144,29 +144,29 @@ const Pilots: React.FC<unknown> = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full rounded-xl py-4 px-8 shadow-md backdrop-saturate-200 backdrop-blur-2xl bg-opacity-80 border border-white/80 bg-white mt-6">
-      <div className="col-span-1">
-        <Typography variant="h2">Pilots</Typography>
+    <>
+      <div className="grid grid-cols-1 gap-4 w-full rounded-xl py-4 px-8 shadow-md backdrop-saturate-200 backdrop-blur-2xl bg-opacity-80 border border-white/80 bg-white mt-6">
+        <div className="col-span-1">
+          <Typography variant="h2">Pilots</Typography>
+        </div>
+        <div className="col-span-1 justify-self-end">
+          <Button
+            className="flex justify-center gap-3"
+            variant="filled"
+            onClick={onOpenCloseDrawer}
+            data-testid="add-pilot-button"
+          >
+            <PlusIcon size="lg" />
+            Add Pilot
+          </Button>
+        </div>
+        <Table defaultData={data} columns={columns}></Table>
       </div>
-      <div className="col-span-1 justify-self-end">
-        <Button
-          className="flex justify-center gap-3"
-          variant="filled"
-          onClick={onOpenCloseDrawer}
-          data-testid="add-pilot-button"
-        >
-          <PlusIcon size="lg" />
-          Add Pilot
-        </Button>
-      </div>
-
       <PilotForm
         isDrawerOpen={isDrawerOpen}
         onOpenCloseDrawer={onOpenCloseDrawer}
       />
-
-      <Table defaultData={data} columns={columns}></Table>
-    </div>
+    </>
   );
 };
 
