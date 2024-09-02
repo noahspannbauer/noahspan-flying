@@ -158,13 +158,14 @@ const Pilots: React.FC<unknown> = () => {
           <PlusIcon size="lg" />
           Add Pilot
         </Button>
-        <Table defaultData={data} columns={columns}></Table>
       </div>
 
       <PilotForm
         isDrawerOpen={isDrawerOpen}
         onOpenCloseDrawer={onOpenCloseDrawer}
       />
+
+      <Table defaultData={data} columns={columns}></Table>
     </div>
   );
 };
