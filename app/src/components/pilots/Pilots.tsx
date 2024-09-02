@@ -144,7 +144,7 @@ const Pilots: React.FC<unknown> = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-4 block w-full rounded-xl py-4 px-8 shadow-md backdrop-saturate-200 backdrop-blur-2xl bg-opacity-80 border border-white/80 bg-white text-white mt-6">
       <div className="col-span-1">
         <Typography variant="h2">Pilots</Typography>
       </div>
