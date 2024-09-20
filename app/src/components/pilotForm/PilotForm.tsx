@@ -154,6 +154,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                         onClick: handlePeoplePickerOnClick
                       }}
                       loading={isPeoplePickerLoading}
+                      data-testid="pilot-form-people-picker"
                     />
                   )}
                 />
@@ -181,6 +182,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       }
                       onChange={onChange}
                       value={value}
+                      data-testid="pilot-form-address-input"
                     />
                   )}
                 />
@@ -207,6 +209,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       }
                       onChange={onChange}
                       value={value}
+                      data-testid="pilot-form-city-input"
                     />
                   )}
                 />
@@ -231,6 +234,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       onChange={onChange}
                       value={value}
                       variant="outlined"
+                      data-testid="pilot-form-state-dropdown"
                     />
                   )}
                 />
@@ -257,6 +261,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       }
                       onChange={onChange}
                       value={value}
+                      data-testid="pilot-form-postal-code-input"
                     />
                   )}
                 />
@@ -288,6 +293,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       }
                       onChange={onChange}
                       value={value}
+                      data-testid="pilot-form-email-input"
                     />
                   )}
                 />
@@ -319,6 +325,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       }
                       onChange={onChange}
                       value={value}
+                      data-testid="pilot-form-phone-input"
                     />
                   )}
                 />
@@ -437,7 +444,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   className="flex items-center gap-3"
                   variant="outlined"
                   onClick={onOpenCloseDrawer}
-                  data-testid="pilot-drawer-cancel-button"
+                  data-testid="pilot-cancel-button"
                 >
                   <XmarkIcon size="lg" />
                   Cancel
@@ -449,6 +456,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   loading={isLoading}
                   variant="filled"
                   type="submit"
+                  data-testid="pilot-save-button"
                 >
                   <SaveIcon size="lg" />
                   Save

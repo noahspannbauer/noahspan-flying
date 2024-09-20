@@ -1,28 +1,51 @@
-import { HttpException, Injectable } from '@nestjs/common';
-// import { Repository, InjectRepository } from '@nestjs/azure-database';
+import { Injectable } from '@nestjs/common';
 import { PilotInfoDto } from './pilot-info.dto';
 import { PilotInfoEntity } from './pilot-info.entity';
 import { TableClient, TableService } from '@noahspan/noahspan-modules';
-import { RestError, TableInsertEntityHeaders } from '@azure/data-tables';
+import { odata, RestError, TableInsertEntityHeaders } from '@azure/data-tables';
 import { CustomError } from '../../customError/CustomError';
 
 @Injectable()
 export class PilotInfoService {
   private readonly partitionKey: string = 'info';
 
-  constructor(
-    // @InjectRepository(PilotInfo)
-    // private readonly pilotInfoRepository: Repository<PilotInfo>
-    private readonly tableService: TableService
-  ) {}
+  constructor(private readonly tableService: TableService) {}
 
   // async find(rowKey: string): Promise<PilotInfo> {
   //   return await this.pilotInfoRepository.find(this.partitionKey, rowKey);
   // }
 
-  // async findAll(): Promise<PilotInfo[]> {
-  //   return await this.pilotInfoRepository.findAll();
-  // }
+  async findAll(): Promise<PilotInfoEntity[]> {
+    try {
+      const client: TableClient =
+        await this.tableService.getTableClient('Pilots');
+      const entities = await client.listEntities({
+        queryOptions: { filter: odata`PartitionKey eq 'pilot'` }
+      });
+      const pilots: PilotInfoEntity[] = [];
+
+      for await (const entity of entities) {
+        const pilot: PilotInfoEntity = {
+          partitionKey: entity.partitionKey,
+          rowKey: entity.rowKey,
+          id: entity.id.toString(),
+          name: entity.name.toString()
+        };
+
+        pilots.push(pilot);
+      }
+
+      return pilots;
+    } catch (error) {
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
+    }
+  }
 
   async create(pilotInfoData: PilotInfoDto): Promise<TableInsertEntityHeaders> {
     const client: TableClient =

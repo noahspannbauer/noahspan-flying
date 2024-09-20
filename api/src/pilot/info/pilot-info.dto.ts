@@ -1,7 +1,6 @@
 export class PilotInfoDto {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   address: string;
   city: string;
   state: string;

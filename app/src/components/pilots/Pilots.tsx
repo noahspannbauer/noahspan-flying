@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
 import {
   Button,
@@ -16,132 +16,87 @@ import {
   TrashIcon,
   Typography
 } from '@noahspan/noahspan-components';
+import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
+import { AxiosInstance, AxiosResponse } from 'axios';
+import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 
 const Pilots: React.FC<unknown> = () => {
+  const httpClient: AxiosInstance = useHttpClient();
+  const { getAccessToken } = useAccessToken();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [pilots, setPilots] = useState<Pilot[]>([]);
   const onOpenCloseDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  type Person = {
-    firstName: string;
-    lastName: string;
-    age: number;
-    visits: number;
-    status: string;
-    progress: number;
+  type Pilot = {
+    partitionKey: string;
+    rowKey: string;
+    id: string;
+    name: string;
   };
-
-  const data: Person[] = [
-    {
-      firstName: 'tanner',
-      lastName: 'linsley',
-      age: 24,
-      visits: 100,
-      status: 'In Relationship',
-      progress: 50
-    },
-    {
-      firstName: 'tandy',
-      lastName: 'miller',
-      age: 40,
-      visits: 40,
-      status: 'Single',
-      progress: 80
-    },
-    {
-      firstName: 'joe',
-      lastName: 'dirte',
-      age: 45,
-      visits: 20,
-      status: 'Complicated',
-      progress: 10
-    }
-  ];
 
   const columns: TableColumnDef[] = [
     {
-      accessorKey: 'firstName',
-      header: 'First Name',
-      cell: ({ getValue }) => (
-        <div>
-          {getValue<string>().charAt(0).toUpperCase() +
-            getValue<string>().slice(1)}
-        </div>
-      )
-    },
-    {
-      accessorKey: 'lastName',
-      header: 'Last Name',
-      cell: ({ getValue }) => (
-        <div>
-          {getValue<string>().charAt(0).toUpperCase() +
-            getValue<string>().slice(1)}
-        </div>
-      )
-    },
-    {
-      accessorKey: 'age',
-      header: 'Age',
-      cellProps: {
-        className: 'text-right'
-      }
-    },
-    {
-      accessorKey: 'visits',
-      header: 'Visits',
-      cellProps: {
-        className: 'text-right'
-      }
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status'
-    },
-    {
-      accessorKey: 'progress',
-      header: 'Progress',
-      cellProps: {
-        className: 'text-right'
-      }
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cellProps: {
-        className: 'text-center'
-      },
-      cell: () => {
-        return (
-          <Menu placement="bottom-end">
-            <MenuHandler>
-              <div>
-                <IconButton variant="text">
-                  <EllipsisVerticalIcon size="xl" />
-                </IconButton>
-              </div>
-            </MenuHandler>
-            <MenuList>
-              <MenuItem className="flex gap-3">
-                <PenIcon size="lg" />
-                Edit
-              </MenuItem>
-              <MenuItem className="flex gap-3">
-                <EyeIcon size="lg" />
-                View
-              </MenuItem>
-              <hr className="my-3" />
-              <MenuItem className="flex gap-3">
-                <TrashIcon size="lg" />
-                Delete
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        );
-      },
-      enableSorting: false
+      accessorKey: 'name',
+      header: 'Name'
     }
+    // {
+    //   id: 'actions',
+    //   header: 'Actions',
+    //   cellProps: {
+    //     className: 'text-center'
+    //   },
+    //   cell: () => {
+    //     return (
+    //       <Menu placement="bottom-end">
+    //         <MenuHandler>
+    //           <div>
+    //             <IconButton variant="text">
+    //               <EllipsisVerticalIcon size="xl" />
+    //             </IconButton>
+    //           </div>
+    //         </MenuHandler>
+    //         <MenuList>
+    //           <MenuItem className="flex gap-3">
+    //             <PenIcon size="lg" />
+    //             Edit
+    //           </MenuItem>
+    //           <MenuItem className="flex gap-3">
+    //             <EyeIcon size="lg" />
+    //             View
+    //           </MenuItem>
+    //           <hr className="my-3" />
+    //           <MenuItem className="flex gap-3">
+    //             <TrashIcon size="lg" />
+    //             Delete
+    //           </MenuItem>
+    //         </MenuList>
+    //       </Menu>
+    //     );
+    //   },
+    //   enableSorting: false
+    // }
   ];
+
+  useEffect(() => {
+    const getPilots = async () => {
+      try {
+        const accessToken: string = await getAccessToken();
+        const response: AxiosResponse = await httpClient.get(`api/pilots`, {
+          headers: {
+            Authorization: accessToken
+          }
+        });
+        console.log(response.data);
+        setPilots(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getPilots();
+  }, []);
 
   return (
     <>
@@ -154,13 +109,13 @@ const Pilots: React.FC<unknown> = () => {
             className="flex justify-center gap-3"
             variant="filled"
             onClick={onOpenCloseDrawer}
-            data-testid="add-pilot-button"
+            data-testid="pilot-add-button"
           >
             <PlusIcon size="lg" />
             Add Pilot
           </Button>
         </div>
-        <Table defaultData={data} columns={columns}></Table>
+        {pilots.length > 0 && <Table defaultData={pilots} columns={columns} />}
       </div>
       <PilotForm
         isDrawerOpen={isDrawerOpen}

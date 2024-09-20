@@ -16,6 +16,7 @@
     "@cucumber/cucumber": "^10.7.0",
     "@playwright/test": "^1.44.0",
     "@types/fs-extra": "^11.0.4",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "otpauth": "^9.3.2"
   }
 }
