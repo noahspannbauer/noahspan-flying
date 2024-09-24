@@ -9,7 +9,8 @@ const AppContextProvider: React.FC<IAppContextProviderProps> = (
   props: IAppContextProviderProps
 ) => {
   const intialState: IAppContextState = {
-    featureFlags: []
+    featureFlags: [],
+    userProfile: {}
   };
   const [state, dispatch] = useReducer(reducer, intialState);
   const contextValue: IAppContextProps = useMemo(() => {

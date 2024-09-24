@@ -3,24 +3,28 @@ import { config } from '../support/config';
 
 export class PilotsPage {
   page: Page;
-  newButton: Locator;
   pilotDrawer: Locator;
-  pilotDrawerCancelButton: Locator;
+  pilotAddButton: Locator;
+  pilotSaveButton: Locator;
+  pilotCancelButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.newButton = page.getByTestId('new-pilot-button');
     this.pilotDrawer = page.getByTestId('pilot-drawer');
-    this.pilotDrawerCancelButton = page.getByTestId(
-      'pilot-drawer-cancel-button'
-    );
+    this.pilotAddButton = page.getByTestId('add-pilot-button');
+    this.pilotSaveButton = page.getByTestId('save-pilot-button');
+    this.pilotCancelButton = page.getByTestId('pilot-form-cancel-button');
   }
 
-  public async clickNewButton() {
-    await this.newButton.click();
+  public async clickAddPilotButton() {
+    await this.pilotAddButton.click();
+  }
+
+  public async clickSaveButton() {
+    await this.pilotSaveButton.click();
   }
 
   public async clickPilotDrawerCancelButton() {
-    await this.pilotDrawerCancelButton.click();
+    await this.pilotCancelButton.click();
   }
 }
