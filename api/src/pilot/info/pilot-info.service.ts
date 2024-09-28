@@ -11,9 +11,9 @@ export class PilotInfoService {
 
   constructor(private readonly tableService: TableService) {}
 
-  // async find(rowKey: string): Promise<PilotInfo> {
-  //   return await this.pilotInfoRepository.find(this.partitionKey, rowKey);
-  // }
+  async find(rowKey: string): Promise<PilotInfoEntity> {
+    return await this.pilotInfoRepository.find(this.partitionKey, rowKey);
+  }
 
   async findAll(): Promise<PilotInfoEntity[]> {
     try {
