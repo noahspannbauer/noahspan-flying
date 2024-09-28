@@ -11,7 +11,7 @@ import { PilotInfoDto } from './info/pilot-info.dto';
 import { TableInsertEntityHeaders } from '@azure/data-tables';
 import { CustomError } from '../customError/CustomError';
 import { PilotInfoEntity } from './info/pilot-info.entity';
-import { AuthInterceptor } from 'src/interceptors/auth.interceptor';
+import { PilotInterceptor } from 'src/pilot/interceptors/pilot.interceptor';
 import { Public } from '@noahspan/noahspan-modules';
 
 @Controller('pilots')
@@ -20,7 +20,7 @@ export class PilotController {
 
   @Get()
   @Public()
-  @UseInterceptors(AuthInterceptor)
+  @UseInterceptors(PilotInterceptor)
   async findAll(): Promise<PilotInfoEntity[]> {
     try {
       const pilots: PilotInfoEntity[] = await this.pilotInfoService.findAll();
