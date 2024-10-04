@@ -74,7 +74,7 @@ export class AppController {
   }
 
   @Get('userProfile')
-  async getUserProfile(@Headers() headers: any) {
+  async getUserProfile(@Headers() headers: any): Promise<any> {
     try {
       const graphToken: string = await this.msGraphService.getMsGraphAuth(
         headers.authorization.replace('Bearer ', ''),
@@ -94,12 +94,12 @@ export class AppController {
   async searchUsers(
     @Headers() headers: any,
     @Query('search') search: any
-  ): Promise<Person[]> {
+  ): Promise<any> {
     try {
       const accessToken: string = headers.authorization.replace('Bearer ', '');
-      const personSearchResults: Person[] =
+      const personSearchResults: any[] =
         await this.appService.getPersonSearchResults(accessToken, search);
-      console.log(personSearchResults);
+
       return personSearchResults;
     } catch (error) {
       return error;

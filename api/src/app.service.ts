@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MsGraphService, MsGraphClient } from '@noahspan/noahspan-modules';
-import { Person } from '@microsoft/microsoft-graph-types';
 
 @Injectable()
 export class AppService {
@@ -13,7 +12,7 @@ export class AppService {
   async getPersonSearchResults(
     accessToken: string,
     search: string
-  ): Promise<Person[]> {
+  ): Promise<any[]> {
     try {
       const graphToken: string = await this.msGraphService.getMsGraphAuth(
         accessToken,
@@ -22,12 +21,16 @@ export class AppService {
       const client: MsGraphClient =
         await this.msGraphService.getMsGraphClientDelegated(graphToken);
       const results: any = await client
-        .api(`me/people/?$search=${search}`)
+        .api('users')
+        .header('ConsistencyLevel', 'eventual')
+        .search(`"displayName:${search}"`)
+        .orderby('displayName')
+        .select(['displayName', 'userPrincipalName'])
         .get();
-      let personResults: Person[];
+      let personResults: any[];
 
       if (results.value) {
-        personResults = results.value.filter((result: Person) => {
+        personResults = results.value.filter((result: any) => {
           if (result.userPrincipalName !== null) {
             return result;
           }

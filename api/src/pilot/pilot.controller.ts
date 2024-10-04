@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpException,
+  Param,
   Post,
   UseInterceptors
 } from '@nestjs/common';
@@ -17,6 +18,25 @@ import { Public } from '@noahspan/noahspan-modules';
 @Controller('pilots')
 export class PilotController {
   constructor(private readonly pilotInfoService: PilotInfoService) {}
+
+  @Get(':pilotId')
+  @Public()
+  @UseInterceptors(PilotInterceptor)
+  async find(@Param() params: any): Promise<PilotInfoEntity> {
+    try {
+      const pilot: PilotInfoEntity = await this.pilotInfoService.find(
+        params.pilotId
+      );
+
+      return pilot;
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode, {
+        cause: customError.name
+      });
+    }
+  }
 
   @Get()
   @Public()

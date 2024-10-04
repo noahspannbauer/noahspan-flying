@@ -11,9 +11,43 @@ export class PilotInfoService {
 
   constructor(private readonly tableService: TableService) {}
 
-  // async find(rowKey: string): Promise<PilotInfoEntity> {
-  //   return await this.pilotInfoRepository.find(this.partitionKey, rowKey);
-  // }
+  async find(pilotId: string): Promise<PilotInfoEntity> {
+    try {
+      const client: TableClient =
+        await this.tableService.getTableClient('Pilots');
+      const entities = await client.listEntities({
+        queryOptions: {
+          filter: odata`PartitionKey eq 'pilot' and RowKey eq '${pilotId}'`
+        }
+      });
+      let pilot: PilotInfoEntity;
+      console.log(entities);
+      for await (const entity of entities) {
+        pilot = {
+          partitionKey: entity.partitionKey,
+          rowKey: entity.rowKey,
+          id: entity.id.toString(),
+          name: entity.name.toString(),
+          address: entity.address.toString(),
+          city: entity.city.toString(),
+          state: entity.state.toString(),
+          postalCode: entity.postalCode.toString(),
+          email: entity.email.toString(),
+          phone: entity.phone.toString()
+        };
+      }
+
+      return pilot;
+    } catch (error) {
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
+    }
+  }
 
   async findAll(): Promise<PilotInfoEntity[]> {
     try {

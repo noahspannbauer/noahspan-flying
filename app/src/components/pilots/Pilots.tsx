@@ -19,14 +19,34 @@ import {
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
+import { useIsAuthenticated } from '@azure/msal-react';
+import { PilotFormMode } from '../pilotForm/PilotForm';
 
 const Pilots: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
+  const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [pilotFormMode, setPilotFormMode] = useState<PilotFormMode>(
+    PilotFormMode.CANCEL
+  );
+  const [selectedPilotId, setSelectedPilotId] = useState<string | undefined>();
   const [pilots, setPilots] = useState<Pilot[]>([]);
-  const onOpenCloseDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
+  const onOpenClosePilotForm = (mode: PilotFormMode, pilotId?: string) => {
+    switch (mode) {
+      case PilotFormMode.ADD:
+      case PilotFormMode.EDIT:
+      case PilotFormMode.VIEW:
+        setPilotFormMode(mode);
+        setSelectedPilotId(pilotId);
+        setIsDrawerOpen(true);
+        break;
+      case PilotFormMode.CANCEL:
+        setPilotFormMode(mode);
+        setSelectedPilotId(undefined);
+        setIsDrawerOpen(false);
+        break;
+    }
   };
 
   type Pilot = {
@@ -40,54 +60,66 @@ const Pilots: React.FC<unknown> = () => {
     {
       accessorKey: 'name',
       header: 'Name'
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cellProps: {
+        className: 'text-end'
+      },
+      cell: (info: any) => {
+        const pilotId = info.row.original.rowKey;
+        return (
+          <Menu placement="bottom-end">
+            <MenuHandler>
+              <div>
+                <IconButton variant="text">
+                  <EllipsisVerticalIcon size="xl" />
+                </IconButton>
+              </div>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem
+                className="flex gap-3"
+                onClick={() =>
+                  onOpenClosePilotForm(PilotFormMode.EDIT, pilotId)
+                }
+              >
+                <PenIcon size="lg" />
+                Edit
+              </MenuItem>
+              <MenuItem
+                className="flex gap-3"
+                onClick={() =>
+                  onOpenClosePilotForm(PilotFormMode.VIEW, pilotId)
+                }
+              >
+                <EyeIcon size="lg" />
+                View
+              </MenuItem>
+              <hr className="my-3" />
+              <MenuItem className="flex gap-3">
+                <TrashIcon size="lg" />
+                Delete
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        );
+      },
+      enableSorting: false
     }
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   cellProps: {
-    //     className: 'text-center'
-    //   },
-    //   cell: () => {
-    //     return (
-    //       <Menu placement="bottom-end">
-    //         <MenuHandler>
-    //           <div>
-    //             <IconButton variant="text">
-    //               <EllipsisVerticalIcon size="xl" />
-    //             </IconButton>
-    //           </div>
-    //         </MenuHandler>
-    //         <MenuList>
-    //           <MenuItem className="flex gap-3">
-    //             <PenIcon size="lg" />
-    //             Edit
-    //           </MenuItem>
-    //           <MenuItem className="flex gap-3">
-    //             <EyeIcon size="lg" />
-    //             View
-    //           </MenuItem>
-    //           <hr className="my-3" />
-    //           <MenuItem className="flex gap-3">
-    //             <TrashIcon size="lg" />
-    //             Delete
-    //           </MenuItem>
-    //         </MenuList>
-    //       </Menu>
-    //     );
-    //   },
-    //   enableSorting: false
-    // }
   ];
 
   useEffect(() => {
     const getPilots = async () => {
       try {
-        const accessToken: string = await getAccessToken();
-        const response: AxiosResponse = await httpClient.get(`api/pilots`, {
-          headers: {
-            Authorization: accessToken
-          }
-        });
+        const config = isAuthenticated
+          ? { headers: { Authorization: await getAccessToken() } }
+          : {};
+        const response: AxiosResponse = await httpClient.get(
+          `api/pilots`,
+          config
+        );
         console.log(response.data);
         setPilots(response.data);
       } catch (error) {
@@ -108,7 +140,7 @@ const Pilots: React.FC<unknown> = () => {
           <Button
             className="flex justify-center gap-3"
             variant="filled"
-            onClick={onOpenCloseDrawer}
+            onClick={() => onOpenClosePilotForm(PilotFormMode.ADD)}
             data-testid="pilot-add-button"
           >
             <PlusIcon size="lg" />
@@ -119,7 +151,9 @@ const Pilots: React.FC<unknown> = () => {
       </div>
       <PilotForm
         isDrawerOpen={isDrawerOpen}
-        onOpenCloseDrawer={onOpenCloseDrawer}
+        mode={pilotFormMode}
+        onOpenClose={(mode) => onOpenClosePilotForm(mode)}
+        pilotId={selectedPilotId}
       />
     </>
   );
