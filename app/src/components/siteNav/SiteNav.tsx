@@ -3,6 +3,7 @@ import { ISiteNavProps } from './ISiteNavProps';
 // import { Link as ReactRouterLink } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import {
+  Avatar,
   Button,
   Menu,
   MenuHandler,
@@ -160,24 +161,21 @@ const SiteNav: React.FC<unknown> = () => {
           {!loading && isAuthenticated && (
             <Menu placement="bottom-end">
               <MenuHandler>
-                <>
-                  {/* {userPhoto && */}
-                  {/* <img className='rounded-full' src={userPhoto} /> */}
-                  {/* } */}
-                  {/* {!userPhoto && */}
-                  <div className="rounded-full text-white text-center pt-2 bg-black h-[40px] w-[40px]">
-                    NS
-                  </div>
-
-                  {/* <div className="flex gap-2">
-                  <div className='flex-none'>
-                    
-                  </div>
-                  <Button className='flex-1' variant="text" size="sm">
-                    {appContext.state.userProfile.displayName}
-                  </Button>
-                </div> */}
-                </>
+                <div>
+                  {userPhoto && (
+                    <img
+                      className="rounded-full cursor-pointer"
+                      height="40"
+                      width="40"
+                      src={userPhoto}
+                    />
+                  )}
+                  {!userPhoto && (
+                    <div className="rounded-full cursor-pointer text-white text-center pt-2 bg-black h-[40px] w-[40px]">
+                      NS
+                    </div>
+                  )}
+                </div>
               </MenuHandler>
               <MenuList>
                 <MenuItem onClick={handleSignOut}>

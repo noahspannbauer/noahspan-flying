@@ -1,5 +1,8 @@
+import { PilotFormMode } from './PilotForm';
+
 export interface IPilotFormProps {
-  pilotId?: string;
   isDrawerOpen: boolean;
-  onOpenCloseDrawer: () => void;
+  mode: PilotFormMode;
+  onOpenClose: (mode: PilotFormMode) => void;
+  pilotId?: string;
 }
