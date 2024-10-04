@@ -62,7 +62,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     const divElement: HTMLDivElement = event.target as HTMLDivElement;
 
     methods.setValue('id', divElement.id);
-    methods.setValue('name', divElement.textContent);
+    methods.setValue('name', divElement.textContent!);
     setPeoplePickerResults([]);
   };
 
