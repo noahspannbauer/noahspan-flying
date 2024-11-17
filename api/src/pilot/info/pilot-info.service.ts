@@ -82,19 +82,19 @@ export class PilotInfoService {
   }
 
   async create(pilotInfoData: PilotInfoDto): Promise<TableInsertEntityHeaders> {
-    const client: TableClient =
-      await this.tableService.getTableClient('Pilots');
-    const pilotInfo: PilotInfoEntity = new PilotInfoEntity();
-
-    Object.assign(pilotInfo, pilotInfoData);
-    pilotInfo.partitionKey = 'pilot';
-    pilotInfo.rowKey = pilotInfo.id;
-
     try {
+      const client: TableClient =
+        await this.tableService.getTableClient('Pilots');
+      const pilotInfo: PilotInfoEntity = new PilotInfoEntity();
+
+      Object.assign(pilotInfo, pilotInfoData);
+      pilotInfo.partitionKey = 'pilot';
+      pilotInfo.rowKey = pilotInfo.id;
+      console.log(pilotInfo);
       return await client.createEntity(pilotInfo);
     } catch (error) {
       const restError: RestError = error as RestError;
-
+      console.log(restError);
       throw new CustomError(
         restError.details['odataError']['message']['value'],
         restError.details['odataError']['code'],

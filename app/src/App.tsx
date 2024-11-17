@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Pilots from './components/pilots/Pilots';
+import Logbook from './components/logbook/Logbook';
 import { useAppContext } from './hooks/appContext/UseAppContext';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from './hooks/httpClient/UseHttpClient';
@@ -35,12 +36,13 @@ const App: React.FC<unknown> = () => {
   }, []);
 
   return (
-    <div className="container mx-auto">
+    <div>
       <SiteNav />
       <Routes>
         {useFeatureFlag('flying-pilots')?.enabled && (
-          <Route path="/" element={<Pilots />} />
+          <Route path="/pilots" element={<Pilots />} />
         )}
+        <Route path="/" element={<Logbook />} />
       </Routes>
     </div>
   );

@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
 import {
+  Box,
   Button,
+  ColumnDef,
   EllipsisVerticalIcon,
   EyeIcon,
+  Grid,
   IconButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
-  MenuHandler,
   MenuItem,
-  MenuList,
   PenIcon,
   PlusIcon,
   Table,
-  TableColumnDef,
   TrashIcon,
   Typography
 } from '@noahspan/noahspan-components';
@@ -20,28 +22,33 @@ import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
-import { PilotFormMode } from '../pilotForm/PilotForm';
+import { FormMode } from '../../enums/formMode';
+
+type Pilot = {
+  partitionKey: string;
+  rowKey: string;
+  id: string;
+  name: string;
+};
 
 const Pilots: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [pilotFormMode, setPilotFormMode] = useState<PilotFormMode>(
-    PilotFormMode.CANCEL
-  );
+  const [pilotFormMode, setPilotFormMode] = useState<FormMode>(FormMode.CANCEL);
   const [selectedPilotId, setSelectedPilotId] = useState<string | undefined>();
   const [pilots, setPilots] = useState<Pilot[]>([]);
-  const onOpenClosePilotForm = (mode: PilotFormMode, pilotId?: string) => {
+  const onOpenClosePilotForm = (mode: FormMode, pilotId?: string) => {
     switch (mode) {
-      case PilotFormMode.ADD:
-      case PilotFormMode.EDIT:
-      case PilotFormMode.VIEW:
+      case FormMode.ADD:
+      case FormMode.EDIT:
+      case FormMode.VIEW:
         setPilotFormMode(mode);
         setSelectedPilotId(pilotId);
         setIsDrawerOpen(true);
         break;
-      case PilotFormMode.CANCEL:
+      case FormMode.CANCEL:
         setPilotFormMode(mode);
         setSelectedPilotId(undefined);
         setIsDrawerOpen(false);
@@ -49,64 +56,70 @@ const Pilots: React.FC<unknown> = () => {
     }
   };
 
-  type Pilot = {
-    partitionKey: string;
-    rowKey: string;
-    id: string;
-    name: string;
+  interface ActionMenuProps {
+    pilotId: string;
+  }
+
+  const ActionMenu = ({ pilotId }: ActionMenuProps) => {
+    const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
+      null
+    );
+
+    const onOpenActionMenu = (event: React.MouseEvent<HTMLElement>) => {
+      console.log(event);
+      setAnchorElAction(event.currentTarget);
+    };
+
+    const onCloseActionMenu = () => {
+      setAnchorElAction(null);
+    };
+    return (
+      <div>
+        <IconButton onClick={onOpenActionMenu}>
+          <EllipsisVerticalIcon size="sm" />
+        </IconButton>
+        <Menu
+          anchorEl={anchorElAction}
+          keepMounted
+          open={Boolean(anchorElAction)}
+          onClose={onCloseActionMenu}
+        >
+          <MenuItem
+            onClick={() => onOpenClosePilotForm(FormMode.EDIT, pilotId)}
+          >
+            <ListItemIcon>
+              <PenIcon size="lg" />
+            </ListItemIcon>
+            <ListItemText>Edit</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={() => onOpenClosePilotForm(FormMode.VIEW, pilotId)}
+          >
+            <ListItemIcon>
+              <EyeIcon size="lg" />
+            </ListItemIcon>
+            <ListItemText>View</ListItemText>
+          </MenuItem>
+          <hr className="my-3" />
+          <MenuItem>
+            <ListItemIcon>
+              <TrashIcon size="lg" />
+            </ListItemIcon>
+            <ListItemText>Delete</ListItemText>
+          </MenuItem>
+        </Menu>
+      </div>
+    );
   };
 
-  const columns: TableColumnDef[] = [
+  const columns: ColumnDef<Pilot>[] = [
     {
       accessorKey: 'name',
       header: 'Name'
     },
     {
-      id: 'actions',
       header: 'Actions',
-      cellProps: {
-        className: 'text-end'
-      },
-      cell: (info: any) => {
-        const pilotId = info.row.original.rowKey;
-        return (
-          <Menu placement="bottom-end">
-            <MenuHandler>
-              <div>
-                <IconButton variant="text">
-                  <EllipsisVerticalIcon size="xl" />
-                </IconButton>
-              </div>
-            </MenuHandler>
-            <MenuList>
-              <MenuItem
-                className="flex gap-3"
-                onClick={() =>
-                  onOpenClosePilotForm(PilotFormMode.EDIT, pilotId)
-                }
-              >
-                <PenIcon size="lg" />
-                Edit
-              </MenuItem>
-              <MenuItem
-                className="flex gap-3"
-                onClick={() =>
-                  onOpenClosePilotForm(PilotFormMode.VIEW, pilotId)
-                }
-              >
-                <EyeIcon size="lg" />
-                View
-              </MenuItem>
-              <hr className="my-3" />
-              <MenuItem className="flex gap-3">
-                <TrashIcon size="lg" />
-                Delete
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        );
-      },
-      enableSorting: false
+      cell: (info) => <ActionMenu pilotId={info.row.original.rowKey} />
     }
   ];
 
@@ -131,31 +144,32 @@ const Pilots: React.FC<unknown> = () => {
   }, []);
 
   return (
-    <>
-      <div className="grid grid-cols-1 gap-4 w-full rounded-xl py-4 px-8 shadow-md backdrop-saturate-200 backdrop-blur-2xl bg-opacity-80 border border-white/80 bg-white mt-6">
-        <div className="col-span-1">
-          <Typography variant="h2">Pilots</Typography>
-        </div>
-        <div className="col-span-1 justify-self-end">
+    <Box sx={{ margin: '20px' }}>
+      <Grid container spacing={2}>
+        <Grid size={11}>
+          <Typography variant="h4">Pilots</Typography>
+        </Grid>
+        <Grid display="flex" justifyContent="right" size={1}>
           <Button
-            className="flex justify-center gap-3"
-            variant="filled"
-            onClick={() => onOpenClosePilotForm(PilotFormMode.ADD)}
+            onClick={() => onOpenClosePilotForm(FormMode.ADD)}
+            startIcon={<PlusIcon />}
+            variant="contained"
             data-testid="pilot-add-button"
           >
-            <PlusIcon size="lg" />
             Add Pilot
           </Button>
-        </div>
-        {pilots.length > 0 && <Table defaultData={pilots} columns={columns} />}
-      </div>
+        </Grid>
+        <Grid size={12}>
+          {pilots.length > 0 && <Table columns={columns} data={pilots} />}
+        </Grid>
+      </Grid>
       <PilotForm
         isDrawerOpen={isDrawerOpen}
         mode={pilotFormMode}
         onOpenClose={(mode) => onOpenClosePilotForm(mode)}
         pilotId={selectedPilotId}
       />
-    </>
+    </Box>
   );
 };
 

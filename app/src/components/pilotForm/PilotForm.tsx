@@ -3,13 +3,12 @@ import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   Button,
   Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerFooter,
-  Input,
+  Grid,
+  IconButton,
   PeoplePicker,
   SaveIcon,
   StateSelect,
+  TextField,
   Typography,
   XmarkIcon
 } from '@noahspan/noahspan-components';
@@ -18,13 +17,8 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
-
-export enum PilotFormMode {
-  ADD = 'ADD',
-  EDIT = 'EDIT',
-  VIEW = 'VIEW',
-  CANCEL = 'CANCEL'
-}
+import { FormMode } from '../../enums/formMode';
+import { Person } from '@microsoft/microsoft-graph-types';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
   pilotId,
@@ -36,6 +30,10 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const [peoplePickerResults, setPeoplePickerResults] = useState<any[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
+  const [selectedPerson, setSelectedPerson] = useState<Person>({
+    userPrincipalName: '',
+    displayName: ''
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
@@ -56,36 +54,29 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   });
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
-  const handlePeoplePickerOnClick = (
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
-    const divElement: HTMLDivElement = event.target as HTMLDivElement;
-
-    methods.setValue('id', divElement.id);
-    methods.setValue('name', divElement.textContent!);
-    setPeoplePickerResults([]);
-  };
-
-  const handlePeoplePickerOnChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+  const onPeoplePickerSearch = async (
+    _event: React.SyntheticEvent,
+    value: string
   ) => {
     setIsPeoplePickerLoading(true);
 
     try {
-      methods.setValue('name', event.target.value);
-
-      const searchString: string = event.target.value;
-      const accessToken: string = await getAccessToken();
-      const response: AxiosResponse = await httpClient.get(
-        `api/personSearch?search=${searchString}`,
-        {
-          headers: {
-            Authorization: accessToken
+      if (value !== '') {
+        const searchString: string = value;
+        const accessToken: string = await getAccessToken();
+        const response: AxiosResponse = await httpClient.get(
+          `api/personSearch?search=${searchString}`,
+          {
+            headers: {
+              Authorization: accessToken
+            }
           }
-        }
-      );
-      console.log(response);
-      setPeoplePickerResults(response.data);
+        );
+
+        setPeoplePickerResults(response.data);
+      } else {
+        setPeoplePickerResults([]);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -93,9 +84,20 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     }
   };
 
+  const onPeoplePickerSelectionChange = (
+    _event: React.SyntheticEvent,
+    value: Person,
+    _reason: string
+  ) => {
+    methods.setValue('id', value.userPrincipalName!.toString());
+    methods.setValue('name', value.displayName!.toString());
+    setSelectedPerson(value);
+  };
+
   const onCancel = () => {
     methods.reset(defaultValues);
-    onOpenClose(PilotFormMode.CANCEL);
+    onOpenClose(FormMode.CANCEL);
+    setSelectedPerson({ userPrincipalName: '', displayName: '' });
   };
 
   const onSubmit = async (data: unknown) => {
@@ -127,7 +129,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   };
 
   useEffect(() => {
-    if (mode === PilotFormMode.VIEW) {
+    if (mode === FormMode.VIEW) {
       setIsDisabled(true);
     }
   }, [mode]);
@@ -146,10 +148,14 @@ const PilotForm: React.FC<IPilotFormProps> = ({
         );
         const pilot = response.data;
         console.log(pilot);
-        // methods.setValue('blah', pilot.value)
+        setSelectedPerson({
+          userPrincipalName: pilot.id,
+          displayName: pilot.name
+        });
         methods.reset(pilot);
         console.log(methods.getValues());
       } catch (error) {
+        console.log(error);
       } finally {
         setIsLoading(false);
       }
@@ -163,251 +169,219 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   return (
     <Drawer
       open={isDrawerOpen}
-      placement="right"
-      size={1000}
+      anchor="right"
       data-testid="pilot-drawer"
+      PaperProps={{
+        sx: {
+          padding: '30px',
+          width: '33%'
+        }
+      }}
     >
       <FormProvider {...methods}>
-        <DrawerHeader text="Add Pilot" onClose={onCancel} />
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <DrawerBody>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="col-span-1">
-                <Typography variant="h6">Name *</Typography>
-              </div>
-              <div className="col-span-3">
-                <Controller
-                  name="name"
-                  control={methods.control}
-                  rules={{ required: 'A name must be selected' }}
-                  render={({ field: { value } }) => (
-                    <PeoplePicker
-                      results={peoplePickerResults}
-                      inputProps={{
-                        disabled: isDisabled,
-                        labelProps: {
-                          className: 'before:content-none after:content-none'
-                        },
-                        onChange: (event) => handlePeoplePickerOnChange(event),
-                        error: methods.formState.errors.name ? true : false,
-                        helperText: methods.formState.errors.name
-                          ? methods.formState.errors.name.message?.toString()
-                          : undefined,
-                        value: value
-                      }}
-                      listItemProps={{
-                        children: null,
-                        onClick: handlePeoplePickerOnClick
-                      }}
-                      loading={isPeoplePickerLoading}
-                      data-testid="pilot-form-people-picker"
-                    />
-                  )}
-                />
-              </div>
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Address *</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="address"
-                      control={methods.control}
-                      rules={{ required: 'An address is required' }}
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={
-                            methods.formState.errors.address ? true : false
-                          }
-                          helperText={
-                            methods.formState.errors.address
-                              ? methods.formState.errors.address.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          data-testid="pilot-form-address-input"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">City *</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="city"
-                      control={methods.control}
-                      rules={{ required: 'A city is required' }}
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={methods.formState.errors.city ? true : false}
-                          helperText={
-                            methods.formState.errors.city
-                              ? methods.formState.errors.city.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          data-testid="pilot-form-city-input"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">State *</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="state"
-                      control={methods.control}
-                      rules={{ required: 'A state must be selected' }}
-                      render={({ field: { onChange, value } }) => (
-                        <StateSelect
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={methods.formState.errors.state ? true : false}
-                          helperText={
-                            methods.formState.errors.state
-                              ? methods.formState.errors.state.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          variant="outlined"
-                          data-testid="pilot-form-state-dropdown"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Postal Code *</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="postalCode"
-                      control={methods.control}
-                      rules={{ required: 'A postal code is required' }}
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={
-                            methods.formState.errors.postalCode ? true : false
-                          }
-                          helperText={
-                            methods.formState.errors.postalCode
-                              ? methods.formState.errors.postalCode.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          data-testid="pilot-form-postal-code-input"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Email</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="email"
-                      control={methods.control}
-                      rules={{
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Invalid email address'
-                        }
-                      }}
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={methods.formState.errors.email ? true : false}
-                          helperText={
-                            methods.formState.errors.email
-                              ? methods.formState.errors.email.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          data-testid="pilot-form-email-input"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Phone Number</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="phone"
-                      control={methods.control}
-                      rules={{
-                        pattern: {
-                          value: /^[0-9]{3}[-\s\.][0-9]{3}[-\s\.][0-9]{4}$/i,
-                          message: 'Enter phone number as 123-456-7890'
-                        }
-                      }}
-                      render={({ field: { onChange, value } }) => (
-                        <Input
-                          disabled={isDisabled}
-                          labelProps={{
-                            className: 'before:content-none after:content-none'
-                          }}
-                          error={methods.formState.errors.phone ? true : false}
-                          helperText={
-                            methods.formState.errors.phone
-                              ? methods.formState.errors.phone.message?.toString()
-                              : undefined
-                          }
-                          onChange={onChange}
-                          value={value}
-                          data-testid="pilot-form-phone-input"
-                        />
-                      )}
-                    />
-                  </div>
-                </>
-              )}
-              {/* {pilotId && (
+          <Grid container spacing={2}>
+            <Grid size={11}>
+              <Typography variant="h4">{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Pilot`}</Typography>
+            </Grid>
+            <Grid display="flex" justifyContent="right" size={1}>
+              <IconButton onClick={onCancel}>
+                <XmarkIcon />
+              </IconButton>
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">Name *</Typography>
+            </Grid>
+            <Grid size={9}>
+              <PeoplePicker
+                disabled={isDisabled}
+                loading={isPeoplePickerLoading}
+                onInputChanged={onPeoplePickerSearch}
+                onSelectionChanged={onPeoplePickerSelectionChange}
+                options={peoplePickerResults}
+                value={selectedPerson}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">Address *</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="address"
+                control={methods.control}
+                rules={{ required: 'An address is required' }}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    disabled={isDisabled}
+                    error={methods.formState.errors.address ? true : false}
+                    fullWidth
+                    helperText={
+                      methods.formState.errors.address
+                        ? methods.formState.errors.address.message
+                        : undefined
+                    }
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">City *</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="city"
+                control={methods.control}
+                rules={{ required: 'A city is required' }}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    disabled={isDisabled}
+                    error={methods.formState.errors.city ? true : false}
+                    fullWidth
+                    helperText={
+                      methods.formState.errors.city
+                        ? methods.formState.errors.city.message
+                        : undefined
+                    }
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">State *</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="state"
+                control={methods.control}
+                rules={{ required: 'A state must be selected' }}
+                render={({ field: { onChange, value } }) => (
+                  <StateSelect
+                    disabled={isDisabled}
+                    // error={methods.formState.errors.state ? true : false}
+                    fullWidth
+                    // helperText={
+                    //   methods.formState.errors.state
+                    //     ? methods.formState.errors.state.message?.toString()
+                    //     : undefined
+                    // }
+                    onChange={onChange}
+                    value={value}
+                    variant="outlined"
+                    data-testid="pilot-form-state-dropdown"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">Postal Code *</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="postalCode"
+                control={methods.control}
+                rules={{ required: 'A postal code is required' }}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    disabled={isDisabled}
+                    error={methods.formState.errors.postalCode ? true : false}
+                    fullWidth
+                    helperText={
+                      methods.formState.errors.postalCode
+                        ? methods.formState.errors.postalCode.message
+                        : undefined
+                    }
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">Email</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="email"
+                control={methods.control}
+                rules={{
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    disabled={isDisabled}
+                    fullWidth
+                    error={methods.formState.errors.email ? true : false}
+                    helperText={
+                      methods.formState.errors.email
+                        ? methods.formState.errors.email.message
+                        : undefined
+                    }
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={3}>
+              <Typography variant="h6">Phone Number</Typography>
+            </Grid>
+            <Grid size={9}>
+              <Controller
+                name="phone"
+                control={methods.control}
+                rules={{
+                  pattern: {
+                    value: /^[0-9]{3}[-\s\.][0-9]{3}[-\s\.][0-9]{4}$/i,
+                    message: 'Enter phone number as 123-456-7890'
+                  }
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    disabled={isDisabled}
+                    fullWidth
+                    error={methods.formState.errors.phone ? true : false}
+                    helperText={
+                      methods.formState.errors.phone
+                        ? methods.formState.errors.phone.message
+                        : undefined
+                    }
+                    onChange={onChange}
+                    value={value}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid display="flex" gap={2} justifyContent="right" size={12}>
+              <Button
+                disabled={isDisabled}
+                startIcon={<XmarkIcon />}
+                variant="outlined"
+                onClick={onCancel}
+                data-testid="pilot-cancel-button"
+                size="small"
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={isDisabled}
+                startIcon={<SaveIcon />}
+                size="small"
+                type="submit"
+                variant="contained"
+                data-testid="pilot-save-button"
+              >
+                Save
+              </Button>
+            </Grid>
+          </Grid>
+          {/* {pilotId && (
                 <>
                   <div className="col-span-1">
                     <Typography variant="h6">Last Review</Typography>
@@ -432,7 +406,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   </div>
                 </>
               )} */}
-              {/* {pilotId && (
+          {/* {pilotId && (
                 <>
                   <div className="col-span-4">
                     <Typography variant="h5">Medical</Typography>
@@ -512,41 +486,34 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   <PilotFormEndorsements endorsements={[]} />
                 </>
               )} */}
-            </div>
-          </DrawerBody>
-          <DrawerFooter>
-            <>
-              {mode !== PilotFormMode.VIEW && (
+          {/* </div>
+              {mode !== FormMode.VIEW && (
                 <div className="flex gap-2 justify-end justify-self-center pt-4">
                   <div>
                     <Button
-                      className="flex items-center gap-3"
                       disabled={isDisabled}
-                      variant="outlined"
+                      startIcon={<XmarkIcon />}
+                      variant='contained'
                       onClick={onCancel}
                       data-testid="pilot-cancel-button"
                     >
-                      <XmarkIcon size="lg" />
                       Cancel
                     </Button>
                   </div>
                   <div>
                     <Button
-                      className="flex items-center gap-3"
                       disabled={isDisabled}
-                      loading={isLoading}
-                      variant="filled"
+                      startIcon={<SaveIcon />}
+                      size='medium'
                       type="submit"
+                      variant='contained'
                       data-testid="pilot-save-button"
                     >
-                      <SaveIcon size="lg" />
                       Save
                     </Button>
                   </div>
                 </div>
-              )}
-            </>
-          </DrawerFooter>
+              )} */}
         </form>
       </FormProvider>
     </Drawer>

@@ -9,6 +9,7 @@ import {
 } from '@noahspan/noahspan-modules';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { LogbookModule } from './logbook/logbook.module';
 import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
@@ -32,6 +33,7 @@ import { HttpExceptionFilter } from './filters/http-exception.filter';
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET
     }),
+    LogbookModule,
     PilotModule
   ],
   controllers: [AppController],

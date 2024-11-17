@@ -8,7 +8,7 @@ import '@noahspan/noahspan-components/noahspan-components.css';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
 
-const pca: PublicClientApplication = new PublicClientApplication({
+const msalInstance: PublicClientApplication = new PublicClientApplication({
   auth: {
     clientId: import.meta.env.VITE_CLIENT_ID,
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`,
@@ -16,14 +16,16 @@ const pca: PublicClientApplication = new PublicClientApplication({
   }
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <MsalProvider instance={pca}>
-      <AppContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AppContextProvider>
-    </MsalProvider>
-  </React.StrictMode>
-);
+msalInstance.initialize().then(() => {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <MsalProvider instance={msalInstance}>
+        <AppContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AppContextProvider>
+      </MsalProvider>
+    </React.StrictMode>
+  );
+});
