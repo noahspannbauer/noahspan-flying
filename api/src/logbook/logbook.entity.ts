@@ -1,7 +1,6 @@
 export class LogbookEntity {
   partitionKey: string;
   rowKey: string;
-  id: string;
   pilotId: string;
   pilotName: string;
   date: string;

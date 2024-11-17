@@ -360,25 +360,31 @@ const PilotForm: React.FC<IPilotFormProps> = ({
             </Grid>
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
-                disabled={isDisabled}
+                disabled={
+                  isDisabled && mode.toString() !== FormMode.VIEW
+                    ? isDisabled
+                    : false
+                }
                 startIcon={<XmarkIcon />}
                 variant="outlined"
                 onClick={onCancel}
                 data-testid="pilot-cancel-button"
                 size="small"
               >
-                Cancel
+                {mode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
               </Button>
-              <Button
-                disabled={isDisabled}
-                startIcon={<SaveIcon />}
-                size="small"
-                type="submit"
-                variant="contained"
-                data-testid="pilot-save-button"
-              >
-                Save
-              </Button>
+              {mode.toString() !== FormMode.VIEW && (
+                <Button
+                  disabled={isDisabled}
+                  startIcon={<SaveIcon />}
+                  size="small"
+                  type="submit"
+                  variant="contained"
+                  data-testid="pilot-save-button"
+                >
+                  Save
+                </Button>
+              )}
             </Grid>
           </Grid>
           {/* {pilotId && (
@@ -485,34 +491,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   </div>
                   <PilotFormEndorsements endorsements={[]} />
                 </>
-              )} */}
-          {/* </div>
-              {mode !== FormMode.VIEW && (
-                <div className="flex gap-2 justify-end justify-self-center pt-4">
-                  <div>
-                    <Button
-                      disabled={isDisabled}
-                      startIcon={<XmarkIcon />}
-                      variant='contained'
-                      onClick={onCancel}
-                      data-testid="pilot-cancel-button"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <div>
-                    <Button
-                      disabled={isDisabled}
-                      startIcon={<SaveIcon />}
-                      size='medium'
-                      type="submit"
-                      variant='contained'
-                      data-testid="pilot-save-button"
-                    >
-                      Save
-                    </Button>
-                  </div>
-                </div>
               )} */}
         </form>
       </FormProvider>

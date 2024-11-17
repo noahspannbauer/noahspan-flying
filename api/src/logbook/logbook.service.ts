@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TableClient, TableService } from '@noahspan/noahspan-modules';
 import { LogbookDto } from './logbook.dto';
 import { LogbookEntity } from './logbook.entity';
-import { odata, RestError, TableInsertEntityHeaders } from '@azure/data-tables';
+import { RestError, TableInsertEntityHeaders } from '@azure/data-tables';
 import { CustomError } from '../customError/CustomError';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,20 +10,20 @@ import { v4 as uuidv4 } from 'uuid';
 export class LogbookService {
   constructor(private readonly tableService: TableService) {}
 
-  async findAll(): Promise<LogbookEntity[]> {
+  async getLogbookEntries(filter: string): Promise<LogbookEntity[]> {
     try {
       const client: TableClient =
         await this.tableService.getTableClient('Logbook');
       const entities = await client.listEntities({
-        queryOptions: { filter: odata`PartitionKey eq 'entry'` }
+        queryOptions: { filter: filter }
       });
+      console.log(entities);
       const logbookEntries: LogbookEntity[] = [];
 
       for await (const entity of entities) {
         const logbookEntry = {
           partitionKey: entity.partitionKey.toString(),
           rowKey: entity.rowKey.toString(),
-          id: entity.rowKey.toString(),
           pilotId: entity.pilotId.toString(),
           pilotName: entity.pilotName.toString(),
           date: entity.date.toString(),
@@ -89,6 +89,34 @@ export class LogbookService {
     }
   }
 
+  async find(entryId: string): Promise<LogbookEntity> {
+    try {
+      const filter: string = `PartitionKey eq 'entry' and RowKey eq '${entryId}'`;
+      const entries: LogbookEntity[] = await this.getLogbookEntries(filter);
+
+      return entries[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAll(): Promise<LogbookEntity[]> {
+    try {
+      const filter: string = `PartitionKey eq 'entry'`;
+      const entries: LogbookEntity[] = await this.getLogbookEntries(filter);
+
+      return entries;
+    } catch (error) {
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
+    }
+  }
+
   async create(logbookData: LogbookDto): Promise<TableInsertEntityHeaders> {
     const client: TableClient =
       await this.tableService.getTableClient('Logbook');
@@ -96,7 +124,7 @@ export class LogbookService {
 
     Object.assign(logbook, logbookData);
     logbook.partitionKey = 'entry';
-    logbook.rowKey = `${logbook.pilotId}:${uuidv4()}`;
+    logbook.rowKey = uuidv4();
 
     try {
       return await client.createEntity(logbook);
