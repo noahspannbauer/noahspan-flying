@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PilotController } from './pilot.controller';
+import { LogbookController } from './logbook.controller';
+import { LogbookService } from './logbook.service';
 import { TableModule } from '@noahspan/noahspan-modules';
-import { PilotInfoService } from './info/pilot-info.service';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { PilotInfoService } from './info/pilot-info.service';
       )
     })
   ],
-  controllers: [PilotController],
-  providers: [PilotInfoService]
+  controllers: [LogbookController],
+  providers: [LogbookService]
 })
-export class PilotModule {}
+export class LogbookModule {}
