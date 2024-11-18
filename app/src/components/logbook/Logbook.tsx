@@ -14,6 +14,7 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
+import ActionMenu from '../../actionMenu/ActionMenu';
 
 type LogbookEntry = {
   partitionKey: string;
@@ -49,20 +50,20 @@ const Logbook: React.FC<unknown> = () => {
   const { getAccessToken } = useAccessToken();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [entryFormMode, setEntryFormMode] = useState<FormMode>(FormMode.CANCEL);
-  const [selectedPilotId, setSelectedPilotId] = useState<string | undefined>();
+  const [selectedEntryId, setSelectedEntryId] = useState<string | undefined>();
   const [entries, setEntries] = useState([]);
-  const onOpenCloseEntryForm = (mode: FormMode, pilotId?: string) => {
+  const onOpenCloseEntryForm = (mode: FormMode, entryId?: string) => {
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
       case FormMode.VIEW:
         setEntryFormMode(mode);
-        setSelectedPilotId(pilotId);
+        setSelectedEntryId(entryId);
         setIsDrawerOpen(true);
         break;
       case FormMode.CANCEL:
         setEntryFormMode(mode);
-        setSelectedPilotId(undefined);
+        setSelectedEntryId(undefined);
         setIsDrawerOpen(false);
         break;
     }
@@ -292,6 +293,19 @@ const Logbook: React.FC<unknown> = () => {
     {
       accessorKey: 'notes',
       header: 'Notes'
+    },
+    {
+      header: 'Actions',
+      meta: {
+        align: 'center',
+        headerAlign: 'center'
+      },
+      cell: (info) => (
+        <ActionMenu
+          id={info.row.original.rowKey}
+          onOpenCloseForm={onOpenCloseEntryForm}
+        />
+      )
     }
   ];
 
@@ -307,7 +321,6 @@ const Logbook: React.FC<unknown> = () => {
           config
         );
 
-        console.log(response);
         setEntries(response.data);
       } catch (error) {
         console.log(error);
@@ -340,7 +353,7 @@ const Logbook: React.FC<unknown> = () => {
         </Grid>
       </Grid>
       <LogbookEntryForm
-        entryId={'1'}
+        entryId={selectedEntryId}
         isDrawerOpen={isDrawerOpen}
         mode={entryFormMode}
         onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
