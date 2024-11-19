@@ -15,7 +15,12 @@ import {
   Typography,
   XmarkIcon
 } from '@noahspan/noahspan-components';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  FormProvider
+} from 'react-hook-form';
 import { ILogbookEntryFormProps } from './ILogbookEntryFormProps';
 import { initialState, reducer } from './reducer';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
@@ -78,7 +83,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
 
       const accessToken: string = await getAccessToken();
 
-      if (!entryId) {
+      if (entryId) {
         await httpClient.post(`api/logbook`, data, {
           headers: {
             Authorization: accessToken
