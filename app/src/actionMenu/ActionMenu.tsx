@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IActionMenuProps } from './IActionMenuProps';
 import {
   EllipsisVerticalIcon,
@@ -25,10 +25,6 @@ const ActionMenu = ({ id, onOpenCloseForm }: IActionMenuProps) => {
   const onCloseActionMenu = () => {
     setAnchorElAction(null);
   };
-
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
 
   return (
     <div>

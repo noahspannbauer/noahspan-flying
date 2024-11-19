@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -15,13 +15,9 @@ import {
   Typography,
   XmarkIcon
 } from '@noahspan/noahspan-components';
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  FormProvider
-} from 'react-hook-form';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { ILogbookEntryFormProps } from './ILogbookEntryFormProps';
+import { initialState, reducer } from './reducer';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
@@ -35,13 +31,8 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
   mode,
   onOpenClose
 }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const httpClient: AxiosInstance = useHttpClient();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedEntry, setSelectedEntry] = useState();
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const [pilotOptions, setPilotOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   const defaultValues = {
@@ -77,45 +68,55 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
 
   const onCancel = () => {
     methods.reset(defaultValues);
+    dispatch({ type: 'SET_IS_DISABLED', payload: false });
     onOpenClose(FormMode.CANCEL);
   };
 
   const onSubmit = async (data: unknown) => {
     try {
-      setIsLoading(true);
+      dispatch({ type: 'SET_IS_LOADING', payload: true });
 
       const accessToken: string = await getAccessToken();
 
-      await httpClient.post(`api/logbook`, data, {
-        headers: {
-          Authorization: accessToken
-        }
-      });
+      if (!entryId) {
+        await httpClient.post(`api/logbook`, data, {
+          headers: {
+            Authorization: accessToken
+          }
+        });
+      } else {
+        await httpClient.put(`api/logbook/${entryId}`, data, {
+          headers: {
+            Authorization: accessToken
+          }
+        });
+      }
 
       methods.reset(defaultValues);
+      dispatch({ type: 'SET_IS_DISABLED', payload: false });
       onOpenClose(FormMode.CANCEL);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errResp = error.response;
 
-        console.log(errResp?.data.message);
+        console.log(errResp);
       } else {
       }
     } finally {
-      setIsLoading(false);
+      dispatch({ type: 'SET_IS_LOADING', payload: false });
     }
   };
 
   useEffect(() => {
     if (mode === FormMode.VIEW) {
-      setIsDisabled(true);
+      dispatch({ type: 'SET_IS_DISABLED', payload: true });
     }
   }, [mode]);
 
   useEffect(() => {
     const getEntry = async () => {
       try {
-        setIsLoading(true);
+        dispatch({ type: 'SET_IS_LOADING', payload: true });
 
         const config = isAuthenticated
           ? { headers: { Authorization: await getAccessToken() } }
@@ -130,7 +131,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
       } catch (error) {
         console.log(error);
       } finally {
-        setIsLoading(false);
+        dispatch({ type: 'SET_IS_LOADING', payload: false });
       }
     };
 
@@ -148,7 +149,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
         };
       });
 
-      setPilotOptions(newPilotsOptions);
+      dispatch({ type: 'SET_PILOT_OPTIONS', payload: newPilotsOptions });
     }
   }, [pilots]);
 
@@ -182,28 +183,40 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 name="pilotId"
                 control={methods.control}
                 render={({ field: { onChange, value } }) => {
+                  useEffect(() => {
+                    if (value && mode !== FormMode.ADD) {
+                      const pilot = pilots?.find((pilot) => pilot.id === value);
+
+                      dispatch({
+                        type: 'SET_SELECTED_ENTRY_PILOT_NAME',
+                        payload: pilot.name
+                      });
+                    }
+                  }, [value]);
+
                   return (
-                    <Select
-                      disabled={isDisabled}
-                      fullWidth
-                      onChange={(event) => {
-                        const pilot = pilots?.find(
-                          (pilot) => pilot.id === event.target.value
-                        );
-
-                        if (pilot) {
-                          methods.setValue('pilotName', pilot.name);
-                        }
-
-                        methods.setValue('pilotId', event.target.value);
-                      }}
-                      options={
-                        pilotOptions && pilotOptions.length > 0
-                          ? pilotOptions
-                          : []
-                      }
-                      value={value}
-                    />
+                    <>
+                      {mode === FormMode.ADD && (
+                        <Select
+                          disabled={state.isDisabled}
+                          fullWidth
+                          onChange={onChange}
+                          options={
+                            state.pilotOptions && state.pilotOptions.length > 0
+                              ? state.pilotOptions
+                              : []
+                          }
+                          value={value}
+                        />
+                      )}
+                      {mode !== FormMode.ADD && (
+                        <TextField
+                          disabled={true}
+                          fullWidth
+                          value={state.selectedEntryPilotName}
+                        />
+                      )}
+                    </>
                   );
                 }}
               />
@@ -217,7 +230,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <DatePicker
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     onChange={onChange}
                     value={value}
                   />
@@ -233,7 +246,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -256,7 +269,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -279,7 +292,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -302,7 +315,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -325,7 +338,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -354,7 +367,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -383,7 +396,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -419,7 +432,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -450,7 +463,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -492,7 +505,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -523,7 +536,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -556,7 +569,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -587,7 +600,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -618,7 +631,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -662,7 +675,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -695,7 +708,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -726,7 +739,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -757,7 +770,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -788,7 +801,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -819,7 +832,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         control={methods.control}
                         render={({ field: { onChange, value } }) => (
                           <TextField
-                            disabled={isDisabled}
+                            disabled={state.isDisabled}
                             error={
                               methods.formState.errors.address ? true : false
                             }
@@ -854,7 +867,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 control={methods.control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
-                    disabled={isDisabled}
+                    disabled={state.isDisabled}
                     error={methods.formState.errors.address ? true : false}
                     fullWidth
                     helperText={
@@ -873,8 +886,8 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
                 disabled={
-                  isDisabled && mode.toString() !== FormMode.VIEW
-                    ? isDisabled
+                  state.isDisabled && mode.toString() !== FormMode.VIEW
+                    ? state.isDisabled
                     : false
                 }
                 startIcon={<XmarkIcon />}
@@ -886,7 +899,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
               </Button>
               {mode.toString() !== FormMode.VIEW && (
                 <Button
-                  disabled={isDisabled}
+                  disabled={state.isDisabled}
                   startIcon={<SaveIcon />}
                   size="small"
                   type="submit"
