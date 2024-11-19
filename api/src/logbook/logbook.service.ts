@@ -8,16 +8,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LogbookService {
+  private readonly tableName = 'Logbook';
+
   constructor(private readonly tableService: TableService) {}
 
   async getLogbookEntries(filter: string): Promise<LogbookEntity[]> {
     try {
-      const client: TableClient =
-        await this.tableService.getTableClient('Logbook');
+      const client: TableClient = await this.tableService.getTableClient(
+        this.tableName
+      );
       const entities = await client.listEntities({
         queryOptions: { filter: filter }
       });
-      console.log(entities);
       const logbookEntries: LogbookEntity[] = [];
 
       for await (const entity of entities) {
@@ -73,7 +75,7 @@ export class LogbookService {
             : null,
           notes: entity.notes.toString()
         };
-        console.log(logbookEntry);
+
         logbookEntries.push(logbookEntry);
       }
 
@@ -118,8 +120,9 @@ export class LogbookService {
   }
 
   async create(logbookData: LogbookDto): Promise<TableInsertEntityHeaders> {
-    const client: TableClient =
-      await this.tableService.getTableClient('Logbook');
+    const client: TableClient = await this.tableService.getTableClient(
+      this.tableName
+    );
     const logbook: LogbookEntity = new LogbookEntity();
 
     Object.assign(logbook, logbookData);
@@ -128,6 +131,27 @@ export class LogbookService {
 
     try {
       return await client.createEntity(logbook);
+    } catch (error) {
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
+    }
+  }
+
+  async update(logbookData: LogbookDto): Promise<void> {
+    const client: TableClient = await this.tableService.getTableClient(
+      this.tableName
+    );
+    const logbook: LogbookEntity = new LogbookEntity();
+
+    Object.assign(logbook, logbookData);
+
+    try {
+      await client.upsertEntity(logbook, 'Replace');
     } catch (error) {
       const restError: RestError = error as RestError;
 

@@ -4,7 +4,8 @@ import {
   Get,
   HttpException,
   Param,
-  Post
+  Post,
+  Put
 } from '@nestjs/common';
 import { LogbookService } from './logbook.service';
 import { LogbookDto } from './logbook.dto';
@@ -18,7 +19,6 @@ export class LogbookController {
 
   @Get(':entryId')
   async find(@Param() params: any): Promise<LogbookEntity> {
-    console.log(params);
     try {
       const entry: LogbookEntity = await this.logbookService.find(
         params.entryId
@@ -43,7 +43,7 @@ export class LogbookController {
       return logbookEntries;
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error);
+
       throw new HttpException(customError.message, customError.statusCode, {
         cause: customError.name
       });
@@ -55,6 +55,22 @@ export class LogbookController {
     try {
       const response: TableInsertEntityHeaders =
         await this.logbookService.create(logbookData);
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode, {
+        cause: customError.name
+      });
+    }
+  }
+
+  @Put(':entryId')
+  async update(
+    @Param() params: any,
+    @Body() logbookData: LogbookDto
+  ): Promise<void> {
+    try {
+      return await this.logbookService.update(logbookData);
     } catch (error) {
       const customError = error as CustomError;
 
