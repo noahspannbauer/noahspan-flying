@@ -73,7 +73,7 @@ export class LogbookService {
           instrumentNavTrack: entity.instrumentNavTrack
             ? Number(entity.instrumentNavTrack)
             : null,
-          notes: entity.notes.toString()
+          notes: entity.notes ? entity.notes.toString() : ''
         };
 
         logbookEntries.push(logbookEntry);
@@ -143,15 +143,33 @@ export class LogbookService {
   }
 
   async update(logbookData: LogbookDto): Promise<void> {
-    const client: TableClient = await this.tableService.getTableClient(
-      this.tableName
-    );
-    const logbook: LogbookEntity = new LogbookEntity();
-
-    Object.assign(logbook, logbookData);
-
     try {
+      const client: TableClient = await this.tableService.getTableClient(
+        this.tableName
+      );
+      const logbook: LogbookEntity = new LogbookEntity();
+
+      Object.assign(logbook, logbookData);
+
       await client.upsertEntity(logbook, 'Replace');
+    } catch (error) {
+      const restError: RestError = error as RestError;
+
+      throw new CustomError(
+        restError.details['odataError']['message']['value'],
+        restError.details['odataError']['code'],
+        restError.statusCode
+      );
+    }
+  }
+
+  async delete(rowKey: string): Promise<void> {
+    try {
+      const client: TableClient = await this.tableService.getTableClient(
+        this.tableName
+      );
+
+      await client.deleteEntity('entry', rowKey);
     } catch (error) {
       const restError: RestError = error as RestError;
 

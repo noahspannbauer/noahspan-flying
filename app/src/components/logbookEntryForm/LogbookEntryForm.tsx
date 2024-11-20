@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Button,
   ChevronDownIcon,
   DatePicker,
@@ -18,7 +19,7 @@ import {
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { ILogbookEntryFormProps } from './ILogbookEntryFormProps';
 import { initialState, reducer } from './reducer';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -96,12 +97,9 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
       dispatch({ type: 'SET_IS_DISABLED', payload: false });
       onOpenClose(FormMode.CANCEL);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errResp = error.response;
+      const axiosError = error as AxiosError;
 
-        console.log(errResp);
-      } else {
-      }
+      dispatch({ type: 'SET_ERROR', payload: axiosError.message });
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false });
     }
@@ -129,13 +127,15 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
 
         methods.reset(entry);
       } catch (error) {
-        console.log(error);
+        const axiosError = error as AxiosError;
+
+        dispatch({ type: 'SET_ERROR', payload: axiosError.message });
       } finally {
         dispatch({ type: 'SET_IS_LOADING', payload: false });
       }
     };
 
-    if (entryId) {
+    if (entryId && isDrawerOpen) {
       getEntry();
     }
   }, [entryId]);
@@ -175,6 +175,19 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                 <XmarkIcon />
               </IconButton>
             </Grid>
+            {state.error && (
+              <Grid display="flex" justifyContent="center" size={12}>
+                <Alert
+                  onClose={() =>
+                    dispatch({ type: 'SET_ERROR', payload: undefined })
+                  }
+                  severity="error"
+                  sx={{ width: '100%' }}
+                >
+                  {state.error}
+                </Alert>
+              </Grid>
+            )}
             <Grid alignItems="center" display="flex" size={4}>
               <Typography variant="body1">Pilot *</Typography>
             </Grid>
@@ -200,7 +213,17 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
                         <Select
                           disabled={state.isDisabled}
                           fullWidth
-                          onChange={onChange}
+                          onChange={(event) => {
+                            const pilot = pilots?.find(
+                              (pilot) => (pilot.id = event.target.value)
+                            );
+
+                            if (pilot) {
+                              methods.setValue('pilotName', pilot.name);
+                            }
+
+                            methods.setValue('pilotId', event.target.value);
+                          }}
                           options={
                             state.pilotOptions && state.pilotOptions.length > 0
                               ? state.pilotOptions

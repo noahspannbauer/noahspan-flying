@@ -11,9 +11,9 @@ import {
   PenIcon,
   TrashIcon
 } from '@noahspan/noahspan-components';
-import { FormMode } from '../enums/formMode';
+import { FormMode } from '../../enums/formMode';
 
-const ActionMenu = ({ id, onOpenCloseForm }: IActionMenuProps) => {
+const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
   const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
     null
   );
@@ -50,7 +50,7 @@ const ActionMenu = ({ id, onOpenCloseForm }: IActionMenuProps) => {
           <ListItemText>View</ListItemText>
         </MenuItem>
         <hr className="my-3" />
-        <MenuItem>
+        <MenuItem onClick={() => onDelete(id)}>
           <ListItemIcon>
             <TrashIcon size="lg" />
           </ListItemIcon>

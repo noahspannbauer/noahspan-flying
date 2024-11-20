@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
@@ -71,6 +72,19 @@ export class LogbookController {
   ): Promise<void> {
     try {
       return await this.logbookService.update(logbookData);
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode, {
+        cause: customError.name
+      });
+    }
+  }
+
+  @Delete(':rowKey')
+  async delete(@Param() params: any): Promise<void> {
+    try {
+      await this.logbookService.delete(params.rowKey);
     } catch (error) {
       const customError = error as CustomError;
 
