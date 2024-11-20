@@ -19,6 +19,14 @@ jobs:
         with:
           submodules: true
 
+      - name: Install
+        run: |
+          npm install
+
+      - name: Build API
+        run: |
+          npm run build -w api
+
       - name: Build and Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -28,7 +36,8 @@ jobs:
           action: 'upload'
           app_build_command: ${{ vars.APP_BUILD_COMMAND }}
           app_location: ${{ vars.APP_LOCATION }}
-          api_build_command: ${{ vars.API_BUILD_COMMAND }}
-          api_location: ${{ vars.API_LOCATION}}
+          # api_build_command: ${{ vars.API_BUILD_COMMAND }}
+          api_location: ${{ vars.API_LOCATION }}
           output_location: ${{ vars.OUTPUT_LOCATION }}
           deployment_environment: 'development'
+          skip_api_build: true
