@@ -1,75 +1,130 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import LogbookEntryForm from '../logbookEntryForm/LogbookEntryForm';
 import {
+  Alert,
   Box,
   Button,
   ColumnDef,
   Grid,
   PlusIcon,
+  Spinner,
   Table,
   Typography
 } from '@noahspan/noahspan-components';
+import { initialState, reducer } from './reducer';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
-import ActionMenu from '../../actionMenu/ActionMenu';
-
-type LogbookEntry = {
-  partitionKey: string;
-  rowKey: string;
-  id: string;
-  pilotId: string;
-  date: string;
-  aircraftMakeModel: string;
-  aircraftIdentity: string;
-  routeFrom: string;
-  routeTo: string;
-  durationOfFlight: number | null;
-  singleEngineLand: number | null;
-  simulatorAtd: number | null;
-  landingsDay: number | null;
-  landingsNight: number | null;
-  instrumentActual: number | null;
-  instrumentSimulated: number | null;
-  instrumentApproaches: number | null;
-  instrumentHolds: number | null;
-  instrumentNavTrack: number | null;
-  groundTrainingReceived: number;
-  flightTrainingReceived: number;
-  crossCountry: number | null;
-  night: number | null;
-  solo: number | null;
-  pilotInCommand: number | null;
-};
+import ActionMenu from '../actionMenu/ActionMenu';
+import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
+import { ILogbookEntry } from './ILogbookEntry';
 
 const Logbook: React.FC<unknown> = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const httpClient: AxiosInstance = useHttpClient();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [entryFormMode, setEntryFormMode] = useState<FormMode>(FormMode.CANCEL);
-  const [selectedEntryId, setSelectedEntryId] = useState<string | undefined>();
-  const [entries, setEntries] = useState([]);
+
+  const getLogbookEntries = async () => {
+    try {
+      dispatch({ type: 'SET_IS_LOADING', payload: true });
+
+      const token = await getAccessToken();
+      const config = isAuthenticated
+        ? { headers: { Authorization: `${token}` } }
+        : {};
+      const response: AxiosResponse = await httpClient.get(
+        `api/logbook`,
+        config
+      );
+
+      dispatch({ type: 'SET_ENTRIES', payload: response.data });
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      dispatch({
+        type: 'SET_ERROR',
+        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+      });
+    } finally {
+      dispatch({ type: 'SET_IS_LOADING', payload: false });
+    }
+  };
+
   const onOpenCloseEntryForm = (mode: FormMode, entryId?: string) => {
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
       case FormMode.VIEW:
-        setEntryFormMode(mode);
-        setSelectedEntryId(entryId);
-        setIsDrawerOpen(true);
+        dispatch({
+          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          payload: {
+            formMode: mode,
+            selectedEntryId: entryId,
+            isFormOpen: true
+          }
+        });
+
         break;
       case FormMode.CANCEL:
-        setEntryFormMode(mode);
-        setSelectedEntryId(undefined);
-        setIsDrawerOpen(false);
+        dispatch({
+          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          payload: {
+            formMode: mode,
+            selectedEntryId: undefined,
+            isFormOpen: false
+          }
+        });
+
         break;
     }
   };
 
-  const columns: ColumnDef<LogbookEntry>[] = [
+  const onDeleteEntry = (entryId: string) => {
+    dispatch({
+      type: 'SET_DELETE',
+      payload: { isConfirmationDialogOpen: true, selectedEntryId: entryId }
+    });
+  };
+
+  const onConfirmationDialogConfirm = async () => {
+    try {
+      dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: true });
+
+      const token = await getAccessToken();
+      const config = isAuthenticated
+        ? { headers: { Authorization: `${token}` } }
+        : {};
+
+      await httpClient.delete(`api/logbook/${state.selectedEntryId}`, config);
+
+      dispatch({
+        type: 'SET_DELETE',
+        payload: { isConfirmationDialogOpen: false, selectedEntryId: undefined }
+      });
+      await getLogbookEntries();
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      dispatch({
+        type: 'SET_ERROR',
+        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+      });
+    } finally {
+      dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
+    }
+  };
+
+  const onConfirmationDialogCancel = () => {
+    dispatch({
+      type: 'SET_DELETE',
+      payload: { isConfirmationDialogOpen: false, selectedEntryId: undefined }
+    });
+  };
+
+  const columns: ColumnDef<ILogbookEntry>[] = [
     {
       accessorKey: 'pilotName',
       header: 'Pilot'
@@ -303,6 +358,7 @@ const Logbook: React.FC<unknown> = () => {
       cell: (info) => (
         <ActionMenu
           id={info.row.original.rowKey}
+          onDelete={onDeleteEntry}
           onOpenCloseForm={onOpenCloseEntryForm}
         />
       )
@@ -310,27 +366,10 @@ const Logbook: React.FC<unknown> = () => {
   ];
 
   useEffect(() => {
-    const getLogbookEntries = async () => {
-      try {
-        const token = await getAccessToken();
-        const config = isAuthenticated
-          ? { headers: { Authorization: `${token}` } }
-          : {};
-        const response: AxiosResponse = await httpClient.get(
-          `api/logbook`,
-          config
-        );
-
-        setEntries(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (isAuthenticated && !isDrawerOpen) {
+    if (isAuthenticated && !state.isFormOpen) {
       getLogbookEntries();
     }
-  }, [isAuthenticated, isDrawerOpen]);
+  }, [isAuthenticated, state.isFormOpen]);
 
   return (
     <Box sx={{ margin: '20px' }}>
@@ -348,15 +387,50 @@ const Logbook: React.FC<unknown> = () => {
             Add Entry
           </Button>
         </Grid>
-        <Grid size={12}>
-          {entries.length > 0 && <Table columns={columns} data={entries} />}
-        </Grid>
+        {!state.isLoading && state.error && (
+          <Grid display="flex" justifyContent="center" size={12}>
+            <Alert
+              onClose={() =>
+                dispatch({ type: 'SET_ERROR', payload: undefined })
+              }
+              severity="error"
+              sx={{ width: '100%' }}
+            >
+              {state.error}
+            </Alert>
+          </Grid>
+        )}
+        {!state.isLoading && (
+          <Grid size={12}>
+            {state.entries.length > 0 && (
+              <Table columns={columns} data={state.entries} />
+            )}
+          </Grid>
+        )}
+        {state.isLoading && !state.error && (
+          <>
+            <Grid display="flex" justifyContent="center" size={12}>
+              <Spinner />
+            </Grid>
+            <Grid display="flex" justifyContent="center" size={12}>
+              Loading...
+            </Grid>
+          </>
+        )}
       </Grid>
       <LogbookEntryForm
-        entryId={selectedEntryId}
-        isDrawerOpen={isDrawerOpen}
-        mode={entryFormMode}
+        entryId={state.selectedEntryId}
+        isDrawerOpen={state.isFormOpen}
+        mode={state.formMode}
         onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
+      />
+      <ConfirmationDialog
+        contentText="Are you sure you want to delete the logbook entry?"
+        isLoading={state.isConfirmDialogLoading}
+        isOpen={state.isConfirmDialogOpen}
+        onCancel={onConfirmationDialogCancel}
+        onConfirm={onConfirmationDialogConfirm}
+        title="Confirm Delete"
       />
     </Box>
   );
