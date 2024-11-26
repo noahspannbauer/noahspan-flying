@@ -11,8 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.calling_workflow }}
     steps:
-      - name: 'Checkout'
-        uses: action/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: 'Setup Node'
         uses: actions/setup-node@v4
