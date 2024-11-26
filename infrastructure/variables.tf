@@ -26,3 +26,16 @@ variable "STORAGE_ACCOUNT_NAME" {
   type = string
 }
 
+variable "CLIENT_ID" {
+  type = string
+}
+
+variable "CLIENT_SECRET" {
+  type = string
+  sensitive = true
+}
+
+variable "TENANT_ID" {
+  type = string
+}
+

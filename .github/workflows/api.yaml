@@ -1,0 +1,36 @@
+name: 'API Build and Deploy'
+on:
+  workflow_call:
+    inputs:
+      calling_workflow:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.calling_workflow }}
+    steps:
+      - name: 'Checkout'
+        uses: action/checkout@v4
+
+      - name: 'Setup Node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+
+      - name: Install
+        run: |
+          npm install
+
+      - name: Build
+        shell: bash
+        run: |
+          npm run build -w api
+
+      - name: Deploy
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ vars.API_FUNCTION_APP_NAME }}
+          package: ${{ vars.API_FUNCTION_APP_PACKAGE_PATH }}
+          publish-profile: ${{ secrets.API_FUNCTION_APP_PUBLISH_PROFILE }}

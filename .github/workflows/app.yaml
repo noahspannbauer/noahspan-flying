@@ -1,0 +1,47 @@
+name: 'App Build and Deploy'
+on:
+  workflow_call:
+    inputs:
+      calling_workflow:
+        required: true
+        type: string
+      deployment_environment:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.calling_workflow }}
+    env:
+      VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
+      VITE_TENANT_ID: ${{ secrets.VITE_TENANT_ID }}
+      VITE_REDIRECT_URL: ${{ secrets.VITE_REDIRECT_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: 'Setup Node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+
+      - name: Install
+        run: |
+          npm install
+
+      - name: Build
+        run: |
+          npm run build -w app
+
+      - name: Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          skip_app_build: true
+          app_location: ${{ vars.APP_LOCATION }}
+          deployment_environment: ${{ inputs.deployment_environment }}
