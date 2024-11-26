@@ -106,7 +106,8 @@ export class AppController {
     }
   }
 
-  @Get()
+  @Public()
+  @Get('hello')
   getHello(): string {
     return this.appService.getHello();
   }
