@@ -105,4 +105,9 @@ export class AppController {
       return error;
     }
   }
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
 }
