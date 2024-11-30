@@ -6,8 +6,8 @@ resource "azurerm_static_web_app" "static_web_app" {
   sku_tier = "Free"
 }
 
-resource "azurerm_dns_cname_record" "dns_cname_record" {
-  name = var.SUBDOMAIN_NAME
+resource "azurerm_dns_cname_record" "dns_cname_record_app" {
+  name = var.APP_SUBDOMAIN_NAME
   zone_name = data.azurerm_dns_zone.dns_zone.name
   resource_group_name = data.azurerm_resource_group.resource_group.name
   ttl = 14400
@@ -16,8 +16,8 @@ resource "azurerm_dns_cname_record" "dns_cname_record" {
 
 resource "azurerm_static_web_app_custom_domain" "static_web_app_custom_domain" {
   static_web_app_id = azurerm_static_web_app.static_web_app.id
-  domain_name = "${var.SUBDOMAIN_NAME}.${var.DOMAIN_NAME}"
+  domain_name = "${var.APP_SUBDOMAIN_NAME}.${var.DOMAIN_NAME}"
   validation_type = "cname-delegation"
 
-  depends_on = [ azurerm_dns_cname_record.dns_cname_record ]
+  depends_on = [ azurerm_dns_cname_record.dns_cname_record_app ]
 }
