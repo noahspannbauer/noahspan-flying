@@ -8,6 +8,7 @@ async function bootstrap() {
   const httpService = new HttpService();
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   httpService.axiosRef.interceptors.response.use(
     (response) => {

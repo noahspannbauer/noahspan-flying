@@ -105,4 +105,10 @@ export class AppController {
       return error;
     }
   }
+
+  @Public()
+  @Get('hello')
+  async getHello(): Promise<string> {
+    return this.appService.getHello();
+  }
 }
