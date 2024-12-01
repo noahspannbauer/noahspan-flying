@@ -23,10 +23,11 @@ jobs:
           dir_names: 'true'
 
       - name: Output modified files
+        id: modified-files
         env:
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
         run: |
-          echo ${MODIFIED_FILES}
+          echo "modified_files=${MODIFIED_FILES}" >> "$GITHUB_OUTPUT"
 
   github-output:
     name: git-hub-output
