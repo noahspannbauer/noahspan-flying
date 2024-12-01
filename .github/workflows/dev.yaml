@@ -8,6 +8,8 @@ jobs:
   changed-files:
     name: changed-files
     runs-on: ubuntu-latest
+    outputs:
+      modified_files: ${{ steps.modified-files.outputs.modified_files }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,15 +23,14 @@ jobs:
           dir_names: 'true'
 
       - name: List modified files
+        id: modified-files
         env:
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
         run: |
-          for file in ${MODIFIED_FILES}; do
-            echo "$file was modified"
-          done
+          echo ${MODIFIED_FILES} >> $GITHUB_OUTPUT
 
   build-deploy-api:
-    if: contains(needs.changed-files.outputs, 'api')
+    if: contains(needs.changed-files.outputs.modified_files, 'api')
     name: build-deploy-api
     needs:
       - changed-files
