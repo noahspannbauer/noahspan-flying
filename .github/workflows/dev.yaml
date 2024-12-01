@@ -26,7 +26,7 @@ jobs:
         env:
           MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
         run: |
-          echo "modified_files=$MODIFIED_FILES" >> "$GITHUB_OUTPUT"
+          echo "modified_files=${MODIFIED_FILES}" >> "$GITHUB_OUTPUT"
 
   github-output:
     name: git-hub-output
@@ -38,7 +38,7 @@ jobs:
         env:
           OUTPUT: ${{ needs.changed-files.outputs.modified_files }}
         run: |
-          echo "$OUTPUT"
+          echo '${{ toJSON(needs.changed-files.outputs) }}'
 
   build-deploy-api:
     if: contains(needs.changed-files.outputs.modified_files, 'api')
