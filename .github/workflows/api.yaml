@@ -5,6 +5,9 @@ on:
       calling_workflow:
         required: true
         type: string
+      version_number:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -43,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: noahspan/flying-api:${{ github.run_id }}
+          tags: noahspan/flying-api:${{ inputs.version_number }}
           file: ./api/Dockerfile
           context: ./api
 
@@ -59,4 +62,4 @@ jobs:
 
       - name: Update Container App
         run: |
-          az containerapp update --name flying-api-${{ inputs.calling_workflow }}-${{ github.run_id }} --resource-group noahspan --image docker.io/noahspan/flying-api:${{ github.run_id }}
+          az containerapp update --name flying-api-${{ inputs.calling_workflow }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/flying-api:${{ inputs.version_number }}

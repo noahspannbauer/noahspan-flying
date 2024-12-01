@@ -29,18 +29,6 @@ jobs:
         run: |
           echo "modified_files=${MODIFIED_FILES}" >> "$GITHUB_OUTPUT"
 
-  github-output:
-    name: git-hub-output
-    needs:
-      - changed-files
-    runs-on: ubuntu-latest
-    steps:
-      - name: GitHub output
-        env:
-          OUTPUT: ${{ needs.changed-files.outputs.modified_files }}
-        run: |
-          echo '${{ toJSON(needs.changed-files.outputs) }}'
-
   build-deploy-api:
     if: contains(needs.changed-files.outputs.modified_files, 'api')
     name: build-deploy-api
@@ -49,6 +37,7 @@ jobs:
     uses: ./.github/workflows/api.yaml
     with:
       calling_workflow: dev
+      version_number: ${{ github.run_id }}
     secrets: inherit
 
   build-deploy-app:
