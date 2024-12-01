@@ -28,6 +28,16 @@ jobs:
         run: |
           echo "modified_files=$MODIFIED_FILES" >> $GITHUB_OUTPUT
 
+  github-output:
+    name: git-hub-output
+    needs:
+      - changed-files
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub output
+        run: |
+          echo ${GITHUB_OUTPUT}
+
   build-deploy-api:
     if: contains(needs.changed-files.outputs.modified_files, 'api')
     name: build-deploy-api
