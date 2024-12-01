@@ -15,12 +15,21 @@ jobs:
           fetch-depth: 2
 
       - name: Get changed files
+        id: changed-files
         uses: tj-actions/changed-files@v45
         with:
           dir_names: 'true'
 
+      - name: List modified files
+        env:
+          MODIFIED_FILES: ${{ steps.changed-files.outputs.modified_files }}
+        run: |
+          for file in ${MODIFIED_FILES}; do
+            echo "$file was modified"
+          done
+
   build-deploy-api:
-    if: contains(needs.changed-files.outputs.modified_files, 'api')
+    if: contains(needs.changed-files.outputs, 'api')
     name: build-deploy-api
     needs:
       - changed-files
