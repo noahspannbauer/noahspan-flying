@@ -418,20 +418,24 @@ const Logbook: React.FC<unknown> = () => {
           </>
         )}
       </Grid>
-      <LogbookEntryForm
-        entryId={state.selectedEntryId}
-        isDrawerOpen={state.isFormOpen}
-        mode={state.formMode}
-        onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
-      />
-      <ConfirmationDialog
-        contentText="Are you sure you want to delete the logbook entry?"
-        isLoading={state.isConfirmDialogLoading}
-        isOpen={state.isConfirmDialogOpen}
-        onCancel={onConfirmationDialogCancel}
-        onConfirm={onConfirmationDialogConfirm}
-        title="Confirm Delete"
-      />
+      {state.isFormOpen && (
+        <LogbookEntryForm
+          entryId={state.selectedEntryId}
+          isDrawerOpen={state.isFormOpen}
+          mode={state.formMode}
+          onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
+        />
+      )}
+      {state.isConfirmDialogOpen && (
+        <ConfirmationDialog
+          contentText="Are you sure you want to delete the logbook entry?"
+          isLoading={state.isConfirmDialogLoading}
+          isOpen={state.isConfirmDialogOpen}
+          onCancel={onConfirmationDialogCancel}
+          onConfirm={onConfirmationDialogConfirm}
+          title="Confirm Delete"
+        />
+      )}
     </Box>
   );
 };
