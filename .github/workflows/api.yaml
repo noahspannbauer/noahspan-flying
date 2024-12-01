@@ -59,4 +59,4 @@ jobs:
 
       - name: Update Container App
         run: |
-          az containerapp update --name flying-api --resource-group noahspan --image docker.io/noahspan/flying-api:${{ github.run_id }}
+          az containerapp update --name flying-api-${{ inputs.calling_workflow }}-${{ github.run_id }} --resource-group noahspan --image docker.io/noahspan/flying-api:${{ github.run_id }}

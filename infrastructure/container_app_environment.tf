@@ -1,5 +1,5 @@
 resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
-  name = "noahspan-flying-log-analytics-workspace"
+  name = "flying-log-analytics-workspace"
   location = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
   sku = "PerGB2018"
@@ -7,7 +7,7 @@ resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
 }
 
 resource "azurerm_container_app_environment" "container_app_environment_dev" {
-  name = "flying-dev"
+  name = "flying"
   location = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id

@@ -1,5 +1,5 @@
 resource "azurerm_container_app" "container_app_dev" {
-  name = "flying-api"
+  name = "flying-api-dev"
   container_app_environment_id = azurerm_container_app_environment.container_app_environment_dev.id
   resource_group_name = data.azurerm_resource_group.resource_group.name
   revision_mode = "Single"
@@ -12,7 +12,7 @@ resource "azurerm_container_app" "container_app_dev" {
 
   template {
     min_replicas = 0
-    max_replicas = 1
+    max_replicas = 5
 
     container {
       name = "flying-api-dev"
