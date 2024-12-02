@@ -15,6 +15,7 @@ export class PilotInfoService {
     try {
       const client: TableClient =
         await this.tableService.getTableClient('Pilots');
+      console.log(client);
       const entities = await client.listEntities({
         queryOptions: {
           filter: odata`PartitionKey eq 'pilot' and RowKey eq '${pilotId}'`
