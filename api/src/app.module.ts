@@ -14,6 +14,8 @@ import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 
+console.log('app: ' + process.env);
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
