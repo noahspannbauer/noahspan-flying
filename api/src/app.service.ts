@@ -6,7 +6,7 @@ export class AppService {
   constructor(private readonly msGraphService: MsGraphService) {}
 
   getHello(): string {
-    return process.env.toString();
+    return JSON.stringify(process.env);
   }
 
   async getPersonSearchResults(
