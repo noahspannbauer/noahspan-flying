@@ -16,7 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: true
+          sparse-checkout: |
+            ./api
 
       - name: 'Setup Node'
         uses: actions/setup-node@v4
@@ -24,12 +25,14 @@ jobs:
           node-version: ${{ vars.NODE_VERSION }}
 
       - name: Install
+        working-directory: ./app
         run: |
           npm install
 
       - name: Build
+        working-directory: ./app
         run: |
-          npm run build -w app
+          npm run build
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
