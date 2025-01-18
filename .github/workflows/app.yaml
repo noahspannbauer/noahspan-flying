@@ -52,7 +52,8 @@ jobs:
         with:
           push: true
           tags: noahspan/flying-app:${{ inputs.version_number }}
-          context: ./app
+          context: .
+          target: app
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL }}
             VITE_CLIENT_ID=${{ secrets.VITE_CLIENT_ID }}

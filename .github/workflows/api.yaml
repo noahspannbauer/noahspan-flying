@@ -56,7 +56,8 @@ jobs:
         with:
           push: true
           tags: noahspan/flying-api:${{ inputs.version_number }}
-          context: ./api
+          context: .
+          target: api
 
   deploy:
     runs-on: ubuntu-latest
