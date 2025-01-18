@@ -20,20 +20,23 @@ jobs:
           sparse-checkout: |
             api
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ vars.PNPM_VERSION }}
+
       - name: 'Setup Node'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ vars.NODE_VERSION }}
 
-      - name: Install
-        working-directory: api
+      - name: Install dependencies
         run: |
-          npm install
+          pnpm install --prod --frozen-lockfile
 
       - name: Build
-        working-directory: api
         run: |
-          npm run build
+          pnpm --filter api build
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
