@@ -11,8 +11,8 @@ RUN pnpm deploy --filter=api --prod /prod/api
 RUN pnpm deploy --filter=app --prod /prod/app
 
 FROM base AS api
-COPY --from=build /prod/api /prod/api
-WORKDIR /prod/app1
+COPY --from=install /prod/api /prod/api
+WORKDIR /prod/api
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
 
@@ -22,7 +22,7 @@ ARG VITE_CLIENT_ID
 ARG VITE_TENANT_ID
 ARG VITE_REDIRECT_URL
 RUN npm i -g serve
-COPY --from=build /prod/app /prod/app
+COPY --from=install /prod/app /prod/app
 WORKDIR /prod/app
 EXPOSE 8080
 CMD [ "serve", "-s", "dist", "-p", "8080" ]
