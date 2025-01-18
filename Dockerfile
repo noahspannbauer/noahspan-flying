@@ -11,10 +11,11 @@ RUN pnpm deploy --filter=api --prod /prod/api
 RUN pnpm deploy --filter=app --prod /prod/app
 
 FROM base AS api
-COPY --from=install /prod/api /prod/api
-WORKDIR /prod/api
+COPY ./api/dist ./api/dist
+COPY ./api/node_modules ./api/node_modules
 EXPOSE 3000
-CMD ["node", "dist/main.js"]
+CMD ["node", "/api/dist/main.js"]
+# CMD ["tail", "-f", "/dev/null"] 
 
 FROM base AS app
 ARG VITE_API_URL
