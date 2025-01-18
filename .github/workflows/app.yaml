@@ -27,7 +27,7 @@ jobs:
       - name: Install
         working-directory: app
         run: |
-          npm install --omit=dev
+          npm install
 
       - name: Build
         working-directory: app
