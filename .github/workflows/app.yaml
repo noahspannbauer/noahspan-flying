@@ -25,10 +25,12 @@ jobs:
           node-version: ${{ vars.NODE_VERSION }}
 
       - name: Install
+        working-directory: app
         run: |
           npm install
 
       - name: Build
+        working-directory: app
         run: |
           npm run build
 
