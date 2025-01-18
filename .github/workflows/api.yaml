@@ -23,12 +23,12 @@ jobs:
           node-version: ${{ vars.NODE_VERSION }}
 
       - name: Install
-        working-directory: ./api
+        working-directory: api
         run: |
           npm install
 
       - name: Build
-        working-directory: ./api
+        working-directory: api
         run: |
           npm run build
 
