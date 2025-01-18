@@ -25,6 +25,10 @@ jobs:
         with:
           version: ${{ vars.PNPM_VERSION }}
 
+      - name: Install Nest CLI
+        run: |
+          npm install -g @nestjs/cli
+
       - name: 'Setup Node'
         uses: actions/setup-node@v4
         with:
