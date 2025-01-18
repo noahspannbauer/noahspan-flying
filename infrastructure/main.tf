@@ -30,8 +30,7 @@ resource "azurerm_container_app" "container_app_api" {
 
   dapr {
     app_id = module.environment.container_app_api_dapr_app_id
-    app_port = 80
-    app_protocol = "http"
+    app_port = 3000
   }
 
   template {
@@ -49,7 +48,7 @@ resource "azurerm_container_app" "container_app_api" {
   ingress {
     allow_insecure_connections = false
     external_enabled = true
-    target_port = 80
+    target_port = 3000
     transport = "auto"
 
     traffic_weight {
@@ -95,7 +94,7 @@ resource "azurerm_container_app" "container_app_app" {
   ingress {
     allow_insecure_connections = false
     external_enabled = true
-    target_port = 80
+    target_port = 8080
     transport = "auto"
 
     traffic_weight {
