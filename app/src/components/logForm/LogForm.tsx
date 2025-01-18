@@ -17,7 +17,7 @@ import {
   XmarkIcon
 } from '@noahspan/noahspan-components';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { ILogbookEntryFormProps } from './ILogbookEntryFormProps';
+import { ILogFormProps } from './ILogFormProps';
 import { initialState, reducer } from './reducer';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
@@ -26,7 +26,7 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
 import { usePilots } from '../../hooks/pilots/UsePilots';
 
-const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
+const LogForm: React.FC<ILogFormProps> = ({
   entryId,
   isDrawerOpen,
   mode,
@@ -37,8 +37,6 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   const defaultValues = {
-    partitionKey: '',
-    rowKey: '',
     pilotId: '',
     pilotName: '',
     date: null,
@@ -80,13 +78,13 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
       const accessToken: string = await getAccessToken();
 
       if (!entryId) {
-        await httpClient.post(`api/logbook`, data, {
+        await httpClient.post(`api/logs`, data, {
           headers: {
             Authorization: accessToken
           }
         });
       } else {
-        await httpClient.put(`api/logbook/${entryId}`, data, {
+        await httpClient.put(`api/logs/${entryId}`, data, {
           headers: {
             Authorization: accessToken
           }
@@ -120,7 +118,7 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/logbook/${entryId}`,
+          `api/logs/${entryId}`,
           config
         );
         const entry = response.data;
@@ -939,4 +937,4 @@ const LogbookEntryForm: React.FC<ILogbookEntryFormProps> = ({
   );
 };
 
-export default LogbookEntryForm;
+export default LogForm;

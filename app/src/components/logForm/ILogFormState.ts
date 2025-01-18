@@ -1,4 +1,4 @@
-export interface ILogbookEntryFormState {
+export interface ILogFormState {
   error: string | undefined;
   isDisabled: boolean;
   isLoading: boolean;

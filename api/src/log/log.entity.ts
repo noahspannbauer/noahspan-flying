@@ -1,4 +1,4 @@
-export class LogbookEntity {
+export class Log {
   partitionKey: string;
   rowKey: string;
   pilotId: string;

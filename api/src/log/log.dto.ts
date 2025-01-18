@@ -1,4 +1,4 @@
-export class LogbookDto {
+export class LogDto {
   pilotId: string;
   pilotName: string;
   date: string;

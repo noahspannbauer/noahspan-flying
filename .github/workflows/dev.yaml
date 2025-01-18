@@ -48,5 +48,5 @@ jobs:
     uses: ./.github/workflows/app.yaml
     with:
       calling_workflow: dev
-      deployment_environment: development
+      version_number: ${{ github.run_id }}
     secrets: inherit

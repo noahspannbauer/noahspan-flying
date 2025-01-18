@@ -1,4 +1,6 @@
-export class PilotInfoDto {
+export class PilotDto {
+  partitionKey: string;
+  rowKey: string;
   id: string;
   name: string;
   address: string;

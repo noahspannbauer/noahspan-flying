@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { DaprModule, DaprService } from '@noahspan/noahspan-modules';
-import { PilotController } from './pilot.controller';
-import { PilotService } from './pilot.service';
+import { LogController } from './log.controller';
+import { LogService } from './log.service';
 import { AzureTableStorageModule } from '@noahspan/azure-database';
-import { Pilot } from './pilot.entity';
+import { Log } from './log.entity';
 
 @Module({
   imports: [
@@ -22,13 +22,13 @@ import { Pilot } from './pilot.entity';
       },
       inject: [DaprService]
     }),
-    AzureTableStorageModule.forFeature(Pilot, {
+    AzureTableStorageModule.forFeature(Log, {
       createTableIfNotExists: false,
-      table: 'pilots'
+      table: 'logs'
     }),
     DaprModule
   ],
-  controllers: [PilotController],
-  providers: [PilotService]
+  controllers: [LogController],
+  providers: [LogService]
 })
-export class PilotModule {}
+export class LogModule {}

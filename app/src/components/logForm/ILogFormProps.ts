@@ -1,6 +1,6 @@
 import { FormMode } from '../../enums/formMode';
 
-export interface ILogbookEntryFormProps {
+export interface ILogFormProps {
   entryId?: string;
   isDrawerOpen: boolean;
   mode: FormMode;

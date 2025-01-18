@@ -19,6 +19,7 @@ const App: React.FC<unknown> = () => {
         const response: AxiosResponse = await httpClient.get(
           `api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
         );
+        console.log(response);
         const featureFlags: { key: string; enabled: boolean }[] = response.data;
 
         if (featureFlags.length > 0) {

@@ -1,4 +1,4 @@
-import { ILogbookEntryFormState } from './ILogbookEntryFormState';
+import { ILogFormState } from './ILogFormState';
 
 type Action =
   | { type: 'SET_ERROR'; payload: string | undefined }
@@ -7,7 +7,7 @@ type Action =
   | { type: 'SET_PILOT_OPTIONS'; payload: { label: string; value: string }[] }
   | { type: 'SET_SELECTED_ENTRY_PILOT_NAME'; payload: string };
 
-export const initialState: ILogbookEntryFormState = {
+export const initialState: ILogFormState = {
   error: undefined,
   isDisabled: false,
   isLoading: true,
@@ -16,9 +16,9 @@ export const initialState: ILogbookEntryFormState = {
 };
 
 export const reducer = (
-  state: ILogbookEntryFormState,
+  state: ILogFormState,
   action: Action
-): ILogbookEntryFormState => {
+): ILogFormState => {
   switch (action.type) {
     case 'SET_ERROR': {
       return {

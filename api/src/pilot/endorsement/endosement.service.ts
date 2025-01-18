@@ -1,4 +1,4 @@
-import { InjectRepository, Repository } from '@nestjs/azure-database';
+import { InjectRepository, Repository } from '@noahspan/azure-database';
 import { Injectable } from '@nestjs/common';
 import { Endorsement } from './endorsement.entity';
 

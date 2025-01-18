@@ -1,3 +1,5 @@
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpService } from '@nestjs/axios';
@@ -20,6 +22,7 @@ async function bootstrap() {
       throw new InternalServerErrorException();
     }
   );
+  app.enableCors();
 
   await app.listen(3000);
 }

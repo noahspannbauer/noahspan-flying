@@ -1,5 +1,5 @@
-import { useEffect, useReducer, useState } from 'react';
-import LogbookEntryForm from '../logbookEntryForm/LogbookEntryForm';
+import { useEffect, useReducer } from 'react';
+import LogForm from '../logForm/LogForm';
 import {
   Alert,
   Box,
@@ -35,10 +35,7 @@ const Logbook: React.FC<unknown> = () => {
       const config = isAuthenticated
         ? { headers: { Authorization: `${token}` } }
         : {};
-      const response: AxiosResponse = await httpClient.get(
-        `api/logbook`,
-        config
-      );
+      const response: AxiosResponse = await httpClient.get(`api/logs`, config);
 
       dispatch({ type: 'SET_ENTRIES', payload: response.data });
     } catch (error) {
@@ -98,7 +95,7 @@ const Logbook: React.FC<unknown> = () => {
         ? { headers: { Authorization: `${token}` } }
         : {};
 
-      await httpClient.delete(`api/logbook/${state.selectedEntryId}`, config);
+      await httpClient.delete(`api/logs/${state.selectedEntryId}`, config);
 
       dispatch({
         type: 'SET_DELETE',
@@ -419,7 +416,7 @@ const Logbook: React.FC<unknown> = () => {
         )}
       </Grid>
       {state.isFormOpen && (
-        <LogbookEntryForm
+        <LogForm
           entryId={state.selectedEntryId}
           isDrawerOpen={state.isFormOpen}
           mode={state.formMode}

@@ -6,28 +6,24 @@ import {
   HttpException,
   Param,
   Post,
-  Put,
-  UseInterceptors
+  Put
 } from '@nestjs/common';
-import { PilotDto } from './pilot.dto';
-import { Pilot } from './pilot.entity';
-import { PilotService } from './pilot.service';
-import { CustomError, Public } from '@noahspan/noahspan-modules';
-import { PilotInterceptor } from './interceptors/pilot.interceptor';
+import { LogDto } from './log.dto';
+import { Log } from './log.entity';
+import { LogService } from './log.service';
+import { CustomError } from '@noahspan/noahspan-modules';
 
-@Controller('pilots')
-export class PilotController {
-  constructor(private readonly pilotService: PilotService) {}
+@Controller('logs')
+export class LogController {
+  constructor(private readonly logService: LogService) {}
 
   @Get(':partitionKey/:rowKey')
-  @Public()
-  @UseInterceptors(PilotInterceptor)
   async find(
     @Param('partitionKey') partitionKey: string,
     @Param('rowKey') rowKey: string
-  ) {
+  ): Promise<Log> {
     try {
-      return await this.pilotService.find(partitionKey, rowKey);
+      return await this.logService.find(partitionKey, rowKey);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -36,11 +32,9 @@ export class PilotController {
   }
 
   @Get()
-  @Public()
-  @UseInterceptors(PilotInterceptor)
-  async findAll() {
+  async findAll(): Promise<Log[]> {
     try {
-      return await this.pilotService.findAll();
+      return await this.logService.findAll();
     } catch (error) {
       const customError = error as CustomError;
 
@@ -49,13 +43,13 @@ export class PilotController {
   }
 
   @Post()
-  async create(@Body() pilotDto: PilotDto) {
+  async create(@Body() logDto: LogDto): Promise<Log> {
     try {
-      const pilot = new Pilot();
+      const log = new Log();
 
-      Object.assign(pilot, pilotDto);
-
-      return await this.pilotService.create(pilot);
+      Object.assign(log, logDto);
+      console.log(log);
+      return await this.logService.create(log);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -67,14 +61,14 @@ export class PilotController {
   async update(
     @Param('partitionKey') partitionKey: string,
     @Param('rowKey') rowKey: string,
-    @Body() pilotDto: PilotDto
-  ) {
+    @Body() logDto: LogDto
+  ): Promise<Log> {
     try {
-      const pilot = new Pilot();
+      const log = new Log();
 
-      Object.assign(pilot, pilotDto);
+      Object.assign(log, logDto);
 
-      return await this.pilotService.update(partitionKey, rowKey, pilot);
+      return await this.logService.update(partitionKey, rowKey, log);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -86,9 +80,9 @@ export class PilotController {
   async delete(
     @Param('partitionKey') partitionKey: string,
     @Param('rowKey') rowKey: string
-  ) {
+  ): Promise<void> {
     try {
-      return await this.pilotService.delete(partitionKey, rowKey);
+      return await this.logService.delete(partitionKey, rowKey);
     } catch (error) {
       const customError = error as CustomError;
 
