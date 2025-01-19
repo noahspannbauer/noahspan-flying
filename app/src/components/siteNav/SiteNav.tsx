@@ -83,9 +83,9 @@ const SiteNav: React.FC<unknown> = () => {
   //     throw new Error();
   //   }
   // };
-  // const handlePageClick = (url: string) => {
-  //   navigate(url);
-  // };
+  const handlePageClick = (url: string) => {
+    navigate(url);
+  };
 
   const Settings = () => {
     return (
