@@ -10,45 +10,21 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps ) => {
   const msalInstance = new PublicClientApplication(msalConfig);
 
-  msalInstance.initialize().then(() => {
-    msalInstance.handleRedirectPromise().then(handleResponse).catch((error) => {
-      console.error(error);
-    })
-  }).catch((error) => {
-    console.log('handleRedirectPromise: ' + error)
-  })
-
-  const handleResponse = () => {
-    if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
+  // Default to using the first account if no account is active on page load
+  if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
       // Account selection logic is app dependent. Adjust as needed for different use cases.
       msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
-    }
-
-    msalInstance.addEventCallback((event) => {
-      const authenticationResult = event.payload as AuthenticationResult;
-      const account = authenticationResult?.account;
-  
-        if (event.eventType === EventType.LOGIN_SUCCESS && account) {
-            msalInstance.setActiveAccount(account);
-        }
-    });
   }
 
-  // Default to using the first account if no account is active on page load
-  // if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
-  //     // Account selection logic is app dependent. Adjust as needed for different use cases.
-  //     msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
-  // }
-
   // Listen for sign-in event and set active account
-  // msalInstance.addEventCallback((event) => {
-  //   const authenticationResult = event.payload as AuthenticationResult;
-  //   const account = authenticationResult?.account;
+  msalInstance.addEventCallback((event) => {
+    const authenticationResult = event.payload as AuthenticationResult;
+    const account = authenticationResult?.account;
 
-  //     if (event.eventType === EventType.LOGIN_SUCCESS && account) {
-  //         msalInstance.setActiveAccount(account);
-  //     }
-  // });
+      if (event.eventType === EventType.LOGIN_SUCCESS && account) {
+          msalInstance.setActiveAccount(account);
+      }
+  });
 
   return <MsalProvider instance={msalInstance}>
     {children}
