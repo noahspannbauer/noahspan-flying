@@ -35,11 +35,11 @@ const SiteNav: React.FC<unknown> = () => {
     }
   ];
 
-  const handleSignInRedirect = () => {
-    instance
+  const handleSignInRedirect = async () => {
+    await instance
       .loginRedirect({
           ...loginRequest,
-          prompt: 'create',
+          // prompt: 'create',
       })
       .catch((error) => console.log(error));
   };
