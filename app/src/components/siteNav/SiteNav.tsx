@@ -44,14 +44,18 @@ const SiteNav: React.FC<unknown> = () => {
     }
   ];
   const handleSignIn = async () => {
-    try {
-      await instance.handleRedirectPromise()
-      await instance.loginRedirect({
-        scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
-      });
-    } catch (error) {
+    instance.handleRedirectPromise().then((response) => {
+      if (response) {
+        console.log(response)
+        console.log('successful login', response);
+      } else {
+        instance.loginRedirect({
+          scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+        });
+      }
+    }).catch((error) => {
       console.log(error);
-    }
+    })
   };
   const handleSignOut = () => {
     instance.logoutRedirect();
