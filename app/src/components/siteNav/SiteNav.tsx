@@ -20,7 +20,7 @@ const SiteNav: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
   const isAuthenticated = useIsAuthenticated();
-  const { getAccessToken } = useAccessToken();
+  // const { getAccessToken } = useAccessToken();
   const { instance } = useMsal();
   const navigate = useNavigate();
   const pages = [
@@ -50,42 +50,42 @@ const SiteNav: React.FC<unknown> = () => {
     window.location.reload();
   }
 
-  const getUserProfile = async (accessToken: string): Promise<User> => {
-    try {
-      const response: AxiosResponse = await httpClient.get(`api/userProfile`, {
-        headers: {
-          Authorization: accessToken
-        }
-      });
-      const userProfile: User = response.data;
+  // const getUserProfile = async (accessToken: string): Promise<User> => {
+  //   try {
+  //     const response: AxiosResponse = await httpClient.get(`api/userProfile`, {
+  //       headers: {
+  //         Authorization: accessToken
+  //       }
+  //     });
+  //     const userProfile: User = response.data;
 
-      return userProfile;
-    } catch (error) {
-      throw new Error();
-    }
-  };
+  //     return userProfile;
+  //   } catch (error) {
+  //     throw new Error();
+  //   }
+  // };
 
-  const getUserPhoto = async (accessToken: string): Promise<string> => {
-    try {
-      const response: AxiosResponse = await httpClient.get(`api/userPhoto`, {
-        headers: {
-          Authorization: accessToken
-        },
-        responseType: 'arraybuffer'
-      });
-      const arrayBufferView = new Uint8Array(response.data);
-      const blob = new Blob([arrayBufferView], { type: 'image/png' });
-      const imageUrl = window.URL.createObjectURL(blob);
+  // const getUserPhoto = async (accessToken: string): Promise<string> => {
+  //   try {
+  //     const response: AxiosResponse = await httpClient.get(`api/userPhoto`, {
+  //       headers: {
+  //         Authorization: accessToken
+  //       },
+  //       responseType: 'arraybuffer'
+  //     });
+  //     const arrayBufferView = new Uint8Array(response.data);
+  //     const blob = new Blob([arrayBufferView], { type: 'image/png' });
+  //     const imageUrl = window.URL.createObjectURL(blob);
 
-      return imageUrl;
-    } catch (error) {
-      console.log(error);
-      throw new Error();
-    }
-  };
-  const handlePageClick = (url: string) => {
-    navigate(url);
-  };
+  //     return imageUrl;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new Error();
+  //   }
+  // };
+  // const handlePageClick = (url: string) => {
+  //   navigate(url);
+  // };
 
   const Settings = () => {
     return (
@@ -98,31 +98,31 @@ const SiteNav: React.FC<unknown> = () => {
     );
   };
 
-  useEffect(() => {
-    const setUserProfile = async () => {
-      try {
-        const accessToken: string = await getAccessToken();
-        const userProfile = await getUserProfile(accessToken);
-        const userPhoto = await getUserPhoto(accessToken);
+  // useEffect(() => {
+  //   const setUserProfile = async () => {
+  //     try {
+  //       const accessToken: string = await getAccessToken();
+  //       const userProfile = await getUserProfile(accessToken);
+  //       const userPhoto = await getUserPhoto(accessToken);
 
-        setUserPhoto(userPhoto);
+  //       setUserPhoto(userPhoto);
 
-        appContext.dispatch({
-          type: 'SET_USER_PROFILE',
-          payload: userProfile
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //       appContext.dispatch({
+  //         type: 'SET_USER_PROFILE',
+  //         payload: userProfile
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    if (
-      isAuthenticated &&
-      Object.keys(appContext.state.userProfile).length === 0
-    ) {
-      setUserProfile();
-    }
-  }, [isAuthenticated]);
+  //   if (
+  //     isAuthenticated &&
+  //     Object.keys(appContext.state.userProfile).length === 0
+  //   ) {
+  //     setUserProfile();
+  //   }
+  // }, [isAuthenticated]);
 
   return (
     <Navbar
