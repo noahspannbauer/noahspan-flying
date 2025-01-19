@@ -30,10 +30,6 @@ output "container_app_environment_name" {
   value = local.container_app_environment_name[var.environment]
 }
 
-output "key_vault_name" {
-  value = local.key_vault_name[var.environment]
-}
-
 output "logbook_feature_flag_active" {
   value = local.logbook_feature_flag_active[var.environment]
 }
