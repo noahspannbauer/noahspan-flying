@@ -7,7 +7,7 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
-export const AuthProvider = async ({ children }: AuthProviderProps ) => {
+export const AuthProvider = ({ children }: AuthProviderProps ) => {
   const msalInstance = new PublicClientApplication(msalConfig);
 
   // Default to using the first account if no account is active on page load
@@ -25,9 +25,6 @@ export const AuthProvider = async ({ children }: AuthProviderProps ) => {
           msalInstance.setActiveAccount(account);
       }
   });
-
-  await msalInstance.initialize();
-  // msalInstance.handleRedirectPromise();
 
   return <MsalProvider instance={msalInstance}>
     {children}

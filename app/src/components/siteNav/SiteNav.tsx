@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import {
+  Button,
   MenuItem,
   Navbar,
   PlaneIcon,
@@ -19,7 +20,7 @@ const SiteNav: React.FC<unknown> = () => {
   const [userPhoto, setUserPhoto] = useState<string>();
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
-  const isAuthenticated = useIsAuthenticated();
+  // const isAuthenticated = useIsAuthenticated();
   // const { getAccessToken } = useAccessToken();
   const { instance } = useMsal();
   const navigate = useNavigate();
@@ -125,15 +126,16 @@ const SiteNav: React.FC<unknown> = () => {
   // }, [isAuthenticated]);
 
   return (
-    <Navbar
-      handlePageClick={handlePageClick}
-      handleSignIn={handleSignInRedirect}
-      isAuthenticated={isAuthenticated}
-      logo={<PlaneIcon size="2x" />}
-      pages={pages}
-      settings={<Settings />}
-      userPhoto={userPhoto}
-    />
+    <Button onClick={handleSignInRedirect}>Sign In</Button>
+    // <Navbar
+    //   handlePageClick={handlePageClick}
+    //   handleSignIn={handleSignInRedirect}
+    //   isAuthenticated={isAuthenticated}
+    //   logo={<PlaneIcon size="2x" />}
+    //   pages={pages}
+    //   settings={<Settings />}
+    //   userPhoto={userPhoto}
+    // />
   );
 };
 
