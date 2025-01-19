@@ -3,7 +3,6 @@ locals {
     dev = "flying-app-dev"
   }
 
-
   container_app_app_container_image = {
     dev = "noahspan/flying-app:v0.0.1"
   }
@@ -32,6 +31,10 @@ locals {
     dev = "flying-dev"
   }
 
+  logbook_feature_flag_active = {
+    dev = "true"
+  }
+
   key_vault_name = {
     dev = "noahspanflyingkeyvault"
   }
@@ -40,11 +43,11 @@ locals {
     dev = "flying-log-analytics-workspace-dev"
   }
 
-  storage_account_name = {
-    dev = "noahspanflyingdev"
+  pilots_feature_flag_active = {
+    dev = "true"
   }
 
-  user_assigned_identity_name = {
-    dev = "noahspanflyingdevuser"
+  storage_account_name = {
+    dev = "noahspanflyingdev"
   }
 }

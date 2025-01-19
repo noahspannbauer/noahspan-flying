@@ -4,81 +4,42 @@ import { AppService } from './app.service';
 import { AuthGuard, AuthModule } from '@noahspan/noahspan-modules';
 import { MsGraphModule } from '@noahspan/noahspan-modules';
 import { APP_GUARD } from '@nestjs/core';
+import { FeatureFlagModule } from './featureFlag/feature-flag.module'
 import { LogModule } from './log/log.module';
 import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { DaprModule, DaprService } from '@noahspan/noahspan-modules';
-import { AzureTableStorageModule } from '@noahspan/azure-database';
-
-const secretStoreName = 'key-vault';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     AuthModule.registerAsync({
-      imports: [DaprModule],
-      useFactory: async (daprService: DaprService) => {
-        const clientIdSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'client-id'
-        );
-        const clientSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'client-secret'
-        );
-        const tenantIdSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'tenant-id'
-        );
-
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
         return {
-          clientId: clientIdSecret['client-id'].toString(),
-          clientSecret: clientSecret['client-secret'].toString(),
-          tenantId: tenantIdSecret['tenant-id'].toString()
+          clientId: configService.get<string>('clientId'),
+          clientSecret: configService.get<string>('clientSecret'),
+          tenantId: configService.get<string>('tenantId')
         };
       },
-      inject: [DaprService]
+      inject: [ConfigService]
     }),
-    AzureTableStorageModule.forRootAsync({
-      imports: [DaprModule],
-      useFactory: async (daprService: DaprService) => {
-        const connectionString = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'azure-storage-connection-string'
-        );
-
-        return {
-          connectionString:
-            connectionString['azure-storage-connection-string'].toString()
-        };
-      },
-      inject: [DaprService]
+    ConfigModule.forRoot({
+      load: [configuration]
     }),
-    DaprModule,
+    FeatureFlagModule,
     LogModule,
     MsGraphModule.registerAsync({
-      imports: [DaprModule],
-      useFactory: async (daprService: DaprService) => {
-        const clientIdSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'client-id'
-        );
-        const clientSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'client-secret'
-        );
-        const tenantIdSecret = await daprService.daprClient.secret.get(
-          secretStoreName,
-          'tenant-id'
-        );
-
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
         return {
-          clientId: clientIdSecret['client-id'].toString(),
-          clientSecret: clientSecret['client-secret'].toString(),
-          tenantId: tenantIdSecret['tenant-id'].toString()
+          clientId: configService.get<string>('clientId'),
+          clientSecret: configService.get<string>('clientSecret'),
+          tenantId: configService.get<string>('tenantId')
         };
       },
-      inject: [DaprService]
+      inject: [ConfigService]
     }),
     PilotModule
   ],

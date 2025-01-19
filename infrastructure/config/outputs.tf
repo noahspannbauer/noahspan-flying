@@ -34,14 +34,18 @@ output "key_vault_name" {
   value = local.key_vault_name[var.environment]
 }
 
+output "logbook_feature_flag_active" {
+  value = local.logbook_feature_flag_active[var.environment]
+}
+
 output "log_analytics_workspace_name" {
   value = local.log_analytics_workspace_name[var.environment]
 }
 
-output "storage_account_name" {
-  value = local.storage_account_name[var.environment]
+output "pilots_feature_flag_active" {
+  value = local.pilots_feature_flag_active[var.environment]
 }
 
-output "user_assigned_identity_name" {
-  value = local.user_assigned_identity_name[var.environment]
+output "storage_account_name" {
+  value = local.storage_account_name[var.environment]
 }

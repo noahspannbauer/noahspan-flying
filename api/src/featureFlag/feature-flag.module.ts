@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PilotController } from './pilot.controller';
-import { PilotService } from './pilot.service';
+import { FeatureFlagController } from './feature-flag.controller';
+import { FeatureFlagService } from './feature-flag.service';
 import { AzureTableStorageModule } from '@noahspan/azure-database';
-import { Pilot } from './pilot.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FeatureFlag } from './feature-flag.entity';
 
 @Module({
   imports: [
@@ -16,12 +16,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       },
       inject: [ConfigService]
     }),
-    AzureTableStorageModule.forFeature(Pilot, {
+    AzureTableStorageModule.forFeature(FeatureFlag, {
       createTableIfNotExists: false,
-      table: 'pilots'
+      table: 'featureFlags'
     }),
   ],
-  controllers: [PilotController],
-  providers: [PilotService]
+  controllers: [FeatureFlagController],
+  providers: [FeatureFlagService]
 })
-export class PilotModule {}
+export class FeatureFlagModule {}

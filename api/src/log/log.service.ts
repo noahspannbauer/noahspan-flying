@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LogService {
-  private readonly tableName = 'Logbook';
-
   constructor(
     @InjectRepository(Log) private readonly logRepository: Repository<Log>
   ) {}

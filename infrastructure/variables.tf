@@ -6,6 +6,10 @@ variable "APP_SUBDOMAIN_NAME" {
   type = string
 }
 
+variable "AZURE_STORAGE_CONNECTION_STRING" {
+  type = string
+}
+
 variable "CLIENT_ID" {
   type = string
 }

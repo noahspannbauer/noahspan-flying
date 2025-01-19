@@ -42,6 +42,26 @@ resource "azurerm_container_app" "container_app_api" {
       image = module.environment.container_app_api_container_image
       cpu = 0.25
       memory = "0.5Gi"
+
+      env {
+        name = "AZURE_STORAGE_CONNECTION_STRING"
+        secret_name = "azure-storage-connection-string"
+      }
+
+      env {
+        name = "CLIENT_ID"
+        secret_name = "client-id"
+      }
+
+      env {
+        name = "CLIENT_SECRET"
+        secret_name = "client-secret"
+      }
+
+      env {
+        name = "TENANT_ID"
+        secret_name = "tenant-id"
+      }
     }
   }
 
@@ -60,6 +80,26 @@ resource "azurerm_container_app" "container_app_api" {
   secret {
     name = "docker-io-password"
     value = var.DOCKER_IO_PASSWORD
+  }
+
+  secret {
+    name = "azure-storage-connection-string"
+    value = var.AZURE_STORAGE_CONNECTION_STRING
+  }
+
+  secret {
+    name = "client-id"
+    value = var.CLIENT_ID
+  }
+
+  secret {
+    name = "client-secret"
+    value = var.CLIENT_SECRET
+  }
+
+  secret {
+    name = "tenant-id"
+    value = var.TENANT_ID
   }
 
   lifecycle {

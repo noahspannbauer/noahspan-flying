@@ -48,7 +48,7 @@ export class LogController {
       const log = new Log();
 
       Object.assign(log, logDto);
-      console.log(log);
+
       return await this.logService.create(log);
     } catch (error) {
       const customError = error as CustomError;

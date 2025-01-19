@@ -3,68 +3,19 @@ import {
   Get,
   Headers,
   Query,
-  Res,
   StreamableFile
 } from '@nestjs/common';
 import { Client as MsGraphClient } from '@microsoft/microsoft-graph-client';
 import { MsGraphService, Public } from '@noahspan/noahspan-modules';
-import { FeatureFlagValue } from '@azure/app-configuration';
 import { Person } from '@microsoft/microsoft-graph-types';
 import { AppService } from './app.service';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import { arrayBuffer } from 'stream/consumers';
-import type { Response } from 'express';
-import { DaprService } from '@noahspan/noahspan-modules';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly daprService: DaprService,
     private readonly msGraphService: MsGraphService
   ) {}
-
-  // @Public()
-  // @Get('featureFlags')
-  // async getFeatureFlags(
-  //   @Query() query: any
-  // ): Promise<{ key: string; enabled: boolean }[]> {
-  //   try {
-  //     const featureFlagKeys: string[] =
-  //       query.keys && query.keys.toString().includes(';')
-  //         ? query.keys.split(';')
-  //         : [query.keys];
-  //     const featureFlagLabel: string = query.label;
-  //     const featureFlags: { key: string; enabled: boolean }[] =
-  //       await this.appConfigService.getFeatureFlags(
-  //         featureFlagKeys,
-  //         featureFlagLabel
-  //       );
-
-  //     return featureFlags;
-  //   } catch (error) {
-  //     return error;
-  //   }
-  // }
-
-  @Public()
-  @Get('featureFlags')
-  async getFeatureFlags(@Query() query: any): Promise<void> {
-    try {
-      // const config = await this.daprService.daprClient.configuration.get('app-config', ['flying-logbook'], {
-      //   'label': 'dev'
-      // })
-      console.log('====== BLAH ======');
-      const config =
-        await this.daprService.daprClient.configuration.get('app-config');
-
-      console.log('====== Config ======: ' + config);
-    } catch (error) {
-      console.log(`======= ERROR ======: ${error}`);
-      return error;
-    }
-  }
 
   @Get('userPhoto')
   async getProfilePhoto(@Headers() headers: any): Promise<StreamableFile> {

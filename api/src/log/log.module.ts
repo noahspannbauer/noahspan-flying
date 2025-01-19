@@ -1,32 +1,25 @@
 import { Module } from '@nestjs/common';
-import { DaprModule, DaprService } from '@noahspan/noahspan-modules';
 import { LogController } from './log.controller';
 import { LogService } from './log.service';
 import { AzureTableStorageModule } from '@noahspan/azure-database';
 import { Log } from './log.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     AzureTableStorageModule.forRootAsync({
-      imports: [DaprModule],
-      useFactory: async (daprService: DaprService) => {
-        const connectionString = await daprService.daprClient.secret.get(
-          'key-vault',
-          'azure-storage-connection-string'
-        );
-
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
         return {
-          connectionString:
-            connectionString['azure-storage-connection-string'].toString()
+          connectionString: configService.get<string>('azureStorageConnectionString')
         };
       },
-      inject: [DaprService]
+      inject: [ConfigService]
     }),
     AzureTableStorageModule.forFeature(Log, {
       createTableIfNotExists: false,
       table: 'logs'
     }),
-    DaprModule
   ],
   controllers: [LogController],
   providers: [LogService]

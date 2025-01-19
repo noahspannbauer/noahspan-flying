@@ -15,12 +15,17 @@ const App: React.FC<unknown> = () => {
   useEffect(() => {
     const getFeatureFlags = async () => {
       try {
-        const featureFlagKeys: string = 'flying-pilots';
+        const featureFlags: { key: string; enabled: boolean }[] = []
         const response: AxiosResponse = await httpClient.get(
-          `api/featureFlags?keys=${featureFlagKeys}&label=${import.meta.env.MODE}`
+          'api/featureFlags'
         );
-        console.log(response);
-        const featureFlags: { key: string; enabled: boolean }[] = response.data;
+        
+        for (const featureFlag of response.data) {
+          featureFlags.push({
+            key: featureFlag.rowKey,
+            enabled: featureFlag.active === 'true' ? true : false
+          })
+        }
 
         if (featureFlags.length > 0) {
           appContext.dispatch({
@@ -40,7 +45,7 @@ const App: React.FC<unknown> = () => {
     <div>
       <SiteNav />
       <Routes>
-        {useFeatureFlag('flying-pilots')?.enabled && (
+        {useFeatureFlag('pilots')?.enabled && (
           <Route path="/pilots" element={<Pilots />} />
         )}
         <Route path="/" element={<Logbook />} />
