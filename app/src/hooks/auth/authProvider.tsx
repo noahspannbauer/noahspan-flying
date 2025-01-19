@@ -26,6 +26,8 @@ export const AuthProvider = ({ children }: AuthProviderProps ) => {
       }
   });
 
+  msalInstance.handleRedirectPromise();
+
   return <MsalProvider instance={msalInstance}>
     {children}
   </MsalProvider>
