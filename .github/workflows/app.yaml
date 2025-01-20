@@ -13,6 +13,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: ${{ inputs.calling_workflow }}
+    env:
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
+      VITE_TENANT_ID: ${{ secrets.VITE_TENANT_ID }}
+      VITE_REDIRECT_URL: ${{ secrets.VITE_REDIRECT_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +37,7 @@ jobs:
       - name: Build
         working-directory: app
         run: |
+          printenv
           npm run build
 
       - name: Setup Docker Buildx
@@ -50,11 +56,6 @@ jobs:
           tags: noahspan/flying-app:${{ inputs.version_number }}
           context: .
           target: app
-          build-args: |
-            VITE_API_URL=${{ secrets.VITE_API_URL }}
-            VITE_CLIENT_ID=${{ secrets.VITE_CLIENT_ID }}
-            VITE_TENANT_ID=${{ secrets.VITE_TENANT_ID }}
-            VITE_REDIRECT_URL=${{ secrets.VITE_REDIRECT_URL }}
 
   deploy:
     runs-on: ubuntu-latest
