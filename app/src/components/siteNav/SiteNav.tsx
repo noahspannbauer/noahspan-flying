@@ -125,6 +125,10 @@ const SiteNav: React.FC<unknown> = () => {
       }
     );
 
+    instance.handleRedirectPromise().then((response) => {
+      console.log(response)
+    })
+
     return () => {
       if (callback) {
         instance.removeEventCallback(callback);

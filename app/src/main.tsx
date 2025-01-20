@@ -19,6 +19,10 @@ const msalInstance: PublicClientApplication = new PublicClientApplication({
 console.log(msalInstance);
 
 console.log('ClientId :' + import.meta.env.VITE_CLIENT_ID)
+console.log('TenantId :' + import.meta.env.VITE_TENANT_ID)
+console.log('RedirectUrl :' + import.meta.env.VITE_REDIRECT_URL)
+
+
 
 msalInstance.initialize().then(() => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
