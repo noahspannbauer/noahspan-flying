@@ -16,6 +16,10 @@ const msalInstance: PublicClientApplication = new PublicClientApplication({
   }
 });
 
+console.log(msalInstance);
+
+console.log('ClientId :' + import.meta.env.VITE_CLIENT_ID)
+
 msalInstance.initialize().then(() => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
