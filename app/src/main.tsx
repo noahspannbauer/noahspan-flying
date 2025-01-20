@@ -12,7 +12,7 @@ const msalConfig = {
     auth: {
         clientId: import.meta.env.VITE_CLIENT_ID,
         authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`,
-        redirectUri: import.meta.env.VITE_TENANT_ID,
+        redirectUri: import.meta.env.VITE_REDIRECT_URL,
     },
     // cache: {
     //     cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -48,7 +48,6 @@ const msalConfig = {
 const msalInstance = new PublicClientApplication(msalConfig)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
     <MsalProvider instance={msalInstance}>
       <AppContextProvider>
         <BrowserRouter>
@@ -56,6 +55,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </BrowserRouter>
       </AppContextProvider>
     </MsalProvider>
-  </React.StrictMode>
 );
 
