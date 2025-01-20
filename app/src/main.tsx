@@ -44,7 +44,7 @@ const msalConfig = {
     //     }	
     // }
 };
-
+console.log(msalConfig)
 const msalInstance = new PublicClientApplication(msalConfig)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
