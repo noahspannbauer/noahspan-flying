@@ -28,10 +28,10 @@ msalInstance.addEventCallback((event: EventMessage) => {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AppContextProvider>
+    {/* <AppContextProvider> */}
       <BrowserRouter>
         <App pca={msalInstance} />
       </BrowserRouter>
-    </AppContextProvider>
+    {/* </AppContextProvider> */}
   </React.StrictMode>
 );
