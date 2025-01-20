@@ -14,10 +14,10 @@ const msalConfig = {
         authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`,
         redirectUri: import.meta.env.VITE_TENANT_ID,
     },
-    cache: {
-        cacheLocation: "sessionStorage", // This configures where your cache will be stored
-        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
-    },
+    // cache: {
+    //     cacheLocation: "sessionStorage", // This configures where your cache will be stored
+    //     storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+    // },
     system: {	
         loggerOptions: {	
             loggerCallback: (level: any, message: any, containsPii: any) => {	
