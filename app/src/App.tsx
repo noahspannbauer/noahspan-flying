@@ -24,8 +24,12 @@ const App: React.FC<unknown> = () => {
   // };
 
   const handleSignInRedirect = () => {
-    instance.acquireTokenSilent({
-      scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+    // instance.acquireTokenSilent({
+    //   scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+    // })
+    instance.loginPopup({
+      scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`],
+      prompt: 'create'
     })
   }
 
