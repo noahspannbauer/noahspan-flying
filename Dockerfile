@@ -8,6 +8,9 @@ CMD ["node", "/api/dist/main.js"]
 
 FROM base AS app
 RUN npm i -g serve
-COPY ./app/dist ./app/dist
+WORKDIR ./app
+# COPY ./app/dist ./app/dist
+COPY ./app ./app
 EXPOSE 8080
-CMD [ "serve", "-s", "app/dist", "-p", "8080" ]
+# CMD [ "serve", "-s", "app/dist", "-p", "8080" ]
+CMD ["npm", "run", "dev"]
