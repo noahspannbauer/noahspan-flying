@@ -15,13 +15,19 @@ const App: React.FC<unknown> = () => {
   const appContext = useAppContext();
     const { instance } = useMsal();
 
+  // const handleSignInRedirect = () => {
+  //   instance
+  //     .loginRedirect({
+  //       scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
+
   const handleSignInRedirect = () => {
-    instance
-      .loginRedirect({
-        scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
-      })
-      .catch((error) => console.log(error));
-  };
+    instance.acquireTokenSilent({
+      scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+    })
+  }
 
   useEffect(() => {
     const getFeatureFlags = async () => {
