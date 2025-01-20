@@ -11,8 +11,8 @@
     "serve": "serve -s dist"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.17.0",
-    "@azure/msal-react": "^2.0.19",
+    "@azure/msal-browser": "^4.0.1",
+    "@azure/msal-react": "^3.0.1",
     "@noahspan/noahspan-components": "^0.8.9",
     "axios": "^1.7.2",
     "dotenv": "^16.4.7",
