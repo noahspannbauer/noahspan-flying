@@ -16,6 +16,10 @@ locals {
     test = "flying-app-test"
     prod = "flying-app-prod"
   }
+
+  container_app_app_redirect_url = {
+    dev = "https://flying-app-dev.greensea-e83e7646.centralus.azurecontainerapps.io"
+  }
   
   container_app_api_name = {
     dev = "flying-api-dev"

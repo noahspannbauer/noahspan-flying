@@ -128,6 +128,26 @@ resource "azurerm_container_app" "container_app_app" {
       image = module.environment.container_app_app_container_image
       cpu = 0.25
       memory = "0.5Gi"
+
+      env {
+        name = "VITE_API_URL"
+        value = azurerm_container_app.container_app_api.latest_revision_fqdn
+      }
+
+      env {
+        name = "VITE_CLIENT_ID"
+        secret_name = "client-id"
+      }
+
+      env {
+        name = "VITE_REDIRECT_URL"
+        value = module.environment.container_app_app_redirect_url
+      }
+
+      env {
+        name = "VITE_TENANT_ID"
+        secret_name = "tenant-id"
+      }
     }
   }
 
@@ -144,8 +164,18 @@ resource "azurerm_container_app" "container_app_app" {
   }
 
   secret {
+    name = "client-id"
+    value = var.CLIENT_ID
+  }
+
+  secret {
     name = "docker-io-password"
     value = var.DOCKER_IO_PASSWORD
+  }
+
+  secret {
+    name = "tenant-id"
+    value = var.TENANT_ID
   }
 
   lifecycle {

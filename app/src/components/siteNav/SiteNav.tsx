@@ -43,8 +43,8 @@ const SiteNav: React.FC<unknown> = () => {
       url: '/pilots'
     }
   ];
-  const handleSignIn = async () => {
-    await instance.loginRedirect({
+  const handleSignIn = () => {
+    instance.loginRedirect({
       scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
     });
   };
@@ -98,44 +98,44 @@ const SiteNav: React.FC<unknown> = () => {
     );
   };
 
-  useEffect(() => {
-    const callback = instance.addEventCallback(
-      async (message: EventMessage) => {
-        if (message.eventType === EventType.LOGIN_SUCCESS) {
-          try {
-            setLoading(true);
+  // useEffect(() => {
+  //   const callback = instance.addEventCallback(
+  //     async (message: EventMessage) => {
+  //       if (message.eventType === EventType.LOGIN_SUCCESS) {
+  //         try {
+  //           setLoading(true);
 
-            const eventPayload: EventPayloadExtended =
-              message.payload as EventPayloadExtended;
-            const userProfile: User = await getUserProfile(
-              eventPayload.accessToken
-            );
-            const userPhoto = await getUserPhoto(eventPayload.accessToken);
+  //           const eventPayload: EventPayloadExtended =
+  //             message.payload as EventPayloadExtended;
+  //           const userProfile: User = await getUserProfile(
+  //             eventPayload.accessToken
+  //           );
+  //           const userPhoto = await getUserPhoto(eventPayload.accessToken);
 
-            appContext.dispatch({
-              type: 'SET_USER_PROFILE',
-              payload: userProfile
-            });
-          } catch (error) {
-            console.log(error);
-          } finally {
-            setLoading(false);
-          }
-        }
-      }
-    );
+  //           appContext.dispatch({
+  //             type: 'SET_USER_PROFILE',
+  //             payload: userProfile
+  //           });
+  //         } catch (error) {
+  //           console.log(error);
+  //         } finally {
+  //           setLoading(false);
+  //         }
+  //       }
+  //     }
+  //   );
 
-    instance.handleRedirectPromise().then((response) => {
-      console.log(response)
-    })
+  //   instance.handleRedirectPromise().then((response) => {
+  //     console.log(response)
+  //   })
 
-    return () => {
-      if (callback) {
-        instance.removeEventCallback(callback);
-        appContext.dispatch({ type: 'SET_USER_PROFILE', payload: {} });
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (callback) {
+  //       instance.removeEventCallback(callback);
+  //       appContext.dispatch({ type: 'SET_USER_PROFILE', payload: {} });
+  //     }
+  //   };
+  // }, []);
 
   useEffect(() => {
     const setUserProfile = async () => {
