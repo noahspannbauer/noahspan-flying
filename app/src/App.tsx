@@ -7,10 +7,21 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from './hooks/httpClient/UseHttpClient';
 import { useFeatureFlag } from './hooks/featureFlag/UseFeatureFlag';
 import SiteNav from './components/siteNav/SiteNav';
+import { useMsal } from '@azure/msal-react';
+import { Button } from '@noahspan/noahspan-components';
 
 const App: React.FC<unknown> = () => {
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
+    const { instance } = useMsal();
+
+  const handleSignInRedirect = () => {
+    instance
+      .loginRedirect({
+        scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
+      })
+      .catch((error) => console.log(error));
+  };
 
   useEffect(() => {
     const getFeatureFlags = async () => {
@@ -43,7 +54,8 @@ const App: React.FC<unknown> = () => {
 
   return (
     <div>
-      <SiteNav />
+      <Button onClick={handleSignInRedirect}>Sign On</Button>
+      {/* <SiteNav /> */}
       <Routes>
         {useFeatureFlag('pilots')?.enabled && (
           <Route path="/pilots" element={<Pilots />} />
