@@ -7,7 +7,7 @@ import './index.css';
 import '@noahspan/noahspan-components/noahspan-components.css';
 import { AuthenticationResult, EventMessage, EventType, PublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
-import { msalConfig } from './auth/msalConfig.ts';
+import { msalConfig } from './auth/msalConfig';
 
 const msalInstance: PublicClientApplication = new PublicClientApplication(msalConfig);
 const accounts = msalInstance.getAllAccounts();
