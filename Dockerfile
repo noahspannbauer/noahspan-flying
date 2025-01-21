@@ -8,11 +8,11 @@ CMD ["node", "/api/dist/main.js"]
 
 FROM base AS app
 RUN npm i -g serve
-WORKDIR ./app
-# COPY ./app/dist ./app/dist
-COPY ./app .
-RUN npm install
+# WORKDIR ./app
+COPY ./app/dist ./app/dist
+# COPY ./app .
+# RUN npm install
 EXPOSE 8080
-# CMD [ "serve", "-s", "app/dist", "-p", "8080" ]
-CMD ["npm", "run", "dev"]
+CMD [ "serve", "-s", "app/dist", "-p", "8080" ]
+# CMD ["npm", "run", "dev"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
