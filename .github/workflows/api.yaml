@@ -30,14 +30,16 @@ jobs:
           node-version: ${{ vars.NODE_VERSION }}
 
       - name: Install dependencies
-        working-directory: api
         run: |
-          npm install
+          pnpm install
 
       - name: Build
-        working-directory: api
         run: |
-          npm run build
+          pnpm --filter api build
+
+      - name: Deploy
+        run: |
+          pnpm --filter api --prod deploy ./.prod/api
 
       - name: Log into Docker Hub
         uses: docker/login-action@v3
