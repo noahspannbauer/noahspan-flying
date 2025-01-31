@@ -20,6 +20,12 @@ jobs:
           sparse-checkout: |
             api
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
+
       - name: Install Nest CLI
         run: |
           npm install -g @nestjs/cli
