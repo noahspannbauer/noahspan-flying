@@ -3,14 +3,17 @@ import {
   Get,
   Headers,
   Query,
-  StreamableFile
+  StreamableFile,
+  UseGuards
 } from '@nestjs/common';
 import { Client as MsGraphClient } from '@microsoft/microsoft-graph-client';
-import { MsGraphService, Public } from '@noahspan/noahspan-modules';
+import { MsGraphService } from './msGraph/ms-graph.service'
 import { Person } from '@microsoft/microsoft-graph-types';
 import { AppService } from './app.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
+@UseGuards(AuthGuard('azure-ad'))
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -72,7 +75,6 @@ export class AppController {
     }
   }
 
-  @Public()
   @Get('hello')
   async getHello(): Promise<string> {
     return this.appService.getHello();

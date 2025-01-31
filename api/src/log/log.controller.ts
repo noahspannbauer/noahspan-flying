@@ -6,14 +6,18 @@ import {
   HttpException,
   Param,
   Post,
-  Put
+  Put,
+  UseGuards
 } from '@nestjs/common';
 import { LogDto } from './log.dto';
 import { Log } from './log.entity';
 import { LogService } from './log.service';
-import { CustomError } from '@noahspan/noahspan-modules';
+import { CustomError } from '../error/customError';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('logs')
+@UseGuards(AuthGuard('azure-ad'))
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
@@ -31,6 +35,7 @@ export class LogController {
     }
   }
 
+  // @Public()
   @Get()
   async findAll(): Promise<Log[]> {
     try {

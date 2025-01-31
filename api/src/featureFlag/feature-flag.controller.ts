@@ -3,16 +3,18 @@ import {
   Get,
   HttpException,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { FeatureFlagService } from './feature-flag.service';
-import { CustomError, Public } from '@noahspan/noahspan-modules';
+import { CustomError } from '../error/customError';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('featureFlags')
+@UseGuards(AuthGuard('azure-ad'))
 export class FeatureFlagController {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
   @Get(':partitionKey/:rowKey')
-  @Public()
   async find(
     @Param('partitionKey') partitionKey: string,
     @Param('rowKey') rowKey: string
@@ -27,7 +29,6 @@ export class FeatureFlagController {
   }
 
   @Get()
-  @Public()
   async findAll() {
     try {
       return await this.featureFlagService.findAll();

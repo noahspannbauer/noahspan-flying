@@ -11,17 +11,23 @@ services:
     command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose'
 
   api:
-    container_name: api
+    container_name: flying-api
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: .
+      target: api
     ports:
-      - '7071:3000'
+      - '3000:3000'
     env_file:
       - ./api/.env
 
-  # swa:
-  #   image: swacli/static-web-apps-cli
-  #   ports:
-  #     - "4280:4280"
-  #   command: "swa start "
+  app:
+    container_name: flying-app
+    build:
+      context: .
+      target: app
+    ports: 
+      - '8080:8080'
+    # env_file:
+    #   - ./app/.env
+
+

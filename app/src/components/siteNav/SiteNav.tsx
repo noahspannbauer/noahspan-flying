@@ -137,35 +137,35 @@ const SiteNav: React.FC<unknown> = () => {
   //   };
   // }, []);
 
-  // useEffect(() => {
-  //   const setUserProfile = async () => {
-  //     try {
-  //       setLoading(true);
+  useEffect(() => {
+    const setUserProfile = async () => {
+      try {
+        setLoading(true);
 
-  //       const accessToken: string = await getAccessToken();
-  //       const userProfile = await getUserProfile(accessToken);
-  //       const userPhoto = await getUserPhoto(accessToken);
+        const accessToken: string = await getAccessToken();
+        const userProfile = await getUserProfile(accessToken);
+        const userPhoto = await getUserPhoto(accessToken);
 
-  //       setUserPhoto(userPhoto);
+        setUserPhoto(userPhoto);
 
-  //       appContext.dispatch({
-  //         type: 'SET_USER_PROFILE',
-  //         payload: userProfile
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+        appContext.dispatch({
+          type: 'SET_USER_PROFILE',
+          payload: userProfile
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   if (
-  //     isAuthenticated &&
-  //     Object.keys(appContext.state.userProfile).length === 0
-  //   ) {
-  //     setUserProfile();
-  //   }
-  // }, [isAuthenticated]);
+    if (
+      isAuthenticated &&
+      Object.keys(appContext.state.userProfile).length === 0
+    ) {
+      setUserProfile();
+    }
+  }, [isAuthenticated]);
 
   return (
     <Navbar

@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthGuard, AuthModule } from '@noahspan/noahspan-modules';
-import { MsGraphModule } from '@noahspan/noahspan-modules';
-import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
+import { MsGraphModule } from './msGraph/ms-graph.module';
 import { FeatureFlagModule } from './featureFlag/feature-flag.module'
 import { LogModule } from './log/log.module';
 import { PilotModule } from './pilot/pilot.module';
@@ -45,10 +44,6 @@ import configuration from './config/configuration';
   ],
   controllers: [AppController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 // import { MsGraphService, MsGraphClient } from '@noahspan/noahspan-modules';
 import { Client as MsGraphClient } from '@microsoft/microsoft-graph-client';
-import { MsGraphService } from '@noahspan/noahspan-modules';
+import { MsGraphService } from './msGraph/ms-graph.service';
 
 @Injectable()
 export class AppService {
