@@ -36,7 +36,7 @@ const Logbook: React.FC<unknown> = () => {
         ? { headers: { Authorization: `${token}` } }
         : {};
       const response: AxiosResponse = await httpClient.get(`api/logs`, config);
-
+      console.log(response)
       dispatch({ type: 'SET_ENTRIES', payload: response.data });
     } catch (error) {
       const axiosError = error as AxiosError;

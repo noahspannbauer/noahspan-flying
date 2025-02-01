@@ -52,6 +52,7 @@ const SiteNav: React.FC<unknown> = () => {
     instance.logoutRedirect();
   };
   const getUserProfile = async (accessToken: string): Promise<User> => {
+    console.log(accessToken)
     try {
       const response: AxiosResponse = await httpClient.get(`api/userProfile`, {
         headers: {
@@ -66,6 +67,7 @@ const SiteNav: React.FC<unknown> = () => {
     }
   };
   const getUserPhoto = async (accessToken: string): Promise<string> => {
+    console.log(accessToken)
     try {
       const response: AxiosResponse = await httpClient.get(`api/userPhoto`, {
         headers: {

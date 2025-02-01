@@ -28,11 +28,6 @@ resource "azurerm_container_app" "container_app_api" {
     password_secret_name = "docker-io-password"
   }
 
-  dapr {
-    app_id = module.environment.container_app_api_dapr_app_id
-    app_port = 3000
-  }
-
   template {
     min_replicas = 0
     max_replicas = 2
@@ -68,7 +63,7 @@ resource "azurerm_container_app" "container_app_api" {
   ingress {
     allow_insecure_connections = false
     external_enabled = true
-    target_port = 9090
+    target_port = 3000
     transport = "auto"
 
     traffic_weight {
@@ -84,7 +79,7 @@ resource "azurerm_container_app" "container_app_api" {
 
   secret {
     name = "azure-storage-connection-string"
-    value = var.AZURE_STORAGE_CONNECTION_STRING
+    value = azurerm_storage_account.storage_account.primary_connection_string
   }
 
   secret {
@@ -128,26 +123,6 @@ resource "azurerm_container_app" "container_app_app" {
       image = module.environment.container_app_app_container_image
       cpu = 0.25
       memory = "0.5Gi"
-
-      env {
-        name = "VITE_API_URL"
-        value = azurerm_container_app.container_app_api.latest_revision_fqdn
-      }
-
-      env {
-        name = "VITE_CLIENT_ID"
-        secret_name = "client-id"
-      }
-
-      env {
-        name = "VITE_REDIRECT_URL"
-        value = module.environment.container_app_app_redirect_url
-      }
-
-      env {
-        name = "VITE_TENANT_ID"
-        secret_name = "tenant-id"
-      }
     }
   }
 
@@ -164,18 +139,8 @@ resource "azurerm_container_app" "container_app_app" {
   }
 
   secret {
-    name = "client-id"
-    value = var.CLIENT_ID
-  }
-
-  secret {
     name = "docker-io-password"
     value = var.DOCKER_IO_PASSWORD
-  }
-
-  secret {
-    name = "tenant-id"
-    value = var.TENANT_ID
   }
 
   lifecycle {
