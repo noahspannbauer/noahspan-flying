@@ -6,10 +6,6 @@ variable "APP_SUBDOMAIN_NAME" {
   type = string
 }
 
-variable "AZURE_STORAGE_CONNECTION_STRING" {
-  type = string
-}
-
 variable "CLIENT_ID" {
   type = string
 }
@@ -30,10 +26,6 @@ variable "DOCKER_IO_USERNAME" {
 
 variable "DOMAIN_NAME" {
     type = string
-}
-
-variable "CUSTOM_DOMAIN_NAME_COUNT" {
-  type = number
 }
 
 variable "REGION" {

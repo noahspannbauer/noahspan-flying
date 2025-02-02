@@ -14,10 +14,6 @@ output "container_app_api_name" {
   value = local.container_app_api_name[var.environment]
 }
 
-output "container_app_app_redirect_url" {
-  value = local.container_app_app_redirect_url[var.environment]
-}
-
 output "container_app_api_container_image" {
   value = local.container_app_api_container_image[var.environment]
 }
