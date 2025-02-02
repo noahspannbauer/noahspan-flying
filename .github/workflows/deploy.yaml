@@ -24,4 +24,4 @@ jobs:
 
       - name: Update Container App
         run: |
-          az containerapp update --name ${{ inputs.app_name }}}}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
+          az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
