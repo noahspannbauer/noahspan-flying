@@ -1,8 +1,8 @@
-name: 'App Build and Deploy'
+name: 'App Build'
 on:
   workflow_call:
     inputs:
-      calling_workflow:
+      environment_name:
         required: true
         type: string
       version_number:
