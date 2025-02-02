@@ -1,26 +1,23 @@
 {
-  "name": "@noahspan/flying-client",
+  "name": "app",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.0.19",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "serve -s dist"
   },
   "dependencies": {
-    "@azure/msal-browser": "^3.17.0",
-    "@azure/msal-react": "^2.0.19",
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
-    "@fortawesome/free-regular-svg-icons": "^6.5.2",
-    "@fortawesome/free-solid-svg-icons": "^6.5.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@azure/msal-browser": "^4.0.1",
+    "@azure/msal-react": "^3.0.1",
     "@noahspan/noahspan-components": "^0.8.9",
     "axios": "^1.7.2",
-    "framer-motion": "^11.1.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "dotenv": "^16.4.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.51.4",
     "react-router-dom": "^6.23.0"
   },
@@ -29,13 +26,13 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

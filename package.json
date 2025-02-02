@@ -1,16 +1,13 @@
 {
   "name": "@noahspan/flying",
   "version": "1.0.0",
-  "workspaces": [
-    "api",
-    "app",
-    "tests"
-  ],
   "scripts": {
     "start": "concurrently 'npm run start:azure -w api' 'wait-on tcp:0.0.0.0:7071 && npm run dev -w app'",
     "format": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\"",
     "lint": "npm run lint -w api && npm run lint -w app",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "preprod": "rimraf ./.prod && pnpm --filter api build && pnpm --filter app build",
+    "prod": "pnpm --filter api --prod deploy ./.prod/api && pnpm --filter app --prod deploy ./.prod/app"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -23,6 +20,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "3.2.5",
+    "rimraf": "^6.0.1",
     "wait-on": "^7.2.0"
   },
   "lint-staged": {

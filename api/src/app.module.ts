@@ -1,47 +1,49 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {
-  AppConfigModule,
-  AuthModule,
-  AuthGuard,
-  MsGraphModule
-} from '@noahspan/noahspan-modules';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { LogbookModule } from './logbook/logbook.module';
+import { AuthModule } from './auth/auth.module';
+import { MsGraphModule } from './msGraph/ms-graph.module';
+import { FeatureFlagModule } from './featureFlag/feature-flag.module'
+import { LogModule } from './log/log.module';
 import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    AppConfigModule.register({
-      url: process.env.APP_CONFIG_URL,
-      tenantId: process.env.TENANT_ID,
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET
+    AuthModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          clientId: configService.get<string>('clientId'),
+          clientSecret: configService.get<string>('clientSecret'),
+          tenantId: configService.get<string>('tenantId')
+        };
+      },
+      inject: [ConfigService]
     }),
-    AuthModule.register({
-      tenantId: process.env.TENANT_ID,
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET
+    ConfigModule.forRoot({
+      load: [configuration]
     }),
-    MsGraphModule.register({
-      tenantId: process.env.TENANT_ID,
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET
+    FeatureFlagModule,
+    LogModule,
+    MsGraphModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          clientId: configService.get<string>('clientId'),
+          clientSecret: configService.get<string>('clientSecret'),
+          tenantId: configService.get<string>('tenantId')
+        };
+      },
+      inject: [ConfigService]
     }),
-    LogbookModule,
     PilotModule
   ],
   controllers: [AppController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter

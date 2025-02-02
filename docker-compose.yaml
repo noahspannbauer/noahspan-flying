@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - '10000:10000'
+      - '10001:10001'
+      - '10002:10002'
+    command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose'
+
+  api:
+    container_name: flying-api
+    build:
+      context: .
+      target: api
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./api/.env
+
+  app:
+    container_name: flying-app
+    build:
+      context: .
+      target: app
+    ports: 
+      - '8080:8080'
+    # env_file:
+    #   - ./app/.env
+
+

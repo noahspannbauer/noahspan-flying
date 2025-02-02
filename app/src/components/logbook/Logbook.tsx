@@ -1,5 +1,5 @@
-import { useEffect, useReducer, useState } from 'react';
-import LogbookEntryForm from '../logbookEntryForm/LogbookEntryForm';
+import { useEffect, useReducer } from 'react';
+import LogForm from '../logForm/LogForm';
 import {
   Alert,
   Box,
@@ -35,11 +35,8 @@ const Logbook: React.FC<unknown> = () => {
       const config = isAuthenticated
         ? { headers: { Authorization: `${token}` } }
         : {};
-      const response: AxiosResponse = await httpClient.get(
-        `api/logbook`,
-        config
-      );
-
+      const response: AxiosResponse = await httpClient.get(`api/logs`, config);
+      console.log(response)
       dispatch({ type: 'SET_ENTRIES', payload: response.data });
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -98,7 +95,7 @@ const Logbook: React.FC<unknown> = () => {
         ? { headers: { Authorization: `${token}` } }
         : {};
 
-      await httpClient.delete(`api/logbook/${state.selectedEntryId}`, config);
+      await httpClient.delete(`api/logs/${state.selectedEntryId}`, config);
 
       dispatch({
         type: 'SET_DELETE',
@@ -418,20 +415,24 @@ const Logbook: React.FC<unknown> = () => {
           </>
         )}
       </Grid>
-      <LogbookEntryForm
-        entryId={state.selectedEntryId}
-        isDrawerOpen={state.isFormOpen}
-        mode={state.formMode}
-        onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
-      />
-      <ConfirmationDialog
-        contentText="Are you sure you want to delete the logbook entry?"
-        isLoading={state.isConfirmDialogLoading}
-        isOpen={state.isConfirmDialogOpen}
-        onCancel={onConfirmationDialogCancel}
-        onConfirm={onConfirmationDialogConfirm}
-        title="Confirm Delete"
-      />
+      {state.isFormOpen && (
+        <LogForm
+          entryId={state.selectedEntryId}
+          isDrawerOpen={state.isFormOpen}
+          mode={state.formMode}
+          onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
+        />
+      )}
+      {state.isConfirmDialogOpen && (
+        <ConfirmationDialog
+          contentText="Are you sure you want to delete the logbook entry?"
+          isLoading={state.isConfirmDialogLoading}
+          isOpen={state.isConfirmDialogOpen}
+          onCancel={onConfirmationDialogCancel}
+          onConfirm={onConfirmationDialogConfirm}
+          title="Confirm Delete"
+        />
+      )}
     </Box>
   );
 };

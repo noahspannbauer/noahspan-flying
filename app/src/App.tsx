@@ -7,8 +7,14 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from './hooks/httpClient/UseHttpClient';
 import { useFeatureFlag } from './hooks/featureFlag/UseFeatureFlag';
 import SiteNav from './components/siteNav/SiteNav';
+import { IPublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
 
-const App: React.FC<unknown> = () => {
+interface AppProps {
+  pca: IPublicClientApplication
+}
+
+const App: React.FC<AppProps> = ({ pca }: AppProps) => {
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
 
@@ -36,7 +42,7 @@ const App: React.FC<unknown> = () => {
   // }, []);
 
   return (
-    <div>
+    <MsalProvider instance={pca}>
       <SiteNav />
       <Routes>
         {/* {useFeatureFlag('flying-pilots')?.enabled && ( */}
@@ -44,7 +50,7 @@ const App: React.FC<unknown> = () => {
         {/* )} */}
         <Route path="/" element={<Logbook />} />
       </Routes>
-    </div>
+    </MsalProvider>
   );
 };
 

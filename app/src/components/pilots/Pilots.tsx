@@ -39,7 +39,25 @@ const Pilots: React.FC<unknown> = () => {
   const [pilotFormMode, setPilotFormMode] = useState<FormMode>(FormMode.CANCEL);
   const [selectedPilotId, setSelectedPilotId] = useState<string | undefined>();
   const [pilots, setPilots] = useState<Pilot[]>([]);
-  const onOpenClosePilotForm = (mode: FormMode, pilotId?: string) => {
+
+  const getPilots = async (): Promise<Pilot[]> => {
+    try {
+      const config = isAuthenticated
+        ? { headers: { Authorization: await getAccessToken() } }
+        : {};
+      const response: AxiosResponse = await httpClient.get(
+        `api/pilots`,
+        config
+      );
+      const pilots: Pilot[] = response.data;
+
+      return pilots;
+    } catch (error) {
+      throw new Error('broken');
+    }
+  };
+
+  const onOpenClosePilotForm = async (mode: FormMode, pilotId?: string) => {
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
@@ -49,6 +67,9 @@ const Pilots: React.FC<unknown> = () => {
         setIsDrawerOpen(true);
         break;
       case FormMode.CANCEL:
+        const pilots = await getPilots();
+
+        setPilots(pilots);
         setPilotFormMode(mode);
         setSelectedPilotId(undefined);
         setIsDrawerOpen(false);
@@ -73,6 +94,7 @@ const Pilots: React.FC<unknown> = () => {
     const onCloseActionMenu = () => {
       setAnchorElAction(null);
     };
+
     return (
       <div>
         <IconButton onClick={onOpenActionMenu}>
@@ -124,23 +146,17 @@ const Pilots: React.FC<unknown> = () => {
   ];
 
   useEffect(() => {
-    const getPilots = async () => {
+    const loadPilots = async () => {
       try {
-        const config = isAuthenticated
-          ? { headers: { Authorization: await getAccessToken() } }
-          : {};
-        const response: AxiosResponse = await httpClient.get(
-          `api/pilots`,
-          config
-        );
-        console.log(response.data);
-        setPilots(response.data);
+        const pilots = await getPilots();
+
+        setPilots(pilots);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getPilots();
+    loadPilots();
   }, []);
 
   return (

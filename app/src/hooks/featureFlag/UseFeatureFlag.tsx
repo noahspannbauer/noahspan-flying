@@ -5,6 +5,6 @@ export const useFeatureFlag = (featureFlagKey: string) => {
   const featureFlag = appContext.state.featureFlags.find(
     (featureFlag) => featureFlag.key === featureFlagKey
   );
-
+  console.log(featureFlag)
   return featureFlag;
 };

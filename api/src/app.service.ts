@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { MsGraphService, MsGraphClient } from '@noahspan/noahspan-modules';
+// import { MsGraphService, MsGraphClient } from '@noahspan/noahspan-modules';
+import { Client as MsGraphClient } from '@microsoft/microsoft-graph-client';
+import { MsGraphService } from './msGraph/ms-graph.service';
 
 @Injectable()
 export class AppService {
   constructor(private readonly msGraphService: MsGraphService) {}
 
   getHello(): string {
-    return 'Hello World!';
+    return JSON.stringify(process.env);
   }
 
   async getPersonSearchResults(

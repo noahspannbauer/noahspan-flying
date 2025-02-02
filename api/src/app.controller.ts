@@ -3,53 +3,22 @@ import {
   Get,
   Headers,
   Query,
-  Res,
-  StreamableFile
+  StreamableFile,
+  UseGuards
 } from '@nestjs/common';
-import {
-  AppConfigService,
-  MsGraphService,
-  MsGraphClient
-} from '@noahspan/noahspan-modules';
-import { FeatureFlagValue } from '@azure/app-configuration';
-import { Public } from '@noahspan/noahspan-modules';
+import { Client as MsGraphClient } from '@microsoft/microsoft-graph-client';
+import { MsGraphService } from './msGraph/ms-graph.service'
 import { Person } from '@microsoft/microsoft-graph-types';
 import { AppService } from './app.service';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import { arrayBuffer } from 'stream/consumers';
-import type { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
+@UseGuards(AuthGuard('azure-ad'))
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly appConfigService: AppConfigService,
     private readonly msGraphService: MsGraphService
   ) {}
-
-  @Public()
-  @Get('featureFlags')
-  async getFeatureFlags(
-    @Query() query: any
-  ): Promise<{ key: string; enabled: boolean }[]> {
-    try {
-      const featureFlagKeys: string[] =
-        query.keys && query.keys.toString().includes(';')
-          ? query.keys.split(';')
-          : [query.keys];
-      const featureFlagLabel: string = query.label;
-      const featureFlags: { key: string; enabled: boolean }[] =
-        await this.appConfigService.getFeatureFlags(
-          featureFlagKeys,
-          featureFlagLabel
-        );
-
-      return featureFlags;
-    } catch (error) {
-      return error;
-    }
-  }
 
   @Get('userPhoto')
   async getProfilePhoto(@Headers() headers: any): Promise<StreamableFile> {
@@ -106,7 +75,6 @@ export class AppController {
     }
   }
 
-  @Public()
   @Get('hello')
   async getHello(): Promise<string> {
     return this.appService.getHello();

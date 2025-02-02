@@ -13,7 +13,7 @@ import {
   XmarkIcon
 } from '@noahspan/noahspan-components';
 import { IPilotFormProps } from './IPilotFormProps';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -38,8 +38,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   const defaultValues = {
-    partitionKey: '',
-    rowKey: '',
+    partitionKey: 'pilot',
+    rowKey: 'noah@noahspannbauer.com',
     id: '',
     name: '',
     address: '',
@@ -53,6 +53,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     defaultValues: defaultValues
   });
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
   const onPeoplePickerSearch = async (
     _event: React.SyntheticEvent,
@@ -105,24 +106,19 @@ const PilotForm: React.FC<IPilotFormProps> = ({
       setIsLoading(true);
 
       const accessToken: string = await getAccessToken();
-      const response: AxiosResponse = await httpClient.post(
-        `api/pilots`,
-        data,
-        {
-          headers: {
-            Authorization: accessToken
-          }
+
+      await httpClient.post(`api/pilots`, data, {
+        headers: {
+          Authorization: accessToken
         }
-      );
+      });
 
-      if (response) console.log(response);
+      onOpenClose(FormMode.CANCEL);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errResp = error.response;
+      const axiosError = error as AxiosError;
+      const responseData = axiosError.response?.data as any;
 
-        console.log(errResp?.data.message);
-      } else {
-      }
+      console.log(responseData.message);
     } finally {
       setIsLoading(false);
     }

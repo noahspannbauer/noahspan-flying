@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, InjectRepository } from '@nestjs/azure-database';
+import { Repository, InjectRepository } from '@noahspan/azure-database';
 import { Certificate } from './certificate.entity';
 
 @Injectable()

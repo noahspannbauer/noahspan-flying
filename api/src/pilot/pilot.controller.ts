@@ -1,71 +1,95 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
   Post,
-  UseInterceptors
+  Put,
+  UseGuards,
 } from '@nestjs/common';
-import { PilotInfoService } from './info/pilot-info.service';
-import { PilotInfoDto } from './info/pilot-info.dto';
-import { TableInsertEntityHeaders } from '@azure/data-tables';
-import { CustomError } from '../customError/CustomError';
-import { PilotInfoEntity } from './info/pilot-info.entity';
-import { PilotInterceptor } from 'src/pilot/interceptors/pilot.interceptor';
-import { Public } from '@noahspan/noahspan-modules';
+import { PilotDto } from './pilot.dto';
+import { Pilot } from './pilot.entity';
+import { PilotService } from './pilot.service';
+import { CustomError } from '../error/customError';
+import { AuthGuard } from '@nestjs/passport'
 
 @Controller('pilots')
+@UseGuards(AuthGuard('azure-ad'))
 export class PilotController {
-  constructor(private readonly pilotInfoService: PilotInfoService) {}
+  constructor(private readonly pilotService: PilotService) {}
 
-  @Get(':pilotId')
-  @Public()
-  @UseInterceptors(PilotInterceptor)
-  async find(@Param() params: any): Promise<PilotInfoEntity> {
+  @Get(':partitionKey/:rowKey')
+  async find(
+    @Param('partitionKey') partitionKey: string,
+    @Param('rowKey') rowKey: string
+  ) {
     try {
-      const pilot: PilotInfoEntity = await this.pilotInfoService.find(
-        params.pilotId
-      );
-
-      return pilot;
+      return await this.pilotService.find(partitionKey, rowKey);
     } catch (error) {
       const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode, {
-        cause: customError.name
-      });
+      throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
   @Get()
-  @Public()
-  @UseInterceptors(PilotInterceptor)
-  async findAll(): Promise<PilotInfoEntity[]> {
+  async findAll() {
     try {
-      const pilots: PilotInfoEntity[] = await this.pilotInfoService.findAll();
-
-      return pilots;
+      return await this.pilotService.findAll();
     } catch (error) {
       const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode, {
-        cause: customError.name
-      });
+      throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
   @Post()
-  async create(@Body() pilotInfoData: PilotInfoDto): Promise<void> {
+  async create(@Body() pilotDto: PilotDto) {
     try {
-      const response: TableInsertEntityHeaders =
-        await this.pilotInfoService.create(pilotInfoData);
+      const pilot = new Pilot();
+
+      Object.assign(pilot, pilotDto);
+
+      return await this.pilotService.create(pilot);
     } catch (error) {
       const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode, {
-        cause: customError.name
-      });
+      throw new HttpException(customError.message, customError.statusCode);
+    }
+  }
+
+  @Put(':partitionKey/:rowKey')
+  async update(
+    @Param('partitionKey') partitionKey: string,
+    @Param('rowKey') rowKey: string,
+    @Body() pilotDto: PilotDto
+  ) {
+    try {
+      const pilot = new Pilot();
+
+      Object.assign(pilot, pilotDto);
+
+      return await this.pilotService.update(partitionKey, rowKey, pilot);
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode);
+    }
+  }
+
+  @Delete(':partitionKey/:rowKey')
+  async delete(
+    @Param('partitionKey') partitionKey: string,
+    @Param('rowKey') rowKey: string
+  ) {
+    try {
+      return await this.pilotService.delete(partitionKey, rowKey);
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode);
     }
   }
 }
