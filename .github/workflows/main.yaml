@@ -5,8 +5,13 @@ on:
       - main
 
 jobs:
+  changes:
+    uses: ./.github/workflows/changes.yaml
+
   build-api:
     name: build-api
+    needs:
+      - changes
     uses: ./.github/workflows/api_build.yaml
     with:
       environment_name: test
@@ -15,7 +20,9 @@ jobs:
 
   deploy-api:
     name: deploy-api
-    needs: build-api
+    needs: 
+      - changes
+      - build-api
     uses: ./.github/workflows/deploy.yaml
     with:
       app_name: flying-app
@@ -25,6 +32,8 @@ jobs:
 
   build-app:
     name: build-app
+    needs:
+      - changes
     uses: ./.github/workflows/app_build.yaml
     with:
       environment_name: test
@@ -33,7 +42,9 @@ jobs:
 
   deploy-app:
     name: deploy-app
-    needs: build-app
+    needs: 
+      - changes
+      - build-app
     uses: ./.github/workflows/deploy.yaml
     with:
       app_name: flying-app

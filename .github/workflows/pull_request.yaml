@@ -4,8 +4,13 @@ on:
   pull_request:
 
 jobs:
+  changes:
+    uses: ./.github/workflows/changes.yaml
+
   build-api:
     name: build-api
+    needs:
+      - changes
     uses: ./.github/workflows/api_build.yaml
     with:
       environment_name: pull_request
@@ -14,6 +19,8 @@ jobs:
 
   build-app:
     name: build-app
+    needs:
+      - changes
     uses: ./.github/workflows/app_build.yaml
     with:
       environment_name: pull_request
