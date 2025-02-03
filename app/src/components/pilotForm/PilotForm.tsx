@@ -99,6 +99,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     methods.reset(defaultValues);
     onOpenClose(FormMode.CANCEL);
     setSelectedPerson({ userPrincipalName: '', displayName: '' });
+    setIsDisabled(false)
   };
 
   const onSubmit = async (data: unknown) => {
@@ -107,12 +108,21 @@ const PilotForm: React.FC<IPilotFormProps> = ({
 
       const accessToken: string = await getAccessToken();
 
-      await httpClient.post(`api/pilots`, data, {
-        headers: {
-          Authorization: accessToken
-        }
-      });
+      if (!pilotId) {
+        await httpClient.post(`api/pilots`, data, {
+          headers: {
+            Authorization: accessToken
+          }
+        });
+      } else {
+        await httpClient.put(`api/pilots/pilot/${pilotId}`, data, {
+          headers: {
+            Authorization: accessToken
+          }
+        })
+      }
 
+      methods.reset(defaultValues)
       onOpenClose(FormMode.CANCEL);
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -139,17 +149,16 @@ const PilotForm: React.FC<IPilotFormProps> = ({
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/pilots/${pilotId}`,
+          `api/pilots/pilot/${pilotId}`,
           config
         );
         const pilot = response.data;
-        console.log(pilot);
+
         setSelectedPerson({
           userPrincipalName: pilot.id,
           displayName: pilot.name
         });
         methods.reset(pilot);
-        console.log(methods.getValues());
       } catch (error) {
         console.log(error);
       } finally {
