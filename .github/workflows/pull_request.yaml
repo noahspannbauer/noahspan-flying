@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/changes.yaml
 
   build-api:
+    if: ${{ needs.changes.outputs.api == 'true' }}
     name: build-api
     needs:
       - changes
@@ -18,6 +19,7 @@ jobs:
     secrets: inherit
 
   build-app:
+    if: ${{ needs.changes.outputs.app == 'true' }}
     name: build-app
     needs:
       - changes
