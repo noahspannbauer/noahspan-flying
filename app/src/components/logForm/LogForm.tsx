@@ -118,7 +118,7 @@ const LogForm: React.FC<ILogFormProps> = ({
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/logs/${entryId}`,
+          `api/logs/log/${entryId}`,
           config
         );
         const entry = response.data;

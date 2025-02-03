@@ -67,7 +67,6 @@ const SiteNav: React.FC<unknown> = () => {
     }
   };
   const getUserPhoto = async (accessToken: string): Promise<string> => {
-    console.log(accessToken)
     try {
       const response: AxiosResponse = await httpClient.get(`api/userPhoto`, {
         headers: {
