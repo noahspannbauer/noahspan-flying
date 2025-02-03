@@ -10,7 +10,6 @@ export class AzureAdStrategy extends PassportStrategy(
     'azure-ad'
 ) {
     constructor(@Inject(MODULE_OPTIONS_TOKEN) authModuleOptions: AuthModuleOptions) {
-        console.log(authModuleOptions)
         super({
             identityMetadata: `https://login.microsoftonline.com/${authModuleOptions.tenantId}/.well-known/openid-configuration`,
             clientID: authModuleOptions.clientId,
