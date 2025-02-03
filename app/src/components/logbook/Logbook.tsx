@@ -95,7 +95,7 @@ const Logbook: React.FC<unknown> = () => {
         ? { headers: { Authorization: `${token}` } }
         : {};
 
-      await httpClient.delete(`api/logs/${state.selectedEntryId}`, config);
+      await httpClient.delete(`api/logs/log/${state.selectedEntryId}`, config);
 
       dispatch({
         type: 'SET_DELETE',
