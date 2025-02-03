@@ -84,7 +84,7 @@ const LogForm: React.FC<ILogFormProps> = ({
           }
         });
       } else {
-        await httpClient.put(`api/logs/${entryId}`, data, {
+        await httpClient.put(`api/logs/log/${entryId}`, data, {
           headers: {
             Authorization: accessToken
           }

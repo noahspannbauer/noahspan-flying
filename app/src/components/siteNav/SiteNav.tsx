@@ -52,7 +52,6 @@ const SiteNav: React.FC<unknown> = () => {
     instance.logoutRedirect();
   };
   const getUserProfile = async (accessToken: string): Promise<User> => {
-    console.log(accessToken)
     try {
       const response: AxiosResponse = await httpClient.get(`api/userProfile`, {
         headers: {
