@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
 import {
   Box,
@@ -19,26 +19,20 @@ import {
   Typography
 } from '@noahspan/noahspan-components';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
-
-type Pilot = {
-  partitionKey: string;
-  rowKey: string;
-  id: string;
-  name: string;
-};
+import { Pilot } from './Pilot.interface';
+import { initialState, reducer } from './reducer';
+import ActionMenu from '../actionMenu/ActionMenu';
+import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 
 const Pilots: React.FC<unknown> = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const httpClient: AxiosInstance = useHttpClient();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [pilotFormMode, setPilotFormMode] = useState<FormMode>(FormMode.CANCEL);
-  const [selectedPilotId, setSelectedPilotId] = useState<string | undefined>();
-  const [pilots, setPilots] = useState<Pilot[]>([]);
 
   const getPilots = async (): Promise<Pilot[]> => {
     try {
@@ -62,76 +56,70 @@ const Pilots: React.FC<unknown> = () => {
       case FormMode.ADD:
       case FormMode.EDIT:
       case FormMode.VIEW:
-        setPilotFormMode(mode);
-        setSelectedPilotId(pilotId);
-        setIsDrawerOpen(true);
+        dispatch({
+          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          payload: {
+            formMode: mode,
+            selectedPilotId: pilotId,
+            isFormOpen: true
+          }
+        })
+
         break;
       case FormMode.CANCEL:
-        const pilots = await getPilots();
+        dispatch({
+          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          payload: {
+            formMode: mode,
+            selectedPilotId: undefined,
+            isFormOpen: false
+          }
+        })
 
-        setPilots(pilots);
-        setPilotFormMode(mode);
-        setSelectedPilotId(undefined);
-        setIsDrawerOpen(false);
         break;
     }
   };
 
-  interface ActionMenuProps {
-    pilotId: string;
-  }
+  const onDeleteEntry = (pilotId: string) => {
+    dispatch({
+      type: 'SET_DELETE',
+      payload: { isConfirmDialogOpen: true, selectedPilotId: pilotId }
+    });
+  };
 
-  const ActionMenu = ({ pilotId }: ActionMenuProps) => {
-    const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
-      null
-    );
+  const onConfirmationDialogConfirm = async () => {
+    try {
+      dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: true });
 
-    const onOpenActionMenu = (event: React.MouseEvent<HTMLElement>) => {
-      console.log(event);
-      setAnchorElAction(event.currentTarget);
-    };
+      const token = await getAccessToken();
+      const config = isAuthenticated
+        ? { headers: { Authorization: `${token}` } }
+        : {};
 
-    const onCloseActionMenu = () => {
-      setAnchorElAction(null);
-    };
+      await httpClient.delete(`api/pilots/pilot/${state.selectedPilotId}`, config);
 
-    return (
-      <div>
-        <IconButton onClick={onOpenActionMenu}>
-          <EllipsisVerticalIcon size="sm" />
-        </IconButton>
-        <Menu
-          anchorEl={anchorElAction}
-          keepMounted
-          open={Boolean(anchorElAction)}
-          onClose={onCloseActionMenu}
-        >
-          <MenuItem
-            onClick={() => onOpenClosePilotForm(FormMode.EDIT, pilotId)}
-          >
-            <ListItemIcon>
-              <PenIcon size="lg" />
-            </ListItemIcon>
-            <ListItemText>Edit</ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={() => onOpenClosePilotForm(FormMode.VIEW, pilotId)}
-          >
-            <ListItemIcon>
-              <EyeIcon size="lg" />
-            </ListItemIcon>
-            <ListItemText>View</ListItemText>
-          </MenuItem>
-          <hr className="my-3" />
-          <MenuItem>
-            <ListItemIcon>
-              <TrashIcon size="lg" />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        </Menu>
-      </div>
-    );
+      dispatch({
+        type: 'SET_DELETE',
+        payload: { isConfirmDialogOpen: false, selectedPilotId: undefined }
+      });
+      await getPilots();
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      dispatch({
+        type: 'SET_ERROR',
+        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+      });
+    } finally {
+      dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
+    }
+  };
+
+  const onConfirmationDialogCancel = () => {
+    dispatch({
+      type: 'SET_DELETE',
+      payload: { isConfirmDialogOpen: false, selectedPilotId: undefined }
+    });
   };
 
   const columns: ColumnDef<Pilot>[] = [
@@ -141,7 +129,13 @@ const Pilots: React.FC<unknown> = () => {
     },
     {
       header: 'Actions',
-      cell: (info) => <ActionMenu pilotId={info.row.original.rowKey} />
+      cell: (info) => (
+        <ActionMenu 
+          id={info.row.original.rowKey} 
+          onDelete={onDeleteEntry}
+          onOpenCloseForm={onOpenClosePilotForm}
+        />
+      )
     }
   ];
 
@@ -150,14 +144,16 @@ const Pilots: React.FC<unknown> = () => {
       try {
         const pilots = await getPilots();
 
-        setPilots(pilots);
+        dispatch({ type: 'SET_PILOTS', payload: pilots })
       } catch (error) {
         console.log(error);
       }
     };
 
-    loadPilots();
-  }, []);
+    if (isAuthenticated && !state.isFormOpen) {
+      loadPilots();
+    }
+  }, [isAuthenticated, state.isFormOpen]);
 
   return (
     <Box sx={{ margin: '20px' }}>
@@ -166,25 +162,39 @@ const Pilots: React.FC<unknown> = () => {
           <Typography variant="h4">Pilots</Typography>
         </Grid>
         <Grid display="flex" justifyContent="right" size={1}>
-          <Button
-            onClick={() => onOpenClosePilotForm(FormMode.ADD)}
-            startIcon={<PlusIcon />}
-            variant="contained"
-            data-testid="pilot-add-button"
-          >
-            Add Pilot
-          </Button>
+          {isAuthenticated &&
+            <Button
+              onClick={() => onOpenClosePilotForm(FormMode.ADD)}
+              startIcon={<PlusIcon />}
+              variant="contained"
+              data-testid="pilot-add-button"
+            >
+              Add Pilot
+            </Button>
+          }
         </Grid>
         <Grid size={12}>
-          {pilots.length > 0 && <Table columns={columns} data={pilots} />}
+          {state.pilots.length > 0 && <Table columns={columns} data={state.pilots} />}
         </Grid>
       </Grid>
-      <PilotForm
-        isDrawerOpen={isDrawerOpen}
-        mode={pilotFormMode}
-        onOpenClose={(mode) => onOpenClosePilotForm(mode)}
-        pilotId={selectedPilotId}
-      />
+      {state.isFormOpen && (
+        <PilotForm
+          isDrawerOpen={state.isFormOpen}
+          mode={state.formMode}
+          onOpenClose={(mode) => onOpenClosePilotForm(mode)}
+          pilotId={state.selectedPilotId}
+        />
+      )}
+      {state.isConfirmDialogOpen && (
+        <ConfirmationDialog
+          contentText="Are you sure you want to delete the pilot entry? Deleting a pilot will delete the pilot and delete all logbook entries for the pilot."
+          isLoading={state.isConfirmDialogLoading}
+          isOpen={state.isConfirmDialogOpen}
+          onCancel={onConfirmationDialogCancel}
+          onConfirm={onConfirmationDialogConfirm}
+          title="Confirm Delete"
+        />
+      )}
     </Box>
   );
 };

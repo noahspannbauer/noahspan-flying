@@ -1,12 +1,14 @@
 import { InjectRepository, Repository } from '@noahspan/azure-database';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Pilot } from './pilot.entity';
+import { Log } from 'src/log/log.entity';
+import { LogService } from 'src/log/log.service';
 
 @Injectable()
 export class PilotService {
   constructor(
-    @InjectRepository(Pilot)
-    private readonly pilotRepository: Repository<Pilot>
+    @InjectRepository(Pilot) private readonly pilotRepository: Repository<Pilot>,
+    @InjectRepository(Log) private readonly logRepository: Repository<Log>
   ) {}
 
   async find(partitionKey: string, rowKey: string): Promise<Pilot> {
@@ -35,6 +37,18 @@ export class PilotService {
   }
 
   async delete(partitionKey: string, rowKey: string): Promise<void> {
+    const pilotLogs: Log[] = await this.logRepository.findAll({
+      queryOptions: {
+        filter: `pilotId eq '${rowKey}'`
+      }
+    })
+
+    for (const pilotLog of pilotLogs) {
+      await this.logRepository.delete(pilotLog.partitionKey, pilotLog.rowKey);
+    }
+
     await this.pilotRepository.delete(partitionKey, rowKey);
+
+    return
   }
 }

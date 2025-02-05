@@ -375,14 +375,16 @@ const Logbook: React.FC<unknown> = () => {
           <Typography variant="h4">Logbook</Typography>
         </Grid>
         <Grid display="flex" justifyContent="right" size={1}>
-          <Button
-            onClick={() => onOpenCloseEntryForm(FormMode.ADD)}
-            startIcon={<PlusIcon />}
-            variant="contained"
-            data-testid="pilot-add-button"
-          >
-            Add Entry
-          </Button>
+          {isAuthenticated &&
+            <Button
+              onClick={() => onOpenCloseEntryForm(FormMode.ADD)}
+              startIcon={<PlusIcon />}
+              variant="contained"
+              data-testid="pilot-add-button"
+            >
+              Add Entry
+            </Button>
+          }
         </Grid>
         {!state.isLoading && state.error && (
           <Grid display="flex" justifyContent="center" size={12}>
