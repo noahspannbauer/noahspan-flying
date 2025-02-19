@@ -10,10 +10,10 @@ on:
         type: string
 
 env:
-  VITE_API_URL: ${{ vars.VITE_API_URL }}
-  VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
-  VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
-  VITE_REDIRECT_URL: ${{ vars.VITE_REDIRECT_URL }}
+  VITE_API_URL: "https://flying-api-test.internal.lemonflower-48c61d49.centralus.azurecontainerapps.io"
+  VITE_CLIENT_ID: "d3562a45-050d-4f9a-baed-0497c7156924"
+  VITE_TENANT_ID: "0f23652e-4b15-420f-991e-3d6fc769a31d"
+  VITE_REDIRECT_URL: "https://flying-app-test.lemonflower-48c61d49.centralus.azurecontainerapps.io"
 
 jobs:
   build:
