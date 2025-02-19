@@ -9,7 +9,6 @@ async function bootstrap() {
   const httpService = new HttpService();
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -23,7 +22,6 @@ async function bootstrap() {
       throw new InternalServerErrorException();
     }
   );
-  
 
   await app.listen(3000);
 }
