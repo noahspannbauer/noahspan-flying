@@ -28,11 +28,13 @@ msalInstance.initialize().then(() => {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <AppContextProvider>
-        <BrowserRouter>
-          <App pca={msalInstance} />
-        </BrowserRouter>
-      </AppContextProvider>
+      <MsalProvider instance={msalInstance}>
+        <AppContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AppContextProvider>
+      </MsalProvider>
     </React.StrictMode>
   );
 })

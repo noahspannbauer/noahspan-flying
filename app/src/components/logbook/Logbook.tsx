@@ -32,7 +32,7 @@ const Logbook: React.FC<unknown> = () => {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
       const response: AxiosResponse = await httpClient.get(`api/logs`);
-      console.log(response)
+
       if (response.data.length > 0) {
         dispatch({ type: 'SET_ENTRIES', payload: response.data });
 
