@@ -16,7 +16,6 @@ import { CustomError } from '../error/customError';
 import { AuthGuard } from '@nestjs/passport'
 
 @Controller('pilots')
-@UseGuards(AuthGuard('azure-ad'))
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 

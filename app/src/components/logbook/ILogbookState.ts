@@ -1,10 +1,11 @@
 import { FormMode } from '../../enums/formMode';
+import { Alert } from '../../interfaces/Alert.interface';
 import { ILogbookEntry } from './ILogbookEntry';
 
 export interface ILogbookState {
+  alert: Alert | undefined;
   entries: ILogbookEntry[];
   formMode: FormMode;
-  error: string | undefined;
   isConfirmDialogLoading: boolean;
   isConfirmDialogOpen: boolean;
   isFormOpen: boolean;
