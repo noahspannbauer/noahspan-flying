@@ -14,14 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.calling_workflow }}
     steps:
-      - name: Set VITE environment varibles
-        run: |
-          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> $GITHUB_ENV
-          echo "VITE_CLIENT_ID=${{ vars.VITE_CLIENT_ID }}" >> $GITHUB_ENV
-          echo "VITE_TENANT_ID=${{ vars.VITE_TENANT_ID }}" >> $GITHUB_ENV
-          echo "VITE_REDIRECT_URL=${{ vars.VITE_REDIRECT_URL }}" >> $GITHUB_ENV
-          printenv
-
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
@@ -44,6 +36,10 @@ jobs:
 
       - name: Build
         run: |
+          export VITE_API_URL="${{ vars.VITE_API_URL }}"
+          export VITE_CLIENT_ID="${{ vars.VITE_CLIENT_ID }}"
+          export VITE_TENANT_ID="${{ vars.VITE_TENANT_ID }}"
+          export VITE_REDIRECT_URL="${{ vars.VITE_REDIRECT_URL }}"
           pnpm --filter app build
 
       - name: Deploy
