@@ -26,7 +26,7 @@ jobs:
       - build-api
     uses: ./.github/workflows/deploy.yaml
     with:
-      app_name: flying-app
+      app_name: flying-api
       environment_name: test
       version_number: ${{ github.run_id }}
     secrets: inherit
