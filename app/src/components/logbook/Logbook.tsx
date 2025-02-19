@@ -166,9 +166,9 @@ const Logbook: React.FC<unknown> = () => {
         align: 'right',
         headerAlign: 'right'
       },
-      cell: (info) =>
+      cell: (info: any) =>
         info.getValue() !== null
-          ? parseFloat(info.getValue()!.toString()).toFixed(1)
+          ? parseFloat(info.getValue()).toFixed(1)
           : ''
     },
     {
@@ -178,10 +178,10 @@ const Logbook: React.FC<unknown> = () => {
         align: 'right',
         headerAlign: 'right'
       },
-      cell: (info) =>
+      cell: (info: any) =>
         info.getValue() !== null
-          ? parseFloat(info.getValue()!.toString()).toFixed(1)
-          : null
+          ? parseFloat(info.getValue()).toFixed(1)
+          : ''
     },
     {
       id: 'landings',
