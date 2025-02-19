@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -19,7 +19,7 @@ import {
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { ILogFormProps } from './ILogFormProps';
 import { initialState, reducer } from './reducer';
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -97,7 +97,7 @@ const LogForm: React.FC<ILogFormProps> = ({
     } catch (error) {
       const axiosError = error as AxiosError;
 
-      dispatch({ type: 'SET_ERROR', payload: axiosError.message });
+      dispatch({ type: 'SET_ALERT', payload: { severity: 'error', message: axiosError.message }});
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false });
     }
@@ -127,7 +127,7 @@ const LogForm: React.FC<ILogFormProps> = ({
       } catch (error) {
         const axiosError = error as AxiosError;
 
-        dispatch({ type: 'SET_ERROR', payload: axiosError.message });
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'error', message: axiosError.message }});
       } finally {
         dispatch({ type: 'SET_IS_LOADING', payload: false });
       }
@@ -173,16 +173,16 @@ const LogForm: React.FC<ILogFormProps> = ({
                 <XmarkIcon />
               </IconButton>
             </Grid>
-            {state.error && (
+            {state.alert && (
               <Grid display="flex" justifyContent="center" size={12}>
                 <Alert
                   onClose={() =>
-                    dispatch({ type: 'SET_ERROR', payload: undefined })
+                    dispatch({ type: 'SET_ALERT', payload: undefined })
                   }
-                  severity="error"
+                  severity={state.alert.severity}
                   sx={{ width: '100%' }}
                 >
-                  {state.error}
+                  {state.alert.message}
                 </Alert>
               </Grid>
             )}

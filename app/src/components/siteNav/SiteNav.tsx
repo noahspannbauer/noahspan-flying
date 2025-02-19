@@ -53,7 +53,7 @@ const SiteNav: React.FC<unknown> = () => {
   };
   const getUserProfile = async (accessToken: string): Promise<User> => {
     try {
-      const response: AxiosResponse = await httpClient.get(`api/userProfile`, {
+      const response: AxiosResponse = await httpClient.get(`api/user/profile`, {
         headers: {
           Authorization: accessToken
         }
@@ -67,7 +67,7 @@ const SiteNav: React.FC<unknown> = () => {
   };
   const getUserPhoto = async (accessToken: string): Promise<string> => {
     try {
-      const response: AxiosResponse = await httpClient.get(`api/userPhoto`, {
+      const response: AxiosResponse = await httpClient.get(`api/user/photo`, {
         headers: {
           Authorization: accessToken
         },
@@ -97,45 +97,6 @@ const SiteNav: React.FC<unknown> = () => {
       </MenuItem>
     );
   };
-
-  // useEffect(() => {
-  //   const callback = instance.addEventCallback(
-  //     async (message: EventMessage) => {
-  //       if (message.eventType === EventType.LOGIN_SUCCESS) {
-  //         try {
-  //           setLoading(true);
-
-  //           const eventPayload: EventPayloadExtended =
-  //             message.payload as EventPayloadExtended;
-  //           const userProfile: User = await getUserProfile(
-  //             eventPayload.accessToken
-  //           );
-  //           const userPhoto = await getUserPhoto(eventPayload.accessToken);
-
-  //           appContext.dispatch({
-  //             type: 'SET_USER_PROFILE',
-  //             payload: userProfile
-  //           });
-  //         } catch (error) {
-  //           console.log(error);
-  //         } finally {
-  //           setLoading(false);
-  //         }
-  //       }
-  //     }
-  //   );
-
-  //   instance.handleRedirectPromise().then((response) => {
-  //     console.log(response)
-  //   })
-
-  //   return () => {
-  //     if (callback) {
-  //       instance.removeEventCallback(callback);
-  //       appContext.dispatch({ type: 'SET_USER_PROFILE', payload: {} });
-  //     }
-  //   };
-  // }, []);
 
   useEffect(() => {
     const setUserProfile = async () => {

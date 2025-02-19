@@ -1,4 +1,5 @@
 import { FormMode } from '../../enums/formMode';
+import { Alert } from '../../interfaces/Alert.interface';
 import { ILogbookEntry } from './ILogbookEntry';
 import { ILogbookState } from './ILogbookState';
 
@@ -11,7 +12,7 @@ type Action =
       };
     }
   | { type: 'SET_ENTRIES'; payload: ILogbookEntry[] }
-  | { type: 'SET_ERROR'; payload: string | undefined }
+  | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_FORM_MODE'; payload: FormMode }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
@@ -25,8 +26,8 @@ type Action =
     };
 
 export const initialState: ILogbookState = {
+  alert: undefined,
   entries: [],
-  error: undefined,
   formMode: FormMode.CANCEL,
   isConfirmDialogLoading: false,
   isConfirmDialogOpen: false,
@@ -53,10 +54,10 @@ export const reducer = (
         entries: action.payload
       };
     }
-    case 'SET_ERROR': {
+    case 'SET_ALERT': {
       return {
         ...state,
-        error: action.payload
+        alert: action.payload
       };
     }
     case 'SET_FORM_MODE': {

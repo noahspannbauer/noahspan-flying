@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
 import {
+  Alert,
   Box,
   Button,
   ColumnDef,
@@ -34,7 +35,7 @@ const Pilots: React.FC<unknown> = () => {
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
 
-  const getPilots = async (): Promise<Pilot[]> => {
+  const getPilots = async () => {
     try {
       const config = isAuthenticated
         ? { headers: { Authorization: await getAccessToken() } }
@@ -43,11 +44,25 @@ const Pilots: React.FC<unknown> = () => {
         `api/pilots`,
         config
       );
-      const pilots: Pilot[] = response.data;
+      console.log(response.data)
+      if (response.data.length > 0) {
+        dispatch({ type: 'SET_PILOTS', payload: response.data });
 
-      return pilots;
+        if (state.alert) {
+          dispatch({ type: 'SET_ALERT', payload: undefined })
+        }
+      } else {
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No pilots found.' }})
+      }
     } catch (error) {
-      throw new Error('broken');
+      const axiosError = error as AxiosError;
+
+      dispatch({
+        type: 'SET_ALERT',
+        payload: { severity: 'error', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
+      })
+    } finally {
+      dispatch({ type: 'SET_IS_LOADING', payload: false })
     }
   };
 
@@ -107,8 +122,8 @@ const Pilots: React.FC<unknown> = () => {
       const axiosError = error as AxiosError;
 
       dispatch({
-        type: 'SET_ERROR',
-        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+        type: 'SET_ALERT',
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -140,18 +155,8 @@ const Pilots: React.FC<unknown> = () => {
   ];
 
   useEffect(() => {
-    const loadPilots = async () => {
-      try {
-        const pilots = await getPilots();
-
-        dispatch({ type: 'SET_PILOTS', payload: pilots })
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     if (isAuthenticated && !state.isFormOpen) {
-      loadPilots();
+      getPilots();
     }
   }, [isAuthenticated, state.isFormOpen]);
 
@@ -173,6 +178,19 @@ const Pilots: React.FC<unknown> = () => {
             </Button>
           }
         </Grid>
+        {!state.isLoading && state.alert && (
+          <Grid display="flex" justifyContent="center" size={12}>
+            <Alert
+              onClose={() =>
+                dispatch({ type: 'SET_ALERT', payload: undefined })
+              }
+              severity={state.alert.severity}
+              sx={{ width: '100%' }}
+            >
+              {state.alert.message}
+            </Alert>
+          </Grid>
+        )}
         <Grid size={12}>
           {state.pilots.length > 0 && <Table columns={columns} data={state.pilots} />}
         </Grid>

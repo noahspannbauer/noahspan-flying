@@ -66,7 +66,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
         const searchString: string = value;
         const accessToken: string = await getAccessToken();
         const response: AxiosResponse = await httpClient.get(
-          `api/personSearch?search=${searchString}`,
+          `api/user/search?search=${searchString}`,
           {
             headers: {
               Authorization: accessToken

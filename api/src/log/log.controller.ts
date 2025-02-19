@@ -13,11 +13,10 @@ import { LogDto } from './log.dto';
 import { Log } from './log.entity';
 import { LogService } from './log.service';
 import { CustomError } from '../error/customError';
-import { AuthGuard } from '@nestjs/passport';
+import { Public } from '@noahspan/noahspan-modules';
 
 
 @Controller('logs')
-@UseGuards(AuthGuard('azure-ad'))
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
@@ -35,7 +34,7 @@ export class LogController {
     }
   }
 
-  // @Public()
+  @Public()
   @Get()
   async findAll(): Promise<Log[]> {
     try {

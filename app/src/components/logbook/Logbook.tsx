@@ -31,19 +31,23 @@ const Logbook: React.FC<unknown> = () => {
     try {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
-      const token = await getAccessToken();
-      const config = isAuthenticated
-        ? { headers: { Authorization: `${token}` } }
-        : {};
-      const response: AxiosResponse = await httpClient.get(`api/logs`, config);
+      const response: AxiosResponse = await httpClient.get(`api/logs`);
       console.log(response)
-      dispatch({ type: 'SET_ENTRIES', payload: response.data });
+      if (response.data.length > 0) {
+        dispatch({ type: 'SET_ENTRIES', payload: response.data });
+
+        if (state.alert) {
+          dispatch({ type: 'SET_ALERT', payload: undefined})
+        }
+      } else {
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No logbook entries found.'}})
+      }
     } catch (error) {
       const axiosError = error as AxiosError;
 
       dispatch({
-        type: 'SET_ERROR',
-        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+        type: 'SET_ALERT',
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false });
@@ -106,8 +110,8 @@ const Logbook: React.FC<unknown> = () => {
       const axiosError = error as AxiosError;
 
       dispatch({
-        type: 'SET_ERROR',
-        payload: `Loading of logbook entries failed with the following message: ${axiosError.message}`
+        type: 'SET_ALERT',
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -363,10 +367,10 @@ const Logbook: React.FC<unknown> = () => {
   ];
 
   useEffect(() => {
-    if (isAuthenticated && !state.isFormOpen) {
+    if (!state.isFormOpen) {
       getLogbookEntries();
     }
-  }, [isAuthenticated, state.isFormOpen]);
+  }, [state.isFormOpen]);
 
   return (
     <Box sx={{ margin: '20px' }}>
@@ -386,16 +390,16 @@ const Logbook: React.FC<unknown> = () => {
             </Button>
           }
         </Grid>
-        {!state.isLoading && state.error && (
+        {!state.isLoading && state.alert && (
           <Grid display="flex" justifyContent="center" size={12}>
             <Alert
               onClose={() =>
-                dispatch({ type: 'SET_ERROR', payload: undefined })
+                dispatch({ type: 'SET_ALERT', payload: undefined })
               }
-              severity="error"
+              severity={state.alert.severity}
               sx={{ width: '100%' }}
             >
-              {state.error}
+              {state.alert.message}
             </Alert>
           </Grid>
         )}
@@ -406,7 +410,7 @@ const Logbook: React.FC<unknown> = () => {
             )}
           </Grid>
         )}
-        {state.isLoading && !state.error && (
+        {state.isLoading && !state.alert && (
           <>
             <Grid display="flex" justifyContent="center" size={12}>
               <Spinner />

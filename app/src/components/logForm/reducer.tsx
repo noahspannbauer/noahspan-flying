@@ -1,14 +1,15 @@
+import { Alert } from '../../interfaces/Alert.interface';
 import { ILogFormState } from './ILogFormState';
 
 type Action =
-  | { type: 'SET_ERROR'; payload: string | undefined }
+  | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_IS_DISABLED'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
   | { type: 'SET_PILOT_OPTIONS'; payload: { label: string; value: string }[] }
   | { type: 'SET_SELECTED_ENTRY_PILOT_NAME'; payload: string };
 
 export const initialState: ILogFormState = {
-  error: undefined,
+  alert: undefined,
   isDisabled: false,
   isLoading: true,
   pilotOptions: [],
@@ -20,10 +21,10 @@ export const reducer = (
   action: Action
 ): ILogFormState => {
   switch (action.type) {
-    case 'SET_ERROR': {
+    case 'SET_ALERT': {
       return {
         ...state,
-        error: action.payload
+        alert: action.payload
       };
     }
     case 'SET_IS_DISABLED': {

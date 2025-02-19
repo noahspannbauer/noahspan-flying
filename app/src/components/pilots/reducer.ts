@@ -1,4 +1,5 @@
 import { FormMode } from "../../enums/formMode";
+import { Alert } from "../../interfaces/Alert.interface";
 import { Pilot } from "./Pilot.interface";
 import { PilotsState } from './PilotsState.interface'
 
@@ -11,7 +12,7 @@ type Action =
     }
   }
   | { type: 'SET_PILOTS'; payload: Pilot[] }
-  | { type: 'SET_ERROR'; payload: string | undefined }
+  | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_FORM_MODE'; payload: FormMode }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
@@ -25,13 +26,13 @@ type Action =
   }
 
 export const initialState: PilotsState = {
-  pilots: [],
-  error: undefined,
+  alert: undefined,
   formMode: FormMode.CANCEL,
   isConfirmDialogLoading: false,
   isConfirmDialogOpen: false,
   isFormOpen: false,
   isLoading: false,
+  pilots: [],
   selectedPilotId: undefined
 }
 
@@ -53,10 +54,10 @@ export const reducer = (
         pilots: action.payload
       }
     }
-    case 'SET_ERROR': {
+    case 'SET_ALERT': {
       return {
         ...state,
-        error: action.payload
+        alert: action.payload
       }
     }
     case 'SET_FORM_MODE': {

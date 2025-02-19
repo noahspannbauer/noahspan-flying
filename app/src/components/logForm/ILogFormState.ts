@@ -1,5 +1,7 @@
+import { Alert } from "../../interfaces/Alert.interface";
+
 export interface ILogFormState {
-  error: string | undefined;
+  alert: Alert | undefined;
   isDisabled: boolean;
   isLoading: boolean;
   pilotOptions: { label: string; value: string }[];
