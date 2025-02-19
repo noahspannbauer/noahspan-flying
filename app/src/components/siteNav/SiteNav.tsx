@@ -27,22 +27,30 @@ type EventPayloadExtended = EventPayload & { accessToken: string };
 const SiteNav: React.FC<unknown> = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userPhoto, setUserPhoto] = useState<string>();
+  const [pages, setPages] = useState<{ name: string; url: string; }[]>([]);
   const httpClient: AxiosInstance = useHttpClient();
   const appContext = useAppContext();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
   const { inProgress, instance } = useMsal();
   const navigate = useNavigate();
-  const pages = [
-    {
-      name: 'Logbook',
-      url: '/'
-    },
-    {
-      name: 'Pilots',
-      url: '/pilots'
+  const getPages = () => {
+    const pages = [
+      {
+        name: 'Logbook',
+        url: '/'
+      }
+    ];
+
+    if (isAuthenticated) {
+      pages.push({
+        name: 'Pilots',
+        url: '/pilots'
+      })
     }
-  ];
+
+    setPages(pages)
+  };
   const handleSignIn = () => {
     instance.loginRedirect({
       scopes: [`api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`]
@@ -125,8 +133,13 @@ const SiteNav: React.FC<unknown> = () => {
       Object.keys(appContext.state.userProfile).length === 0
     ) {
       setUserProfile();
+      getPages();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    getPages();
+  }, [])
 
   return (
     <Navbar
