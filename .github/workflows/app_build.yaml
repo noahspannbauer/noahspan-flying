@@ -9,10 +9,16 @@ on:
         required: true
         type: string
 
+env:
+  VITE_API_URL: ${{ vars.VITE_API_URL }}
+  VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
+  VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
+  VITE_REDIRECT_URL: ${{ vars.VITE_REDIRECT_URL }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.calling_workflow }}
+    environment: ${{ inputs.environment_name }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,16 +41,7 @@ jobs:
           pnpm install
 
       - name: Build
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
-          VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
-          VITE_REDIRECT_URL: ${{ vars.VITE_REDIRECT_URL }}
         run: |
-          export VITE_API_URL="${{ env.VITE_API_URL }}"
-          export VITE_CLIENT_ID="${{ env.VITE_CLIENT_ID }}"
-          export VITE_TENANT_ID="${{ env.VITE_TENANT_ID }}"
-          export VITE_REDIRECT_URL="${{ env.VITE_REDIRECT_URL }}"
           printenv
           pnpm --filter app build
 
