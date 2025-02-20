@@ -15,9 +15,6 @@ env:
   VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
   VITE_REDIRECT_URL: ${{ vars.VITE_REDIRECT_URL }}
 
-permissions:
-  id-token: write
-  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
