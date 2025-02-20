@@ -24,10 +24,12 @@ jobs:
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          allow-no-subscriptions: true
 
-      - name: Update Container App
-        run: |
-          az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
