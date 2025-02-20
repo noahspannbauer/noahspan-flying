@@ -42,7 +42,6 @@ jobs:
 
       - name: Build
         run: |
-          printenv
           pnpm --filter app build
 
       - name: Deploy
