@@ -5,14 +5,9 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  changes:
-    uses: ./.github/workflows/changes.yaml
-
   build-api:
     if: ${{ needs.changes.outputs.api == 'true' }}
     name: build-api
-    needs:
-      - changes
     uses: ./.github/workflows/api_build.yaml
     with:
       environment_name: prod
@@ -22,7 +17,6 @@ jobs:
   deploy-api:
     name: deploy-api
     needs: 
-      - changes
       - build-api
     uses: ./.github/workflows/deploy.yaml
     with:
@@ -34,8 +28,6 @@ jobs:
   build-app:
     if: ${{ needs.changes.outputs.app == 'true' }}
     name: build-app
-    needs:
-      - changes
     uses: ./.github/workflows/app_build.yaml
     with:
       environment_name: prod
@@ -45,7 +37,6 @@ jobs:
   deploy-app:
     name: deploy-app
     needs: 
-      - changes
       - build-app
     uses: ./.github/workflows/deploy.yaml
     with:
