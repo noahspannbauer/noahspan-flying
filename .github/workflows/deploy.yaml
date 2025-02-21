@@ -32,4 +32,4 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
+            az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --revision-suffix ${{ inputs.version_number }} --resource-group noahspan-flying --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
