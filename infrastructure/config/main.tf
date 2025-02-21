@@ -39,6 +39,11 @@ locals {
     prod = "flying-prod"
   }
 
+  custom_domain_count = {
+    test = 0
+    prod = 1
+  }
+
   logbook_feature_flag_active = {
     test = "true"
     prod = "true"

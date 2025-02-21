@@ -30,6 +30,10 @@ output "container_app_environment_name" {
   value = local.container_app_environment_name[var.environment]
 }
 
+output "custom_domain_count" {
+  value = local.custom_domain_count[var.environment]
+}
+
 output "logbook_feature_flag_active" {
   value = local.logbook_feature_flag_active[var.environment]
 }

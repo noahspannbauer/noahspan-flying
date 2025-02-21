@@ -148,11 +148,12 @@ resource "azurerm_container_app" "container_app_app" {
   }
 }
 
-# resource "azurerm_container_app_custom_domain" "custom_domain" {
-#   name = trimsuffix(trimprefix(azurerm_dns_txt_record.dns_txt_record.fqdn, "asuid."), ".")
-#   container_app_id = azurerm_container_app.container_app_app.id
+resource "azurerm_container_app_custom_domain" "custom_domain" {
+  count = module.environment.custom_domain_count
+  name = trimsuffix(trimprefix(azurerm_dns_txt_record.dns_txt_record[0].fqdn, "asuid."), ".")
+  container_app_id = azurerm_container_app.container_app_app.id
   
-#   lifecycle {
-#     ignore_changes = [ certificate_binding_type, container_app_environment_certificate_id ]
-#   }
-# }
+  lifecycle {
+    ignore_changes = [ certificate_binding_type, container_app_environment_certificate_id ]
+  }
+}
