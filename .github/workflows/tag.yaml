@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/api_build.yaml
     with:
       environment_name: prod
-      version_number: ${{ github.run_id }}
+      version_number: ${{ github.ref_name }}
     secrets: inherit
 
   deploy-api:
@@ -21,7 +21,7 @@ jobs:
     with:
       app_name: flying-api
       environment_name: prod
-      version_number: ${{ github.run_id }}
+      version_number: ${{ github.ref_name }}
     secrets: inherit
 
   build-app:
@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/app_build.yaml
     with:
       environment_name: prod
-      version_number: ${{ github.run_id }}
+      version_number: ${{ github.ref_name }}
     secrets: inherit
 
   deploy-app:
@@ -40,5 +40,5 @@ jobs:
     with:
       app_name: flying-app
       environment_name: prod
-      version_number: ${{ github.run_id }}
+      version_number: ${{ github.ref_name }}
     secrets: inherit
