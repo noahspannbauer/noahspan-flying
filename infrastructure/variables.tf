@@ -15,6 +15,10 @@ variable "CLIENT_SECRET" {
   sensitive = true
 }
 
+variable "DNS_ZONE_RESOURCE_GROUP" {
+  type = string
+}
+
 variable "DOCKER_IO_PASSWORD" {
   type = string
   sensitive = true
@@ -25,10 +29,6 @@ variable "DOCKER_IO_USERNAME" {
 }
 
 variable "DOMAIN_NAME" {
-    type = string
-}
-
-variable "REGION" {
     type = string
 }
 

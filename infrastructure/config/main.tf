@@ -5,8 +5,8 @@ locals {
   }
 
   container_app_app_container_image = {
-    test = "noahspan/flying-app:v0.0.1"
-    prod = "noahspan/flying-app:v0.0.1"
+    test = "noahspan/flying-app:v1.0.0"
+    prod = "noahspan/flying-app:v1.0.0"
   }
 
   container_app_app_container_name = {
@@ -20,18 +20,13 @@ locals {
   }
 
   container_app_api_container_image = {
-    test = "noahspan/flying-api:v0.0.1"
-    prod = "noahspan/flying-api:v0.0.1"
+    test = "noahspan/flying-api:v1.0.0"
+    prod = "noahspan/flying-api:v1.0.0"
   }
 
   container_app_api_container_name = {
     test = "flying-api-test"
     prod = "flying-api-prod"
-  }
-
-  container_app_api_dapr_app_id = {
-    test = "flyingapitest"
-    prod = "flyingpapiprod"
   }
 
   container_app_environment_name = {
@@ -62,5 +57,10 @@ locals {
   storage_account_name = {
     test = "noahspanflyingtest"
     prod = "noahspanflyingprod"
+  }
+
+  storage_tables = {
+    test = ["logs", "pilots"]
+    prod = ["logs", "pilots"]
   }
 }

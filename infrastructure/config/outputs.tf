@@ -22,10 +22,6 @@ output "container_app_api_container_name" {
   value = local.container_app_api_container_name[var.environment]
 }
 
-output "container_app_api_dapr_app_id" {
-  value = local.container_app_api_dapr_app_id[var.environment]
-}
-
 output "container_app_environment_name" {
   value = local.container_app_environment_name[var.environment]
 }
@@ -48,4 +44,8 @@ output "pilots_feature_flag_active" {
 
 output "storage_account_name" {
   value = local.storage_account_name[var.environment]
+}
+
+output "storage_tables" {
+  value = local.storage_tables[var.environment]
 }
