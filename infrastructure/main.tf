@@ -1,3 +1,10 @@
+module "storage" {
+  source = "github.com/noahspannbauer/noahspan-terraform/modules/storage"
+  resource_group_name = var.RESOURCE_GROUP_NAME
+  storage_account_name = module.environment.storage_account_name
+  storage_tables = module.environment.storage_tables
+}
+
 module "container_app" {
   source = "github.com/noahspannbauer/noahspan-terraform/modules/container_app"
   app_subdomain_name = var.APP_SUBDOMAIN_NAME
@@ -17,7 +24,6 @@ module "container_app" {
   domain_name = var.DOMAIN_NAME
   log_analytics_workspace_name = module.environment.log_analytics_workspace_name
   resource_group_name = var.RESOURCE_GROUP_NAME
-  storage_account_name = module.environment.storage_account_name
-  storage_tables = module.environment.storage_tables
+  storage_account_primary_connection_string = module.storage.storage_account_primary_connection_string
   tenant_id = var.TENANT_ID
 }
