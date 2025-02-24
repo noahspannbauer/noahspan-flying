@@ -20,6 +20,7 @@ import { Public } from '@noahspan/noahspan-modules';
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
+  @Public()
   @Get(':partitionKey/:rowKey')
   async find(
     @Param('partitionKey') partitionKey: string,
