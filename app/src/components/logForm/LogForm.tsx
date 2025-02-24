@@ -166,7 +166,7 @@ const LogForm: React.FC<ILogFormProps> = ({
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             <Grid size={11}>
-              <Typography variant="h4">{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Pilot`}</Typography>
+              <Typography variant="h4">{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Entry`}</Typography>
             </Grid>
             <Grid display="flex" justifyContent="right" size={1}>
               <IconButton onClick={onCancel}>
