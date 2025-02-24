@@ -18,7 +18,7 @@ services:
     ports:
       - '3000:3000'
     env_file:
-      - ./api/.env
+      - ./api/.env.compose
 
   app:
     container_name: flying-app
@@ -27,7 +27,5 @@ services:
       target: app
     ports: 
       - '8080:8080'
-    # env_file:
-    #   - ./app/.env
 
 

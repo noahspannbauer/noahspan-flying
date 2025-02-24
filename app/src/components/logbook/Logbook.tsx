@@ -167,9 +167,7 @@ const Logbook: React.FC<unknown> = () => {
         headerAlign: 'right'
       },
       cell: (info: any) =>
-        info.getValue() !== null
-          ? parseFloat(info.getValue()).toFixed(1)
-          : ''
+        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
     },
     {
       accessorKey: 'singleEngineLand',
@@ -179,9 +177,7 @@ const Logbook: React.FC<unknown> = () => {
         headerAlign: 'right'
       },
       cell: (info: any) =>
-        info.getValue() !== null
-          ? parseFloat(info.getValue()).toFixed(1)
-          : ''
+        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
     },
     {
       id: 'landings',
@@ -223,9 +219,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'instrumentSimulated',
@@ -235,9 +229,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'instrumentApproaches',
@@ -280,9 +272,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'flightTrainingReceived',
@@ -292,9 +282,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'crossCountry',
@@ -304,9 +292,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'night',
@@ -316,9 +302,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'solo',
@@ -328,9 +312,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
           accessorKey: 'pilotInCommand',
@@ -340,9 +322,7 @@ const Logbook: React.FC<unknown> = () => {
             headerAlign: 'right'
           },
           cell: (info) =>
-            info.getValue() !== null
-              ? parseFloat(info.getValue()).toFixed(1)
-              : ''
+            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         }
       ]
     },
