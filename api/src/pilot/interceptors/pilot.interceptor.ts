@@ -19,15 +19,10 @@ export class PilotInterceptor implements NestInterceptor {
                 name: pilot.name
               };
             });
-
+            console.log(pilots)
             return pilots;
           } else {
-            return {
-              partitionKey: data.partitionKey,
-              rowKey: data.rowKey,
-              id: data.id,
-              name: data.name
-            };
+            return data;
           }
         })
       );

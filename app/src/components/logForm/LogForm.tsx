@@ -122,7 +122,7 @@ const LogForm: React.FC<ILogFormProps> = ({
           config
         );
         const entry = response.data;
-        console.log(entry)
+
         methods.reset(entry);
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -139,7 +139,7 @@ const LogForm: React.FC<ILogFormProps> = ({
   }, [entryId]);
 
   useEffect(() => {
-    if (pilots) {
+    if (pilots && FormMode.ADD) {
       const newPilotsOptions = pilots.map((pilot) => {
         return {
           label: pilot.name,

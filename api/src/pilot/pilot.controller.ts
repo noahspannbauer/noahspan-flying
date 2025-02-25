@@ -7,18 +7,21 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PilotDto } from './pilot.dto';
 import { Pilot } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
-import { AuthGuard } from '@nestjs/passport'
+import { Public } from '@noahspan/noahspan-modules'
+import { PilotInterceptor } from './interceptors/pilot.interceptor';
 
 @Controller('pilots')
+@UseInterceptors(new PilotInterceptor())
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 
+  @Public()
   @Get(':partitionKey/:rowKey')
   async find(
     @Param('partitionKey') partitionKey: string,
@@ -33,6 +36,7 @@ export class PilotController {
     }
   }
 
+  @Public()
   @Get()
   async findAll() {
     try {
