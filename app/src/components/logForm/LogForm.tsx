@@ -186,81 +186,62 @@ const LogForm: React.FC<ILogFormProps> = ({
                 </Alert>
               </Grid>
             )}
-            {!FormMode.VIEW &&
-              <>
-                <Grid alignItems="center" display="flex" size={4}>
-                  <Typography variant="body1">Pilot *</Typography>
-                </Grid>
-                <Grid size={8}>
-                  <Controller
-                    name="pilotId"
-                    control={methods.control}
-                    render={({ field: { onChange, value } }) => {
-                      useEffect(() => {
-                        if (value) {
-                          const pilot = pilots?.find((pilot) => pilot.id === value);
+            <Grid alignItems="center" display="flex" size={4}>
+              <Typography variant="body1">Pilot *</Typography>
+            </Grid>
+            <Grid size={8}>
+              <Controller
+                name="pilotId"
+                control={methods.control}
+                render={({ field: { onChange, value } }) => {
+                  useEffect(() => {
+                    if (value && mode !== FormMode.ADD) {
+                      const pilot = pilots?.find((pilot) => pilot.id === value);
 
-                          dispatch({
-                            type: 'SET_SELECTED_ENTRY_PILOT_NAME',
-                            payload: pilot.name
-                          });
-                        }
-                      }, [value]);
+                      dispatch({
+                        type: 'SET_SELECTED_ENTRY_PILOT_NAME',
+                        payload: pilot.name
+                      });
+                    }
+                  }, [value]);
 
-                      return (
-                        <>
-                          {mode === FormMode.ADD && (
-                            <Select
-                              disabled={state.isDisabled}
-                              fullWidth
-                              onChange={(event) => {
-                                const pilot = pilots?.find(
-                                  (pilot) => (pilot.id = event.target.value)
-                                );
+                  return (
+                    <>
+                      {mode === FormMode.ADD && (
+                        <Select
+                          disabled={state.isDisabled}
+                          fullWidth
+                          onChange={(event) => {
+                            const pilot = pilots?.find(
+                              (pilot) => (pilot.id = event.target.value)
+                            );
 
-                                if (pilot) {
-                                  methods.setValue('pilotName', pilot.name);
-                                }
+                            if (pilot) {
+                              methods.setValue('pilotName', pilot.name);
+                            }
 
-                                methods.setValue('pilotId', event.target.value);
-                              }}
-                              options={
-                                state.pilotOptions && state.pilotOptions.length > 0
-                                  ? state.pilotOptions
-                                  : []
-                              }
-                              value={value}
-                            />
-                          )}
-                        </>
-                      );
-                    }}
-                  />
-                </Grid>
-              </>
-            }
-            {FormMode.VIEW &&
-              <>
-                <Grid alignItems="center" display="flex" size={4}>
-                  <Typography variant="body1">Pilot *</Typography>
-                </Grid>
-                <Grid size={8}>
-                  <Controller
-                    name="pilotName"
-                    control={methods.control}
-                    render={({ field: { value } }) => {
-                      return (
+                            methods.setValue('pilotId', event.target.value);
+                          }}
+                          options={
+                            state.pilotOptions && state.pilotOptions.length > 0
+                              ? state.pilotOptions
+                              : []
+                          }
+                          value={value}
+                        />
+                      )}
+                      {mode !== FormMode.ADD && (
                         <TextField
                           disabled={true}
                           fullWidth
-                          value={value}
+                          value={state.selectedEntryPilotName}
                         />
-                      )
-                    }}
-                  />
-                </Grid>
-              </>
-            }
+                      )}
+                    </>
+                  );
+                }}
+              />
+            </Grid>
             <Grid alignItems="center" display="flex" size={4}>
               <Typography variant="body1">Date *</Typography>
             </Grid>

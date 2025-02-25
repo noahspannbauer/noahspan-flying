@@ -32,6 +32,9 @@ const Logbook: React.FC<unknown> = () => {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
       const response: AxiosResponse = await httpClient.get(`api/logs`);
+      const entries: ILogbookEntry[] = response.data;
+      
+      entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
       if (response.data.length > 0) {
         dispatch({ type: 'SET_ENTRIES', payload: response.data });
