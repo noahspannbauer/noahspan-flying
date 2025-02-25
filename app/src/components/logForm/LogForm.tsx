@@ -123,6 +123,15 @@ const LogForm: React.FC<ILogFormProps> = ({
         );
         const entry = response.data;
 
+        // if (mode !== FormMode.ADD) {
+        //   const pilot = pilots?.find((pilot) => pilot.id === entry.pilotId);
+        //   console.log(pilot.name)
+        //   dispatch({
+        //     type: 'SET_SELECTED_ENTRY_PILOT_NAME',
+        //     payload: pilot.name
+        //   });
+        // }
+
         methods.reset(entry);
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -194,50 +203,29 @@ const LogForm: React.FC<ILogFormProps> = ({
                 name="pilotId"
                 control={methods.control}
                 render={({ field: { onChange, value } }) => {
-                  useEffect(() => {
-                    if (value && mode !== FormMode.ADD) {
-                      const pilot = pilots?.find((pilot) => pilot.id === value);
-
-                      dispatch({
-                        type: 'SET_SELECTED_ENTRY_PILOT_NAME',
-                        payload: pilot.name
-                      });
-                    }
-                  }, [value]);
-
+                  console.log(value)
                   return (
-                    <>
-                      {mode === FormMode.ADD && (
-                        <Select
-                          disabled={state.isDisabled}
-                          fullWidth
-                          onChange={(event) => {
-                            const pilot = pilots?.find(
-                              (pilot) => (pilot.id = event.target.value)
-                            );
+                    <Select
+                      disabled={state.isDisabled}
+                      fullWidth
+                      onChange={(event) => {
+                        const pilot = pilots?.find(
+                          (pilot) => (pilot.id = event.target.value)
+                        );
 
-                            if (pilot) {
-                              methods.setValue('pilotName', pilot.name);
-                            }
+                        if (pilot) {
+                          methods.setValue('pilotName', pilot.name);
+                        }
 
-                            methods.setValue('pilotId', event.target.value);
-                          }}
-                          options={
-                            state.pilotOptions && state.pilotOptions.length > 0
-                              ? state.pilotOptions
-                              : []
-                          }
-                          value={value}
-                        />
-                      )}
-                      {mode !== FormMode.ADD && (
-                        <TextField
-                          disabled={true}
-                          fullWidth
-                          value={state.selectedEntryPilotName}
-                        />
-                      )}
-                    </>
+                        methods.setValue('pilotId', event.target.value);
+                      }}
+                      options={
+                        state.pilotOptions && state.pilotOptions.length > 0
+                          ? state.pilotOptions
+                          : []
+                      }
+                      value={value ? value : ''}
+                    />
                   );
                 }}
               />
