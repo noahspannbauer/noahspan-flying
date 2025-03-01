@@ -9,6 +9,8 @@ services:
       - '10001:10001'
       - '10002:10002'
     command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose'
+    volumes: 
+      - ./azurite-flying:/data
 
   api:
     container_name: flying-api
@@ -28,4 +30,5 @@ services:
     ports: 
       - '8080:8080'
 
-
+volumes:
+  azurite-flying:

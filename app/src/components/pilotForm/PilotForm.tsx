@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
+  Accordion,
   Button,
+  DatePicker,
   Drawer,
   Grid,
   IconButton,
   PeoplePicker,
   SaveIcon,
+  Select,
   StateSelect,
   TextField,
   Typography,
@@ -19,6 +22,7 @@ import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
 import { Person } from '@microsoft/microsoft-graph-types';
+import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
   pilotId,
@@ -47,7 +51,9 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     state: '',
     postalCode: '',
     email: '',
-    phone: ''
+    phone: '',
+    medicalClass: '',
+    medicalExpiration: ''
   };
   const methods = useForm({
     defaultValues: defaultValues
@@ -103,6 +109,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   };
 
   const onSubmit = async (data: unknown) => {
+    console.log(data)
     try {
       setIsLoading(true);
 
@@ -363,6 +370,11 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 )}
               />
             </Grid>
+            <Grid size={12}>
+              <PilotFormMedical
+                isDisabled={isDisabled}
+              />
+            </Grid>
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
                 disabled={
@@ -392,6 +404,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
               )}
             </Grid>
           </Grid>
+          
           {/* {pilotId && (
                 <>
                   <div className="col-span-1">
@@ -417,69 +430,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   </div>
                 </>
               )} */}
-          {/* {pilotId && (
-                <>
-                  <div className="col-span-4">
-                    <Typography variant="h5">Medical</Typography>
-                    <hr className="my-3" />
-                  </div>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Class</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="medicalClass"
-                      control={methods.control}
-                      render={({ field }) => {
-                        return (
-                          <Select
-                            labelProps={{
-                              className:
-                                'before:content-none after:content-none'
-                            }}
-                            {...field}
-                          >
-                            <Option key="first" value="First">
-                              First
-                            </Option>
-                            <Option key="second" value="Second">
-                              Second
-                            </Option>
-                            <Option key="third" value="Third">
-                              Third
-                            </Option>
-                            <Option key="basicMed" value="Basic Med">
-                              Basic Med
-                            </Option>
-                          </Select>
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Expiration Date</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="medicalExpiration"
-                      control={methods.control}
-                      render={({ field }) => {
-                        return (
-                          <DatePicker
-                            handleDateChanged={(date: string) => {
-                              methods.setValue('medicalExpiration', date);
-                            }}
-                            inputProps={{
-                              value: field.value
-                            }}
-                          />
-                        );
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-              {pilotId && (
+
+              {/* {pilotId && (
                 <>
                   <div className="col-span-4">
                     <Typography variant="h5">Certificates</Typography>
