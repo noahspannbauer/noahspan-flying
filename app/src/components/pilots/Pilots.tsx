@@ -5,18 +5,10 @@ import {
   Box,
   Button,
   ColumnDef,
-  EllipsisVerticalIcon,
-  EyeIcon,
   Grid,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  PenIcon,
-  PlusIcon,
+  Icon,
+  IconName,
   Table,
-  TrashIcon,
   Typography
 } from '@noahspan/noahspan-components';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
@@ -144,7 +136,7 @@ const Pilots: React.FC<unknown> = () => {
     },
     {
       header: 'Actions',
-      cell: (info) => (
+      cell: (info: any) => (
         <ActionMenu 
           id={info.row.original.rowKey} 
           onDelete={onDeleteEntry}
@@ -170,7 +162,7 @@ const Pilots: React.FC<unknown> = () => {
           {isAuthenticated &&
             <Button
               onClick={() => onOpenClosePilotForm(FormMode.ADD)}
-              startIcon={<PlusIcon />}
+              startIcon={<Icon iconName={IconName.PLUS} />}
               variant="contained"
               data-testid="pilot-add-button"
             >

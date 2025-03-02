@@ -13,7 +13,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.0.1",
     "@azure/msal-react": "^3.0.1",
-    "@noahspan/noahspan-components": "^0.8.9",
+    "@noahspan/noahspan-components": "^1.3.1",
     "axios": "^1.7.2",
     "dotenv": "^16.4.7",
     "react": "^18.3.1",

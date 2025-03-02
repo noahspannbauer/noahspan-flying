@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { IActionMenuProps } from './IActionMenuProps';
 import {
-  EllipsisVerticalIcon,
-  EyeIcon,
   IconButton,
+  Icon,
+  IconName, 
   ListItemIcon,
   ListItemText,
   Menu,
-  MenuItem,
-  PenIcon,
-  TrashIcon
+  MenuItem
 } from '@noahspan/noahspan-components';
 import { FormMode } from '../../enums/formMode';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -31,7 +29,7 @@ const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
   return (
     <div>
       <IconButton onClick={onOpenActionMenu}>
-        <EllipsisVerticalIcon size="sm" />
+        <Icon iconName={IconName.ELLIPSIS_VERTICAL} size="sm" />
       </IconButton>
       <Menu
         anchorEl={anchorElAction}
@@ -42,14 +40,14 @@ const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
         {isAuthenticated &&
           <MenuItem onClick={() => onOpenCloseForm(FormMode.EDIT, id)}>
             <ListItemIcon>
-              <PenIcon size="lg" />
+              <Icon iconName={IconName.PEN} size="lg" />
             </ListItemIcon>
             <ListItemText>Edit</ListItemText>
           </MenuItem>
         }
         <MenuItem onClick={() => onOpenCloseForm(FormMode.VIEW, id)}>
           <ListItemIcon>
-            <EyeIcon size="lg" />
+            <Icon iconName={IconName.EYE} size="lg" />
           </ListItemIcon>
           <ListItemText>View</ListItemText>
         </MenuItem>
@@ -58,7 +56,7 @@ const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
             <hr className="my-3" />
             <MenuItem onClick={() => onDelete(id)}>
               <ListItemIcon>
-                <TrashIcon size="lg" />
+                <Icon iconName={IconName.TRASH} size="lg" />
               </ListItemIcon>
               <ListItemText>Delete</ListItemText>
             </MenuItem>

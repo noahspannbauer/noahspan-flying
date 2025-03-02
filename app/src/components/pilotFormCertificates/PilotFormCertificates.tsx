@@ -1,134 +1,159 @@
-// import { IPilotFormCertificates } from './IPilotFormCertificates';
-// import {
-//   Button,
-//   DatePicker,
-//   Input,
-//   Option,
-//   PlusIcon,
-//   Select,
-//   TrashIcon,
-//   Typography
-// } from '@noahspan/noahspan-components';
-// import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { PilotFormCertificatesProps } from './PilotFormCertificatesProps.interface';
+import {
+  Button,
+  DatePicker,
+  Grid,
+  Icon,
+  IconButton,
+  IconName,
+  Select,
+  TextField,
+  Typography
+} from '@noahspan/noahspan-components';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
-// const PilotFormCertificates: React.FC<IPilotFormCertificates> = ({
-//   certificates
-// }: IPilotFormCertificates) => {
-//   const {
-//     control,
-//     formState: { errors },
-//     setValue
-//   } = useFormContext();
+const PilotFormCertificates = ({
+  certificates,
+  isDisabled
+}: PilotFormCertificatesProps ) => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
 
-//   const { fields, append, remove } = useFieldArray({
-//     name: 'certificates',
-//     control
-//   });
+  const { fields, append, remove } = useFieldArray({
+    name: 'certificates',
+    control
+  });
 
-//   return (
-//     <>
-//       {fields.length > 0 && (
-//         <>
-//           <div className="col-span-1">
-//             <Typography variant="h6">Type</Typography>
-//           </div>
-//           <div className="col-span-1">
-//             <Typography variant="h6">Number</Typography>
-//           </div>
-//           <div className="col-span-1">
-//             <Typography variant="h6">Date of Issue</Typography>
-//           </div>
-//           <div className="col-span-1"></div>
-//         </>
-//       )}
-//       {fields.map((field, index) => {
-//         return (
-//           <>
-//             <div className="col-span-1">
-//               <Controller
-//                 name={`certificates.${index}.type`}
-//                 control={control}
-//                 render={({ field }) => {
-//                   return (
-//                     <Select label="Type" {...field}>
-//                       <Option key="student" value="Student">
-//                         Student
-//                       </Option>
-//                       <Option key="private" value="Private">
-//                         Private
-//                       </Option>
-//                       <Option key="instrument" value="Instrument">
-//                         Instrument
-//                       </Option>
-//                       <Option key="recreational" value="Recreational">
-//                         Recreational
-//                       </Option>
-//                       <Option key="sport" value="Sport">
-//                         Sport
-//                       </Option>
-//                     </Select>
-//                   );
-//                 }}
-//               />
-//             </div>
-//             <div className="col-span-1">
-//               <Controller
-//                 name={`certificates.${index}.number`}
-//                 control={control}
-//                 render={({ field }) => {
-//                   return <Input label="Number" {...field} />;
-//                 }}
-//               />
-//             </div>
-//             <div className="col-span-1">
-//               <Controller
-//                 name={`certificates.${index}.dateOfIssue`}
-//                 control={control}
-//                 render={({ field }) => {
-//                   return (
-//                     <DatePicker
-//                       handleDateChanged={(date: string) => {
-//                         setValue(`certificates.${index}.dateOfIssue`, date);
-//                       }}
-//                       inputProps={{
-//                         value: field.value
-//                       }}
-//                     />
-//                   );
-//                 }}
-//               />
-//             </div>
-//             <div className="col-span-1">
-//               <Button
-//                 className="flex items-center gap-3"
-//                 onClick={() => remove(index)}
-//                 variant="outlined"
-//               >
-//                 <TrashIcon size="lg" />
-//                 Delete
-//               </Button>
-//             </div>
-//           </>
-//         );
-//       })}
-//       <div className="col-span-4">
-//         <Button
-//           className="flex items-center gap-3"
-//           onClick={() => {
-//             append({
-//               type: '',
-//               number: '',
-//               dateOfIssue: null
-//             });
-//           }}
-//           variant="outlined"
-//         >
-//           <PlusIcon size="lg" />
-//           Add Certificate
-//         </Button>
-//       </div>
-//     </>
-//   );
-// };
+  return (
+    <Grid
+      container
+      spacing={2}
+    >
+      <Grid size={12}>
+        <Typography variant="h5">Certificates</Typography>
+      </Grid>
+      {fields.length > 0 && (
+        <>
+          <Grid size={4}>
+            <Typography variant="h6">Type</Typography>
+          </Grid>
+          <Grid size={4}>
+            <Typography variant="h6">Number</Typography>
+          </Grid>
+          <Grid size={3}>
+            <Typography variant="h6">Date of Issue</Typography>
+          </Grid>
+          <Grid size={1}>
+          </Grid>
+          {fields.map((field, index) => {
+            return (
+              <>
+                <Grid size={4}>
+                  <Controller
+                    name={`certificates.${index}.type`}
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <Select
+                          disabled={isDisabled}
+                          fullWidth
+                          onChange={onChange}
+                          options={
+                            [
+                              {
+                                label: 'Student',
+                                value: 'student'
+                              },
+                              {
+                                label: 'Private',
+                                value: 'private'
+                              },
+                              {
+                                label: 'Instrument',
+                                value: 'instrument'
+                              },
+                              {
+                                label: 'Recreational',
+                                value: 'recreational'
+                              },
+                              {
+                                label: 'Sport',
+                                value: 'sport'
+                              }
+                            ]
+                          }
+                          value={value}
+                        />
+                      );
+                    }}
+                  />
+                </Grid>
+                <Grid size={4}>
+                  <Controller
+                    name={`certificates.${index}.number`}
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <TextField
+                          disabled={isDisabled}
+                          fullWidth
+                          onChange={onChange}
+                          value={value}
+                        />
+                      )
+                    }}
+                  />
+                </Grid>
+                <Grid size={3}>
+                  <Controller
+                    name={`certificates.${index}.dateOfIssue`}
+                    control={control}
+                    render={({ field: { onChange, value} }) => {
+                      return (
+                        <DatePicker
+                          disabled={isDisabled}
+                          onChange={onChange}
+                          value={value}
+                        />
+                      );
+                    }}
+                  />
+                </Grid>
+                <Grid size={1}>
+                  <IconButton
+                    disabled={isDisabled}
+                    onClick={() => remove(index)}
+                    sx={{
+                      marginTop: '-5px'
+                    }}
+                  >
+                    <Icon iconName={IconName.TRASH} size='md' />
+                  </IconButton>
+                </Grid>
+              </>
+            );
+          })}
+        </>
+      )}
+      <Grid display="flex" justifyContent="right" size={12}>
+        <Button
+          onClick={() => {
+            append({
+              type: '',
+              number: '',
+              dateOfIssue: null
+            });
+          }}
+          startIcon={<Icon iconName={IconName.PLUS} />}
+          variant="contained"
+        >
+          Add Certificate
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
 
-// export default PilotFormCertificates;
+export default PilotFormCertificates;

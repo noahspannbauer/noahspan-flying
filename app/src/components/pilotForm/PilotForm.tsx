@@ -6,14 +6,14 @@ import {
   DatePicker,
   Drawer,
   Grid,
+  Icon,
   IconButton,
+  IconName,
   PeoplePicker,
-  SaveIcon,
   Select,
   StateSelect,
   TextField,
-  Typography,
-  XmarkIcon
+  Typography
 } from '@noahspan/noahspan-components';
 import { IPilotFormProps } from './IPilotFormProps';
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
@@ -22,6 +22,7 @@ import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
 import { Person } from '@microsoft/microsoft-graph-types';
+import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
 import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
@@ -53,7 +54,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     email: '',
     phone: '',
     medicalClass: '',
-    medicalExpiration: ''
+    medicalExpiration: '',
+    certificates: []
   };
   const methods = useForm({
     defaultValues: defaultValues
@@ -133,6 +135,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
       onOpenClose(FormMode.CANCEL);
     } catch (error) {
       const axiosError = error as AxiosError;
+      console.log(axiosError)
       const responseData = axiosError.response?.data as any;
 
       console.log(responseData.message);
@@ -160,6 +163,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
           config
         );
         const pilot = response.data;
+        
+        pilot.certificates = JSON.parse(pilot.certificates);
 
         setSelectedPerson({
           userPrincipalName: pilot.id,
@@ -198,7 +203,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
             </Grid>
             <Grid display="flex" justifyContent="right" size={1}>
               <IconButton onClick={onCancel}>
-                <XmarkIcon />
+                <Icon iconName={IconName.XMARK} />
               </IconButton>
             </Grid>
             <Grid size={3}>
@@ -375,6 +380,9 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 isDisabled={isDisabled}
               />
             </Grid>
+            <Grid size={12}>
+              <PilotFormCertificates certificates={[]} isDisabled={isDisabled} />
+            </Grid>
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
                 disabled={
@@ -382,7 +390,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                     ? isDisabled
                     : false
                 }
-                startIcon={<XmarkIcon />}
+                startIcon={<Icon iconName={IconName.XMARK} />}
                 variant="outlined"
                 onClick={onCancel}
                 data-testid="pilot-cancel-button"
@@ -393,7 +401,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
               {mode.toString() !== FormMode.VIEW && (
                 <Button
                   disabled={isDisabled}
-                  startIcon={<SaveIcon />}
+                  startIcon={<Icon iconName={IconName.SAVE} />}
                   size="small"
                   type="submit"
                   variant="contained"
@@ -431,16 +439,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 </>
               )} */}
 
+
               {/* {pilotId && (
-                <>
-                  <div className="col-span-4">
-                    <Typography variant="h5">Certificates</Typography>
-                    <hr className="my-3" />
-                  </div>
-                  <PilotFormCertificates certificates={[]} />
-                </>
-              )}
-              {pilotId && (
                 <>
                   <div className="col-span-4">
                     <Typography variant="h5">Endorsements</Typography>

@@ -11,4 +11,7 @@ export class Pilot {
   @EntityString() postalCode?: string;
   @EntityString() email?: string;
   @EntityString() phone?: string;
+  @EntityString() medicalClass?: string;
+  @EntityString() medicalExpiration: string;
+  @EntityString() certificates: string;
 }

@@ -1,4 +1,4 @@
-import { DatePicker, Grid, Select, Typography } from "@noahspan/noahspan-components";
+import { DatePicker, Grid, Select, Typography } from '@noahspan/noahspan-components';
 import { Controller, useFormContext } from "react-hook-form"
 import { PilotFormMedicalProps } from "./PilotFormMedicalProps.interface";
 
