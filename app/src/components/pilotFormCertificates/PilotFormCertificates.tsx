@@ -129,7 +129,7 @@ const PilotFormCertificates = ({
                       marginTop: '-5px'
                     }}
                   >
-                    <Icon iconName={IconName.TRASH} size='md' />
+                    <Icon iconName={IconName.TRASH} size='sm' />
                   </IconButton>
                 </Grid>
               </>

@@ -7,6 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   Icon,
+  IconName,
   Spinner
 } from '@noahspan/noahspan-components';
 import { IDialogConfirmationProps } from './IConfirmationDialogProps';
@@ -33,13 +34,13 @@ const ConfirmationDialog = ({
         {isLoading && <Spinner />}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel} variant="outlined" startIcon={<Icon iconName='fa-xmark' />}>
+        <Button onClick={onCancel} variant="outlined" startIcon={<Icon iconName={IconName.XMARK} />}>
           No
         </Button>
         <Button
           onClick={onConfirm}
           variant="contained"
-          startIcon={<Icon iconName='fa-circle-check' />}
+          startIcon={<Icon iconName={IconName.CIRCLE_CHECK} />}
         >
           Yes
         </Button>

@@ -898,7 +898,7 @@ const LogForm: React.FC<ILogFormProps> = ({
                     ? state.isDisabled
                     : false
                 }
-                startIcon={<Icon iconName='fa-xmark' />}
+                startIcon={<Icon iconName={IconName.XMARK} />}
                 variant="outlined"
                 onClick={onCancel}
                 size="small"
@@ -908,7 +908,7 @@ const LogForm: React.FC<ILogFormProps> = ({
               {mode.toString() !== FormMode.VIEW && (
                 <Button
                   disabled={state.isDisabled}
-                  startIcon={<Icon iconName='fa-save' />}
+                  startIcon={<Icon iconName={IconName.SAVE} />}
                   size="small"
                   type="submit"
                   variant="contained"
