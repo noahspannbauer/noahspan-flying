@@ -5,16 +5,15 @@ import {
   AccordionSummary,
   Alert,
   Button,
-  ChevronDownIcon,
   DatePicker,
   Drawer,
   Grid,
+  Icon,
   IconButton,
-  SaveIcon,
+  IconName,
   Select,
   TextField,
   Typography,
-  XmarkIcon
 } from '@noahspan/noahspan-components';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { ILogFormProps } from './ILogFormProps';
@@ -179,7 +178,7 @@ const LogForm: React.FC<ILogFormProps> = ({
             </Grid>
             <Grid display="flex" justifyContent="right" size={1}>
               <IconButton onClick={onCancel}>
-                <XmarkIcon />
+                <Icon iconName={IconName.XMARK} />
               </IconButton>
             </Grid>
             {state.alert && (
@@ -208,7 +207,7 @@ const LogForm: React.FC<ILogFormProps> = ({
                     <Select
                       disabled={state.isDisabled}
                       fullWidth
-                      onChange={(event) => {
+                      onChange={(event: any) => {
                         const pilot = pilots?.find(
                           (pilot) => (pilot.id = event.target.value)
                         );
@@ -427,7 +426,7 @@ const LogForm: React.FC<ILogFormProps> = ({
             </Grid>
             <Grid size={12}>
               <Accordion defaultExpanded>
-                <AccordionSummary expandIcon={<ChevronDownIcon />}>
+                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
                   <Typography variant="body1">Landings</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -500,7 +499,7 @@ const LogForm: React.FC<ILogFormProps> = ({
             </Grid>
             <Grid size={12}>
               <Accordion>
-                <AccordionSummary expandIcon={<ChevronDownIcon />}>
+                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
                   Instrument
                 </AccordionSummary>
                 <AccordionDetails>
@@ -668,7 +667,7 @@ const LogForm: React.FC<ILogFormProps> = ({
             </Grid>
             <Grid size={12}>
               <Accordion defaultExpanded>
-                <AccordionSummary expandIcon={<ChevronDownIcon />}>
+                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
                   Type of Pilot Experience or Training
                 </AccordionSummary>
                 <AccordionDetails>
@@ -899,7 +898,7 @@ const LogForm: React.FC<ILogFormProps> = ({
                     ? state.isDisabled
                     : false
                 }
-                startIcon={<XmarkIcon />}
+                startIcon={<Icon iconName={IconName.XMARK} />}
                 variant="outlined"
                 onClick={onCancel}
                 size="small"
@@ -909,7 +908,7 @@ const LogForm: React.FC<ILogFormProps> = ({
               {mode.toString() !== FormMode.VIEW && (
                 <Button
                   disabled={state.isDisabled}
-                  startIcon={<SaveIcon />}
+                  startIcon={<Icon iconName={IconName.SAVE} />}
                   size="small"
                   type="submit"
                   variant="contained"

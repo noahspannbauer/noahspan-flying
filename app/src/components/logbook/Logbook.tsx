@@ -6,7 +6,8 @@ import {
   Button,
   ColumnDef,
   Grid,
-  PlusIcon,
+  Icon,
+  IconName,
   Spinner,
   Table,
   Typography
@@ -221,7 +222,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -231,7 +232,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -274,7 +275,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -284,7 +285,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -294,7 +295,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -304,7 +305,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -314,7 +315,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         },
         {
@@ -324,7 +325,7 @@ const Logbook: React.FC<unknown> = () => {
             align: 'right',
             headerAlign: 'right'
           },
-          cell: (info) =>
+          cell: (info: any) =>
             info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
         }
       ]
@@ -339,7 +340,7 @@ const Logbook: React.FC<unknown> = () => {
         align: 'center',
         headerAlign: 'center'
       },
-      cell: (info) => (
+      cell: (info: any) => (
         <ActionMenu
           id={info.row.original.rowKey}
           onDelete={onDeleteEntry}
@@ -365,7 +366,7 @@ const Logbook: React.FC<unknown> = () => {
           {isAuthenticated &&
             <Button
               onClick={() => onOpenCloseEntryForm(FormMode.ADD)}
-              startIcon={<PlusIcon />}
+              startIcon={<Icon iconName={IconName.PLUS} />}
               variant="contained"
               data-testid="pilot-add-button"
             >

@@ -51,9 +51,23 @@ export class PilotController {
   @Post()
   async create(@Body() pilotDto: PilotDto) {
     try {
-      const pilot = new Pilot();
-
-      Object.assign(pilot, pilotDto);
+      let pilot = new Pilot();
+      
+      pilot = {
+        partitionKey: pilotDto.partitionKey,
+        rowKey: pilotDto.rowKey,
+        id: pilotDto.id,
+        name: pilotDto.name,
+        address: pilotDto.address,
+        city: pilotDto.city,
+        state: pilotDto.state,
+        postalCode: pilotDto.postalCode,
+        email: pilotDto.email,
+        phone: pilotDto.phone,
+        medicalClass: pilotDto.medicalClass,
+        medicalExpiration: pilotDto.medicalExpiration,
+        certificates: JSON.stringify(pilotDto.certificates)
+      }
 
       return await this.pilotService.create(pilot);
     } catch (error) {
@@ -70,9 +84,23 @@ export class PilotController {
     @Body() pilotDto: PilotDto
   ) {
     try {
-      const pilot = new Pilot();
+      let pilot = new Pilot();
 
-      Object.assign(pilot, pilotDto);
+      pilot = {
+        partitionKey: pilotDto.partitionKey,
+        rowKey: pilotDto.rowKey,
+        id: pilotDto.id,
+        name: pilotDto.name,
+        address: pilotDto.address,
+        city: pilotDto.city,
+        state: pilotDto.state,
+        postalCode: pilotDto.postalCode,
+        email: pilotDto.email,
+        phone: pilotDto.phone,
+        medicalClass: pilotDto.medicalClass,
+        medicalExpiration: pilotDto.medicalExpiration,
+        certificates: JSON.stringify(pilotDto.certificates)
+      }
 
       return await this.pilotService.update(partitionKey, rowKey, pilot);
     } catch (error) {

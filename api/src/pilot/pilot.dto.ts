@@ -1,3 +1,5 @@
+import { Certificate } from "./certificate/certificate.entity";
+
 export class PilotDto {
   partitionKey: string;
   rowKey: string;
@@ -9,4 +11,7 @@ export class PilotDto {
   postalCode: string;
   email?: string;
   phone?: string;
+  medicalClass?: string;
+  medicalExpiration?: string;
+  certificates: Certificate;
 }

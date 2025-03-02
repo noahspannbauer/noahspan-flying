@@ -1,30 +1,25 @@
 import { useEffect, useState } from 'react';
-import { ISiteNavProps } from './ISiteNavProps';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import {
   Avatar,
   Button,
+  Icon, 
   IconButton,
+  IconName,
   Menu,
   MenuItem,
   Navbar,
-  PlaneIcon,
-  SignOutIcon,
   Spinner,
   Typography
 } from '@noahspan/noahspan-components';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
-import { InteractionStatus } from '@azure/msal-browser';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { User } from '@microsoft/microsoft-graph-types';
-import { EventMessage, EventPayload, EventType } from '@azure/msal-browser';
 
-type EventPayloadExtended = EventPayload & { accessToken: string };
-
-const SiteNav: React.FC<unknown> = () => {
+const SiteNav = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userPhoto, setUserPhoto] = useState<string>();
   const [pages, setPages] = useState<{ name: string; url: string; }[]>([]);
@@ -98,7 +93,7 @@ const SiteNav: React.FC<unknown> = () => {
   const Settings = () => {
     return (
       <MenuItem onClick={handleSignOut}>
-        <SignOutIcon />
+        <Icon iconName={IconName.SIGN_OUT} />
         <Typography sx={{ marginLeft: '10px', textAlign: 'center' }}>
           Sign Out
         </Typography>
@@ -146,7 +141,7 @@ const SiteNav: React.FC<unknown> = () => {
       handlePageClick={handlePageClick}
       handleSignIn={handleSignIn}
       isAuthenticated={isAuthenticated}
-      logo={<PlaneIcon size="2x" />}
+      logo={<Icon iconName={IconName.PLANE} size="2x" />}
       pages={pages}
       settings={<Settings />}
       userPhoto={userPhoto}
