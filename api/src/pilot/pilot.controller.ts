@@ -66,7 +66,8 @@ export class PilotController {
         phone: pilotDto.phone,
         medicalClass: pilotDto.medicalClass,
         medicalExpiration: pilotDto.medicalExpiration,
-        certificates: JSON.stringify(pilotDto.certificates)
+        certificates: JSON.stringify(pilotDto.certificates),
+        endorsements: JSON.stringify(pilotDto.endorsements)
       }
 
       return await this.pilotService.create(pilot);
@@ -99,7 +100,8 @@ export class PilotController {
         phone: pilotDto.phone,
         medicalClass: pilotDto.medicalClass,
         medicalExpiration: pilotDto.medicalExpiration,
-        certificates: JSON.stringify(pilotDto.certificates)
+        certificates: JSON.stringify(pilotDto.certificates),
+        endorsements: JSON.stringify(pilotDto.endorsements)
       }
 
       return await this.pilotService.update(partitionKey, rowKey, pilot);

@@ -14,4 +14,5 @@ export class Pilot {
   @EntityString() medicalClass?: string;
   @EntityString() medicalExpiration: string;
   @EntityString() certificates: string;
+  @EntityString() endorsements: string;
 }

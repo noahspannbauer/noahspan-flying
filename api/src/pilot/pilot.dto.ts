@@ -1,4 +1,5 @@
 import { Certificate } from "./certificate/certificate.entity";
+import { Endorsement } from "./endorsement/endorsement.entity";
 
 export class PilotDto {
   partitionKey: string;
@@ -14,4 +15,5 @@ export class PilotDto {
   medicalClass?: string;
   medicalExpiration?: string;
   certificates: Certificate;
+  endorsements: Endorsement
 }
