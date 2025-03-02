@@ -36,7 +36,7 @@ const Pilots: React.FC<unknown> = () => {
         `api/pilots`,
         config
       );
-      console.log(response.data)
+ 
       if (response.data.length > 0) {
         dispatch({ type: 'SET_PILOTS', payload: response.data });
 

@@ -13,7 +13,6 @@ import {
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
 const PilotFormCertificates = ({
-  certificates,
   isDisabled
 }: PilotFormCertificatesProps ) => {
   const {
@@ -137,21 +136,23 @@ const PilotFormCertificates = ({
           })}
         </>
       )}
-      <Grid display="flex" justifyContent="right" size={12}>
-        <Button
-          onClick={() => {
-            append({
-              type: '',
-              number: '',
-              dateOfIssue: null
-            });
-          }}
-          startIcon={<Icon iconName={IconName.PLUS} />}
-          variant="contained"
-        >
-          Add Certificate
-        </Button>
-      </Grid>
+      {!isDisabled &&
+        <Grid display="flex" justifyContent="right" size={12}>
+          <Button
+            onClick={() => {
+              append({
+                type: '',
+                number: '',
+                dateOfIssue: null
+              });
+            }}
+            startIcon={<Icon iconName={IconName.PLUS} />}
+            variant="contained"
+          >
+            Add Certificate
+          </Button>
+        </Grid>
+      }     
     </Grid>
   );
 };

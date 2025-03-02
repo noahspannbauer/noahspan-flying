@@ -23,6 +23,7 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
 import { Person } from '@microsoft/microsoft-graph-types';
 import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
+import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
 import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
@@ -55,7 +56,8 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     phone: '',
     medicalClass: '',
     medicalExpiration: '',
-    certificates: []
+    certificates: [],
+    endorsements: []
   };
   const methods = useForm({
     defaultValues: defaultValues
@@ -135,7 +137,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
       onOpenClose(FormMode.CANCEL);
     } catch (error) {
       const axiosError = error as AxiosError;
-      console.log(axiosError)
       const responseData = axiosError.response?.data as any;
 
       console.log(responseData.message);
@@ -163,9 +164,10 @@ const PilotForm: React.FC<IPilotFormProps> = ({
           config
         );
         const pilot = response.data;
-        
-        pilot.certificates = JSON.parse(pilot.certificates);
 
+        pilot.certificates = JSON.parse(pilot.certificates);
+        pilot.endorsements = JSON.parse(pilot.endorsements)
+        console.log(pilot)
         setSelectedPerson({
           userPrincipalName: pilot.id,
           displayName: pilot.name
@@ -381,7 +383,10 @@ const PilotForm: React.FC<IPilotFormProps> = ({
               />
             </Grid>
             <Grid size={12}>
-              <PilotFormCertificates certificates={[]} isDisabled={isDisabled} />
+              <PilotFormCertificates isDisabled={isDisabled} />
+            </Grid>
+            <Grid size={12}>
+              <PilotFormEndorsements isDisabled={isDisabled} />
             </Grid>
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
@@ -412,43 +417,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
               )}
             </Grid>
           </Grid>
-          
-          {/* {pilotId && (
-                <>
-                  <div className="col-span-1">
-                    <Typography variant="h6">Last Review</Typography>
-                  </div>
-                  <div className="col-span-3">
-                    <Controller
-                      name="lastReview"
-                      control={methods.control}
-                      render={({ field }) => {
-                        return (
-                          <DatePicker
-                            handleDateChanged={(date: string) => {
-                              methods.setValue('lastReview', date);
-                            }}
-                            inputProps={{
-                              value: field.value
-                            }}
-                          />
-                        );
-                      }}
-                    />
-                  </div>
-                </>
-              )} */}
-
-
-              {/* {pilotId && (
-                <>
-                  <div className="col-span-4">
-                    <Typography variant="h5">Endorsements</Typography>
-                    <hr className="my-3" />
-                  </div>
-                  <PilotFormEndorsements endorsements={[]} />
-                </>
-              )} */}
         </form>
       </FormProvider>
     </Drawer>

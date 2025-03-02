@@ -47,6 +47,7 @@ const PilotFormMedical = ({ isDisabled }: PilotFormMedicalProps) => {
                     }
                   ]
                 }
+                value={value ? value : ''}
               />
             );
           }}
