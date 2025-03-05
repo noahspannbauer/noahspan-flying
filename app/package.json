@@ -1,7 +1,7 @@
 {
   "name": "app",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.0.1",
     "@azure/msal-react": "^3.0.1",
-    "@noahspan/noahspan-components": "^1.3.1",
+    "@noahspan/noahspan-components": "^1.4.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.7",
     "react": "^18.3.1",

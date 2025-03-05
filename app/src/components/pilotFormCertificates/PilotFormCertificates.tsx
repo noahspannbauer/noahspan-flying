@@ -109,7 +109,7 @@ const PilotFormCertificates = ({
                   <Controller
                     name={`certificates.${index}.dateOfIssue`}
                     control={control}
-                    render={({ field: { onChange, value} }) => {
+                    render={({ field: { onChange, value } }) => {
                       return (
                         <DatePicker
                           disabled={isDisabled}
