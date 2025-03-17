@@ -129,10 +129,56 @@ const Logbook: React.FC<unknown> = () => {
     });
   };
 
-  const columns: ColumnDef<ILogbookEntry>[] = [
+  const unauthColumns: ColumnDef<ILogbookEntry>[] = [
     {
       accessorKey: 'pilotName',
-      header: 'Pilot'
+      header: 'Pilot',
+    },
+    {
+      accessorKey: 'date',
+      header: 'Date'
+    },
+    {
+      accessorKey: 'aircraftMakeModel',
+      header: 'Aircraft Make & Model'
+    },
+    {
+      id: 'route',
+      header: 'Route of Flight',
+      meta: {
+        headerAlign: 'center'
+      },
+      columns: [
+        {
+          accessorKey: 'routeFrom',
+          header: 'From'
+        },
+        {
+          accessorKey: 'routeTo',
+          header: 'To'
+        }
+      ]
+    },
+    {
+      accessorKey: 'durationOfFlight',
+      header: 'Duration Of Flight',
+      meta: {
+        align: 'right',
+        headerAlign: 'right'
+      },
+      cell: (info: any) =>
+        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+    },
+    {
+      accessorKey: 'notes',
+      header: 'Notes'
+    },
+  ]
+
+  const authColumns: ColumnDef<ILogbookEntry>[] = [
+    {
+      accessorKey: 'pilotName',
+      header: 'Pilot',
     },
     {
       accessorKey: 'date',
@@ -144,7 +190,7 @@ const Logbook: React.FC<unknown> = () => {
     },
     {
       accessorKey: 'aircraftIdentity',
-      header: 'Aircraft Identity'
+      header: 'Aircraft Identity',
     },
     {
       id: 'route',
@@ -390,7 +436,7 @@ const Logbook: React.FC<unknown> = () => {
         {!state.isLoading && (
           <Grid size={12}>
             {state.entries.length > 0 && (
-              <Table columns={columns} data={state.entries} />
+              <Table columns={isAuthenticated ? authColumns : unauthColumns} data={state.entries} />
             )}
           </Grid>
         )}

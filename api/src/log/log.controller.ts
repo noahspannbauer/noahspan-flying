@@ -7,20 +7,22 @@ import {
   Param,
   Post,
   Put,
-  UseGuards
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { LogDto } from './log.dto';
 import { Log } from './log.entity';
 import { LogService } from './log.service';
 import { CustomError } from '../error/customError';
-import { Public } from '@noahspan/noahspan-modules';
+import { AuthGuard } from '@noahspan/noahspan-modules';
+import { LogInterceptor } from './interceptors/log.interceptor';
 
 
 @Controller('logs')
+@UseInterceptors(new LogInterceptor())
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
-  @Public()
   @Get(':partitionKey/:rowKey')
   async find(
     @Param('partitionKey') partitionKey: string,
@@ -35,7 +37,6 @@ export class LogController {
     }
   }
 
-  @Public()
   @Get()
   async findAll(): Promise<Log[]> {
     try {
@@ -47,6 +48,7 @@ export class LogController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() logDto: LogDto): Promise<Log> {
     try {
@@ -62,6 +64,7 @@ export class LogController {
     }
   }
 
+  @UseGuards(AuthGuard)  
   @Put(':partitionKey/:rowKey')
   async update(
     @Param('partitionKey') partitionKey: string,
@@ -81,6 +84,7 @@ export class LogController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':partitionKey/:rowKey')
   async delete(
     @Param('partitionKey') partitionKey: string,

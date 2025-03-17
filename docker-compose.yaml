@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   azurite:
-    container_name: azurite
+    container_name: azurite-flying
     image: mcr.microsoft.com/azure-storage/azurite
     ports:
       - '10000:10000'
