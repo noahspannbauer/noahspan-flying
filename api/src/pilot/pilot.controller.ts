@@ -7,13 +7,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { PilotDto } from './pilot.dto';
 import { Pilot } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
-import { Public } from '@noahspan/noahspan-modules'
+import { AuthGuard } from '@noahspan/noahspan-modules'
 import { PilotInterceptor } from './interceptors/pilot.interceptor';
 
 @Controller('pilots')
@@ -21,7 +22,6 @@ import { PilotInterceptor } from './interceptors/pilot.interceptor';
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 
-  @Public()
   @Get(':partitionKey/:rowKey')
   async find(
     @Param('partitionKey') partitionKey: string,
@@ -36,7 +36,6 @@ export class PilotController {
     }
   }
 
-  @Public()
   @Get()
   async findAll() {
     try {
@@ -48,6 +47,7 @@ export class PilotController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() pilotDto: PilotDto) {
     try {
@@ -78,6 +78,7 @@ export class PilotController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Put(':partitionKey/:rowKey')
   async update(
     @Param('partitionKey') partitionKey: string,
@@ -112,6 +113,7 @@ export class PilotController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':partitionKey/:rowKey')
   async delete(
     @Param('partitionKey') partitionKey: string,
