@@ -15,7 +15,6 @@ export class LogInterceptor implements NestInterceptor {
               return {
                 partitionKey: log.partitionKey,
                 rowKey: log.rowKey,
-                id: log.id,
                 pilotId: log.pilotId,
                 pilotName: log.pilotName,
                 date: log.date,
