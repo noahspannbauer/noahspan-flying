@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
-  Accordion,
   Button,
-  DatePicker,
   Drawer,
   Grid,
   Icon,
   IconButton,
   IconName,
   PeoplePicker,
-  Select,
   StateSelect,
   TextField,
-  Typography
+  theme,
+  Typography,
+  useMediaQuery
 } from '@noahspan/noahspan-components';
 import { IPilotFormProps } from './IPilotFormProps';
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
@@ -64,6 +63,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   });
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   const onPeoplePickerSearch = async (
     _event: React.SyntheticEvent,
@@ -193,7 +193,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
       PaperProps={{
         sx: {
           padding: '30px',
-          width: '33%'
+          width: isMedium ? '33%' : '75%'
         }
       }}
     >
@@ -208,10 +208,10 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 <Icon iconName={IconName.XMARK} />
               </IconButton>
             </Grid>
-            <Grid size={3}>
+            <Grid size={isMedium ? 3 : 12}>
               <Typography variant="h6">Name *</Typography>
             </Grid>
-            <Grid size={9}>
+            <Grid size={isMedium ? 9 : 12}>
               <PeoplePicker
                 disabled={isDisabled}
                 loading={isPeoplePickerLoading}
@@ -221,172 +221,178 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 value={selectedPerson}
               />
             </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">Address *</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="address"
-                control={methods.control}
-                rules={{ required: 'An address is required' }}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={isDisabled}
-                    error={methods.formState.errors.address ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+            {isAuthenticated &&
+              <>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">Address *</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="address"
+                    control={methods.control}
+                    rules={{ required: 'An address is required' }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={isDisabled}
+                        error={methods.formState.errors.address ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.address
+                            ? methods.formState.errors.address.message
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">City *</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="city"
-                control={methods.control}
-                rules={{ required: 'A city is required' }}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={isDisabled}
-                    error={methods.formState.errors.city ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.city
-                        ? methods.formState.errors.city.message
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+                </Grid>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">City *</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="city"
+                    control={methods.control}
+                    rules={{ required: 'A city is required' }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={isDisabled}
+                        error={methods.formState.errors.city ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.city
+                            ? methods.formState.errors.city.message
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">State *</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="state"
-                control={methods.control}
-                rules={{ required: 'A state must be selected' }}
-                render={({ field: { onChange, value } }) => (
-                  <StateSelect
-                    disabled={isDisabled}
-                    // error={methods.formState.errors.state ? true : false}
-                    fullWidth
-                    // helperText={
-                    //   methods.formState.errors.state
-                    //     ? methods.formState.errors.state.message?.toString()
-                    //     : undefined
-                    // }
-                    onChange={onChange}
-                    value={value}
-                    variant="outlined"
-                    data-testid="pilot-form-state-dropdown"
+                </Grid>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">State *</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="state"
+                    control={methods.control}
+                    rules={{ required: 'A state must be selected' }}
+                    render={({ field: { onChange, value } }) => (
+                      <StateSelect
+                        disabled={isDisabled}
+                        // error={methods.formState.errors.state ? true : false}
+                        fullWidth
+                        // helperText={
+                        //   methods.formState.errors.state
+                        //     ? methods.formState.errors.state.message?.toString()
+                        //     : undefined
+                        // }
+                        onChange={onChange}
+                        value={value}
+                        variant="outlined"
+                        data-testid="pilot-form-state-dropdown"
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">Postal Code *</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="postalCode"
-                control={methods.control}
-                rules={{ required: 'A postal code is required' }}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={isDisabled}
-                    error={methods.formState.errors.postalCode ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.postalCode
-                        ? methods.formState.errors.postalCode.message
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+                </Grid>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">Postal Code *</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="postalCode"
+                    control={methods.control}
+                    rules={{ required: 'A postal code is required' }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={isDisabled}
+                        error={methods.formState.errors.postalCode ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.postalCode
+                            ? methods.formState.errors.postalCode.message
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">Email</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="email"
-                control={methods.control}
-                rules={{
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address'
-                  }
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={isDisabled}
-                    fullWidth
-                    error={methods.formState.errors.email ? true : false}
-                    helperText={
-                      methods.formState.errors.email
-                        ? methods.formState.errors.email.message
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+                </Grid>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">Email</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="email"
+                    control={methods.control}
+                    rules={{
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address'
+                      }
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={isDisabled}
+                        fullWidth
+                        error={methods.formState.errors.email ? true : false}
+                        helperText={
+                          methods.formState.errors.email
+                            ? methods.formState.errors.email.message
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={3}>
-              <Typography variant="h6">Phone Number</Typography>
-            </Grid>
-            <Grid size={9}>
-              <Controller
-                name="phone"
-                control={methods.control}
-                rules={{
-                  pattern: {
-                    value: /^[0-9]{3}[-\s\.][0-9]{3}[-\s\.][0-9]{4}$/i,
-                    message: 'Enter phone number as 123-456-7890'
-                  }
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={isDisabled}
-                    fullWidth
-                    error={methods.formState.errors.phone ? true : false}
-                    helperText={
-                      methods.formState.errors.phone
-                        ? methods.formState.errors.phone.message
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+                </Grid>
+                <Grid size={isMedium ? 3 : 12}>
+                  <Typography variant="h6">Phone Number</Typography>
+                </Grid>
+                <Grid size={isMedium ? 9 : 12}>
+                  <Controller
+                    name="phone"
+                    control={methods.control}
+                    rules={{
+                      pattern: {
+                        value: /^[0-9]{3}[-\s\.][0-9]{3}[-\s\.][0-9]{4}$/i,
+                        message: 'Enter phone number as 123-456-7890'
+                      }
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={isDisabled}
+                        fullWidth
+                        error={methods.formState.errors.phone ? true : false}
+                        helperText={
+                          methods.formState.errors.phone
+                            ? methods.formState.errors.phone.message
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
+                </Grid>
+              </>
+            }
+            {isAuthenticated &&
+              <Grid size={12}>
+                <PilotFormMedical
+                  isDisabled={isDisabled}
+                />
+              </Grid>
+            }
+            <Grid size={12}>
+              <PilotFormCertificates isDisabled={isDisabled} mode={mode} />
             </Grid>
             <Grid size={12}>
-              <PilotFormMedical
-                isDisabled={isDisabled}
-              />
-            </Grid>
-            <Grid size={12}>
-              <PilotFormCertificates isDisabled={isDisabled} />
-            </Grid>
-            <Grid size={12}>
-              <PilotFormEndorsements isDisabled={isDisabled} />
+              <PilotFormEndorsements isDisabled={isDisabled} mode={mode} />
             </Grid>
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button

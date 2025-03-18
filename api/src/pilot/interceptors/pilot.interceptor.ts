@@ -16,7 +16,9 @@ export class PilotInterceptor implements NestInterceptor {
                 partitionKey: pilot.partitionKey,
                 rowKey: pilot.rowKey,
                 id: pilot.id,
-                name: pilot.name
+                name: pilot.name,
+                certificates: pilot.certificates,
+                endorsements: pilot.endorsements
               };
             });
 

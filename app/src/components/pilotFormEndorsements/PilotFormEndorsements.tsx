@@ -10,8 +10,10 @@ import {
   Typography
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { FormMode } from '../../enums/formMode';
 
 const PilotFormEndorsements = ({
+  mode,
   isDisabled
 }: PilotFormEndorsementsProps) => {
   const {
@@ -30,9 +32,11 @@ const PilotFormEndorsements = ({
       container
       spacing={2}
     >
-      <Grid size={12}>
-        <Typography variant="h5">Endorsements</Typography>
-      </Grid>
+      {fields.length > 0 || mode !== FormMode.VIEW &&
+        <Grid size={12}>
+          <Typography variant="h5">Endorsements</Typography>
+        </Grid>
+      }
       {fields.length > 0 && (
         <>
           <Grid size={8}>

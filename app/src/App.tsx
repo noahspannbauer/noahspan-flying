@@ -19,11 +19,7 @@ const App = () => {
     <>
       <SiteNav />
       <Routes>
-        <Route path="/pilots" element={
-          <ProtectedRoute>
-            <Pilots />
-          </ProtectedRoute>
-        } />
+        <Route path="/pilots" element={<Pilots />} />
         <Route path="/" element={<Logbook />} />
       </Routes>
     </>

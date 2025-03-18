@@ -8,12 +8,14 @@ import {
   IconName,
   Select,
   TextField,
-  Typography
+  Typography,
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { FormMode } from '../../enums/formMode';
 
 const PilotFormCertificates = ({
-  isDisabled
+  isDisabled,
+  mode
 }: PilotFormCertificatesProps ) => {
   const {
     control,
@@ -30,9 +32,11 @@ const PilotFormCertificates = ({
       container
       spacing={2}
     >
-      <Grid size={12}>
-        <Typography variant="h5">Certificates</Typography>
-      </Grid>
+      {fields.length > 0 || mode !== FormMode.VIEW &&
+        <Grid size={12}>
+          <Typography variant="h5">Certificates</Typography>
+        </Grid>
+      }
       {fields.length > 0 && (
         <>
           <Grid size={4}>

@@ -9,7 +9,9 @@ import {
   Icon,
   IconName,
   Table,
-  Typography
+  theme,
+  Typography,
+  useMediaQuery
 } from '@noahspan/noahspan-components';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
@@ -20,21 +22,19 @@ import { Pilot } from './Pilot.interface';
 import { initialState, reducer } from './reducer';
 import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
+import PilotCard from '../pilotCard/PilotCard';
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const httpClient: AxiosInstance = useHttpClient();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   const getPilots = async () => {
     try {
-      const config = isAuthenticated
-        ? { headers: { Authorization: await getAccessToken() } }
-        : {};
       const response: AxiosResponse = await httpClient.get(
-        `api/pilots`,
-        config
+        `api/pilots`
       );
  
       if (response.data.length > 0) {
@@ -147,18 +147,18 @@ const Pilots: React.FC<unknown> = () => {
   ];
 
   useEffect(() => {
-    if (isAuthenticated && !state.isFormOpen) {
+    if (!state.isFormOpen) {
       getPilots();
     }
-  }, [isAuthenticated, state.isFormOpen]);
+  }, [state.isFormOpen]);
 
   return (
     <Box sx={{ margin: '20px' }}>
       <Grid container spacing={2}>
-        <Grid size={11}>
+        <Grid size={isMedium ? 11 : 6}>
           <Typography variant="h4">Pilots</Typography>
         </Grid>
-        <Grid display="flex" justifyContent="right" size={1}>
+        <Grid display="flex" justifyContent="right" size={isMedium ? 1 : 6}>
           {isAuthenticated &&
             <Button
               onClick={() => onOpenClosePilotForm(FormMode.ADD)}
@@ -184,7 +184,12 @@ const Pilots: React.FC<unknown> = () => {
           </Grid>
         )}
         <Grid size={12}>
-          {state.pilots.length > 0 && <Table columns={columns} data={state.pilots} />}
+          {isMedium && state.pilots.length > 0 &&
+            <Table columns={columns} data={state.pilots} />
+          }
+          {!isMedium && state.pilots.length > 0 && 
+            <PilotCard pilots={state.pilots} onDelete={onDeleteEntry} onOpenCloseForm={onOpenClosePilotForm} />
+          }
         </Grid>
       </Grid>
       {state.isFormOpen && (

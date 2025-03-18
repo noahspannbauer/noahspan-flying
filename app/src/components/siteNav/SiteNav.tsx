@@ -34,15 +34,12 @@ const SiteNav = () => {
       {
         name: 'Logbook',
         url: '/'
-      }
-    ];
-
-    if (isAuthenticated) {
-      pages.push({
+      },
+      {
         name: 'Pilots',
         url: '/pilots'
-      })
-    }
+      }
+    ];
 
     setPages(pages)
   };
