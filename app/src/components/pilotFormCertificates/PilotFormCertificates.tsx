@@ -8,17 +8,22 @@ import {
   IconName,
   Select,
   TextField,
-  Typography
+  theme,
+  Typography,
+  useMediaQuery
 } from '@noahspan/noahspan-components';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { FormMode } from '../../enums/formMode';
 
 const PilotFormCertificates = ({
-  isDisabled
+  isDisabled,
+  mode
 }: PilotFormCertificatesProps ) => {
   const {
     control,
     formState: { errors },
   } = useFormContext();
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   const { fields, append, remove } = useFieldArray({
     name: 'certificates',
@@ -30,9 +35,11 @@ const PilotFormCertificates = ({
       container
       spacing={2}
     >
-      <Grid size={12}>
-        <Typography variant="h5">Certificates</Typography>
-      </Grid>
+      {fields.length > 0 || mode !== FormMode.VIEW &&
+        <Grid size={12}>
+          <Typography variant="h5">Certificates</Typography>
+        </Grid>
+      }
       {fields.length > 0 && (
         <>
           <Grid size={4}>
@@ -130,6 +137,11 @@ const PilotFormCertificates = ({
                   >
                     <Icon iconName={IconName.TRASH} size='sm' />
                   </IconButton>
+                </Grid>
+                <Grid size={12}>
+                  {!isMedium && index + 1 < fields.length &&
+                    <hr style={{ border: '1px solid #cbcbcb' }} />
+                  }
                 </Grid>
               </>
             );
