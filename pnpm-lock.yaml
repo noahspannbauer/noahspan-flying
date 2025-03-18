@@ -149,8 +149,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(@azure/msal-browser@4.0.1)(react@18.3.1)
       '@noahspan/noahspan-components':
-        specifier: ^1.4.0
-        version: 1.4.0(@mui/system@6.4.6(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(less@4.2.2)(moment@2.30.1)(postcss@8.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.3(prettier@3.2.5))(typescript@5.7.3)(webpack@5.97.1(esbuild@0.18.20))
+        specifier: ^1.5.1
+        version: 1.5.1(@mui/system@6.4.6(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(less@4.2.2)(moment@2.30.1)(postcss@8.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.3(prettier@3.2.5))(typescript@5.7.3)(webpack@5.97.1(esbuild@0.18.20))
       axios:
         specifier: ^1.7.2
         version: 1.7.9
@@ -1564,8 +1564,8 @@ packages:
       '@nestjs/common': ^9.0.0 || ^10.0.0
       '@nestjs/core': ^9.0.0 || ^10.0.0
 
-  '@noahspan/noahspan-components@1.4.0':
-    resolution: {integrity: sha512-Urq/hHr3KCbmnKO6NhruZQhJnFjiycQ8yReV/JFoxNdlN7WTWGIGEca9MnqNH11WmRK+RtecU4ByehrHqqqK3Q==}
+  '@noahspan/noahspan-components@1.5.1':
+    resolution: {integrity: sha512-GDowrEyxP/uZ1esrJVXWNKCzmG8s/OHra7JVudBKfQhDzxWE9o+RDqIHhX78YwbMsE1cu4BEvNAM8oa6jTaAuQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.2.0
@@ -7289,7 +7289,7 @@ snapshots:
       - stream-browserify
       - supports-color
 
-  '@noahspan/noahspan-components@1.4.0(@mui/system@6.4.6(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(less@4.2.2)(moment@2.30.1)(postcss@8.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.3(prettier@3.2.5))(typescript@5.7.3)(webpack@5.97.1(esbuild@0.18.20))':
+  '@noahspan/noahspan-components@1.5.1(@mui/system@6.4.6(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(less@4.2.2)(moment@2.30.1)(postcss@8.5.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.3(prettier@3.2.5))(typescript@5.7.3)(webpack@5.97.1(esbuild@0.18.20))':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.18)(react@18.3.1)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@18.3.1))(@types/react@18.3.18)(react@18.3.1)

@@ -3,6 +3,7 @@ export interface ILogbookEntry {
   rowKey: string;
   id: string;
   pilotId: string;
+  pilotName: string;
   date: string;
   aircraftMakeModel: string;
   aircraftIdentity: string;
@@ -24,4 +25,5 @@ export interface ILogbookEntry {
   night: number | null;
   solo: number | null;
   pilotInCommand: number | null;
+  notes: string;
 }
