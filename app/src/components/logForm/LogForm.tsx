@@ -13,7 +13,9 @@ import {
   IconName,
   Select,
   TextField,
+  theme,
   Typography,
+  useMediaQuery
 } from '@noahspan/noahspan-components';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { ILogFormProps } from './ILogFormProps';
@@ -63,6 +65,7 @@ const LogForm: React.FC<ILogFormProps> = ({
   };
   const methods = useForm();
   const { pilots } = usePilots();
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   const onCancel = () => {
     methods.reset(defaultValues);
@@ -166,7 +169,7 @@ const LogForm: React.FC<ILogFormProps> = ({
       PaperProps={{
         sx: {
           padding: '30px',
-          width: '33%'
+          width: isMedium ? '33%' : '75%'
         }
       }}
     >
@@ -194,10 +197,10 @@ const LogForm: React.FC<ILogFormProps> = ({
                 </Alert>
               </Grid>
             )}
-            <Grid alignItems="center" display="flex" size={4}>
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Pilot *</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="pilotId"
                 control={methods.control}
@@ -229,10 +232,10 @@ const LogForm: React.FC<ILogFormProps> = ({
                 }}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Date *</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="date"
                 control={methods.control}
@@ -245,10 +248,10 @@ const LogForm: React.FC<ILogFormProps> = ({
                 )}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Aircraft Make and Model *</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="aircraftMakeModel"
                 control={methods.control}
@@ -268,33 +271,37 @@ const LogForm: React.FC<ILogFormProps> = ({
                 )}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
-              <Typography variant="body1">Aircraft Identity *</Typography>
-            </Grid>
-            <Grid size={8}>
-              <Controller
-                name="aircraftIdentity"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={state.isDisabled}
-                    error={methods.formState.errors.address ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
+            {isAuthenticated &&
+              <>
+                <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                  <Typography variant="body1">Aircraft Identity *</Typography>
+                </Grid>
+                <Grid size={isMedium ? 8 : 12}>
+                  <Controller
+                    name="aircraftIdentity"
+                    control={methods.control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={state.isDisabled}
+                        error={methods.formState.errors.address ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.address
+                            ? methods.formState.errors.address.message?.toString()
+                            : undefined
+                        }
+                        onChange={onChange}
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
+                </Grid>
+              </>
+            }
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Route From</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="routeFrom"
                 control={methods.control}
@@ -314,10 +321,10 @@ const LogForm: React.FC<ILogFormProps> = ({
                 )}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Route To</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="routeTo"
                 control={methods.control}
@@ -337,10 +344,10 @@ const LogForm: React.FC<ILogFormProps> = ({
                 )}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
+            <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
               <Typography variant="body1">Duration Of Flight</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="durationOfFlight"
                 control={methods.control}
@@ -366,510 +373,524 @@ const LogForm: React.FC<ILogFormProps> = ({
                 )}
               />
             </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
-              <Typography variant="body1">Single Engine Land</Typography>
-            </Grid>
-            <Grid size={8}>
-              <Controller
-                name="singleEngineLand"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={state.isDisabled}
-                    error={methods.formState.errors.address ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    slotProps={{
-                      htmlInput: {
-                        step: 0.1
-                      }
-                    }}
-                    type="number"
-                    value={value}
+            {isAuthenticated &&
+              <>
+                <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                  <Typography variant="body1">Single Engine Land</Typography>
+                </Grid>
+                <Grid size={isMedium ? 8 : 12}>
+                  <Controller
+                    name="singleEngineLand"
+                    control={methods.control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={state.isDisabled}
+                        error={methods.formState.errors.address ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.address
+                            ? methods.formState.errors.address.message?.toString()
+                            : undefined
+                        }
+                        onChange={onChange}
+                        slotProps={{
+                          htmlInput: {
+                            step: 0.1
+                          }
+                        }}
+                        type="number"
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid alignItems="center" display="flex" size={4}>
-              <Typography variant="body1">Simulator or ATD</Typography>
-            </Grid>
-            <Grid size={8}>
-              <Controller
-                name="simulatorAtd"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    disabled={state.isDisabled}
-                    error={methods.formState.errors.address ? true : false}
-                    fullWidth
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    slotProps={{
-                      htmlInput: {
-                        step: 0.1
-                      }
-                    }}
-                    type="number"
-                    value={value}
+                </Grid>
+              </>
+            }
+            {isAuthenticated &&
+              <>
+                <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                  <Typography variant="body1">Simulator or ATD</Typography>
+                </Grid>
+                <Grid size={isMedium ? 8 : 12}>
+                  <Controller
+                    name="simulatorAtd"
+                    control={methods.control}
+                    render={({ field: { onChange, value } }) => (
+                      <TextField
+                        disabled={state.isDisabled}
+                        error={methods.formState.errors.address ? true : false}
+                        fullWidth
+                        helperText={
+                          methods.formState.errors.address
+                            ? methods.formState.errors.address.message?.toString()
+                            : undefined
+                        }
+                        onChange={onChange}
+                        slotProps={{
+                          htmlInput: {
+                            step: 0.1
+                          }
+                        }}
+                        type="number"
+                        value={value}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={12}>
-              <Accordion defaultExpanded>
-                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
-                  <Typography variant="body1">Landings</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={2}>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Day</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="landingsDay"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 1
+                </Grid>
+              </>
+            }
+            {isAuthenticated &&
+              <Grid size={12}>
+                <Accordion defaultExpanded>
+                  <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
+                    <Typography variant="body1">Landings</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Day</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="landingsDay"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Night</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="landingsNight"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-            <Grid size={12}>
-              <Accordion>
-                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
-                  Instrument
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={2}>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Actual</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="instrumentActual"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Night</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="landingsNight"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Simulated</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="instrumentSimulated"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">
-                        Instrument Approaches
-                      </Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="instrumentApproaches"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 1
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            }
+            {isAuthenticated &&
+              <Grid size={12}>
+                <Accordion>
+                  <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
+                    Instrument
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Actual</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="instrumentActual"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Holds</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="instrumentHolds"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Nav / Track</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="instrumentNavTrack"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 1
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Simulated</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="instrumentSimulated"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-            <Grid size={12}>
-              <Accordion defaultExpanded>
-                <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
-                  Type of Pilot Experience or Training
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={2}>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">
-                        Ground Training Received
-                      </Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="groundTrainingReceived"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">
-                        Flight Training Received
-                      </Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="flightTrainingReceived"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">
+                          Instrument Approaches
+                        </Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="instrumentApproaches"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Cross Country</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="crossCountry"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Night</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="night"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={4}>
+                        <Typography variant="body1">Holds</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="instrumentHolds"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Solo</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="solo"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid alignItems="center" display="flex" size={4}>
-                      <Typography variant="body1">Pilot in Command</Typography>
-                    </Grid>
-                    <Grid size={8}>
-                      <Controller
-                        name="pilotInCommand"
-                        control={methods.control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            disabled={state.isDisabled}
-                            error={
-                              methods.formState.errors.address ? true : false
-                            }
-                            fullWidth
-                            helperText={
-                              methods.formState.errors.address
-                                ? methods.formState.errors.address.message?.toString()
-                                : undefined
-                            }
-                            onChange={onChange}
-                            slotProps={{
-                              htmlInput: {
-                                step: 0.1
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Nav / Track</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="instrumentNavTrack"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
                               }
-                            }}
-                            type="number"
-                            value={value}
-                          />
-                        )}
-                      />
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-            <Grid size={4}>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            }
+            {isAuthenticated &&
+              <Grid size={12}>
+                <Accordion defaultExpanded>
+                  <AccordionSummary expandIcon={<Icon iconName={IconName.CHEVRON_DOWN} />}>
+                    Type of Pilot Experience or Training
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">
+                          Ground Training Received
+                        </Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="groundTrainingReceived"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">
+                          Flight Training Received
+                        </Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="flightTrainingReceived"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Cross Country</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="crossCountry"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Night</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="night"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Solo</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="solo"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid alignItems="center" display="flex" size={isMedium ? 4 : 12}>
+                        <Typography variant="body1">Pilot in Command</Typography>
+                      </Grid>
+                      <Grid size={isMedium ? 8 : 12}>
+                        <Controller
+                          name="pilotInCommand"
+                          control={methods.control}
+                          render={({ field: { onChange, value } }) => (
+                            <TextField
+                              disabled={state.isDisabled}
+                              error={
+                                methods.formState.errors.address ? true : false
+                              }
+                              fullWidth
+                              helperText={
+                                methods.formState.errors.address
+                                  ? methods.formState.errors.address.message?.toString()
+                                  : undefined
+                              }
+                              onChange={onChange}
+                              slotProps={{
+                                htmlInput: {
+                                  step: 0.1
+                                }
+                              }}
+                              type="number"
+                              value={value}
+                            />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            }
+            <Grid size={isMedium ? 4 : 12}>
               <Typography variant="body1">Notes</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={isMedium ? 8 : 12}>
               <Controller
                 name="notes"
                 control={methods.control}

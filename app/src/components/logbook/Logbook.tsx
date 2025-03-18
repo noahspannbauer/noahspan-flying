@@ -10,7 +10,9 @@ import {
   IconName,
   Spinner,
   Table,
-  Typography
+  theme,
+  Typography,
+  useMediaQuery
 } from '@noahspan/noahspan-components';
 import { initialState, reducer } from './reducer';
 import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
@@ -21,12 +23,14 @@ import { FormMode } from '../../enums/formMode';
 import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 import { ILogbookEntry } from './ILogbookEntry';
+import LogbookCard from '../logbookCard/LogbookCard';
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const httpClient: AxiosInstance = useHttpClient();
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
+  const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   const getLogbookEntries = async () => {
     try {
@@ -405,10 +409,10 @@ const Logbook: React.FC<unknown> = () => {
   return (
     <Box sx={{ margin: '20px' }}>
       <Grid container spacing={2}>
-        <Grid size={11}>
+        <Grid size={isMedium ? 11 : 6}>
           <Typography variant="h4">Logbook</Typography>
         </Grid>
-        <Grid display="flex" justifyContent="right" size={1}>
+        <Grid display="flex" justifyContent="right" size={isMedium ? 1 : 6}>
           {isAuthenticated &&
             <Button
               onClick={() => onOpenCloseEntryForm(FormMode.ADD)}
@@ -435,9 +439,12 @@ const Logbook: React.FC<unknown> = () => {
         )}
         {!state.isLoading && (
           <Grid size={12}>
-            {state.entries.length > 0 && (
+            {isMedium && state.entries.length > 0 && (
               <Table columns={isAuthenticated ? authColumns : unauthColumns} data={state.entries} />
             )}
+            {!isMedium && state.entries.length > 0 &&
+              <LogbookCard logs={state.entries} onDelete={onDeleteEntry} onOpenCloseForm={onOpenCloseEntryForm} />
+            }
           </Grid>
         )}
         {state.isLoading && !state.alert && (
