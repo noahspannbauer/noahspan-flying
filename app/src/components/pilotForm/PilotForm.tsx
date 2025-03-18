@@ -113,7 +113,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   };
 
   const onSubmit = async (data: unknown) => {
-    console.log(data)
     try {
       setIsLoading(true);
 
@@ -167,7 +166,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
 
         pilot.certificates = JSON.parse(pilot.certificates);
         pilot.endorsements = JSON.parse(pilot.endorsements)
-        console.log(pilot)
+
         setSelectedPerson({
           userPrincipalName: pilot.id,
           displayName: pilot.name
