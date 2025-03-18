@@ -177,6 +177,20 @@ const Logbook: React.FC<unknown> = () => {
       accessorKey: 'notes',
       header: 'Notes'
     },
+    {
+      header: 'Actions',
+      meta: {
+        align: 'center',
+        headerAlign: 'center'
+      },
+      cell: (info: any) => (
+        <ActionMenu
+          id={info.row.original.rowKey}
+          onDelete={onDeleteEntry}
+          onOpenCloseForm={onOpenCloseEntryForm}
+        />
+      )
+    }
   ]
 
   const authColumns: ColumnDef<ILogbookEntry>[] = [

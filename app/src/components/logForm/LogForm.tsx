@@ -205,7 +205,6 @@ const LogForm: React.FC<ILogFormProps> = ({
                 name="pilotId"
                 control={methods.control}
                 render={({ field: { onChange, value } }) => {
-                  console.log(value)
                   return (
                     <Select
                       disabled={state.isDisabled}
