@@ -45,12 +45,14 @@ const ActionMenu = ({ id, onDelete, onOpenCloseForm, onOpenCloseTracks }: IActio
             </ListItemIcon>
             <ListItemText>Edit</ListItemText>
           </MenuItem>
-          <MenuItem onClick={() => onOpenCloseTracks(FormMode.EDIT, id)}>
-            <ListItemIcon>
-              <Icon iconName={IconName.MAP_LOCATION_DOT} size="lg" />
-            </ListItemIcon>
-            <ListItemText>Tracks</ListItemText>
-          </MenuItem>
+          {onOpenCloseTracks &&
+            <MenuItem onClick={() => onOpenCloseTracks!(FormMode.EDIT, id)}>
+              <ListItemIcon>
+                <Icon iconName={IconName.MAP_LOCATION_DOT} size="lg" />
+              </ListItemIcon>
+              <ListItemText>Tracks</ListItemText>
+            </MenuItem>
+          }
         </>
 
         }
