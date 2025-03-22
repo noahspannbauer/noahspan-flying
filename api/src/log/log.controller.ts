@@ -105,7 +105,7 @@ export class LogController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Post(':partitionKey/:rowKey/track')
   @UseInterceptors(FileInterceptor('file'))
   async createTrack(@Param('rowKey') rowKey: string, @UploadedFile() file: Express.Multer.File) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { Button, Drawer, Grid, Icon, IconButton, IconName, TextField, theme, Typography, useMediaQuery } from "@noahspan/noahspan-components";
 import { useHttpClient } from "../../hooks/httpClient/UseHttpClient";
 import { AxiosInstance, AxiosResponse } from "axios";
@@ -7,10 +7,11 @@ import { LogTracksProps } from "./LogTracksProps.interface";
 import { FormMode } from "../../enums/formMode";
 import { useIsAuthenticated } from "@azure/msal-react";
 import { ILogbookEntry } from "../logbook/ILogbookEntry";
+import ConfirmationDialog from "../confirmationDialog/ConfirmationDialog";
+import { initialState, reducer } from "./reducer";
 
 const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTracksProps) => {
-  const [tracks, setTracks] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(reducer, initialState)
   const httpClient: AxiosInstance = useHttpClient();
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
@@ -37,7 +38,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setIsLoading(true); 
+      dispatch({ type: 'SET_IS_LOADING', payload: true})
 
       const file = event.target.files![0]
       const formData = new FormData();
@@ -62,11 +63,11 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
       
       const updatedLog = await getLog();
 
-      setTracks(JSON.parse(updatedLog.tracks!))
+      dispatch({ type: 'SET_TRACKS', payload: JSON.parse(updatedLog.tracks!) })
     } catch (error) {
       console.log(error)
     } finally {
-      setIsLoading(false);
+      dispatch({ type: 'SET_IS_LOADING', payload: false });
     }
   }
 
@@ -74,32 +75,41 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
     onOpenClose(FormMode.CANCEL)
   }
 
-  const onDelete = async (fileName: string, index: number) => {
+  const onDeleteTrack = async (fileName: string, index: number) => {
+    dispatch({ type: 'SET_ON_DELETE_TRACK', payload: { isConfirmDialogOpen: true, selectedTrack: { fileName: fileName, index: index }}})
+  }
+
+  const onConfirmDialogConfirm = async () => {
     try {
       const config = await getConfig();
 
-      await httpClient.delete(`api/logs/log/${selectedRowKey}/track?fileName=${fileName}`, config);
+      await httpClient.delete(`api/logs/log/${selectedRowKey}/track?fileName=${state.selectedTrack!.fileName}`, config);
 
       const log = await getLog();
       const tracks: string[] = JSON.parse(log.tracks!);
 
-      tracks.splice(index, 1);
+      tracks.splice(state.selectedTrack!.index, 1);
       log.tracks = JSON.stringify(tracks);
       await httpClient.put(`api/logs/log/${selectedRowKey}`, log, config);
 
       const updatedLog = await getLog();
 
-      setTracks(JSON.parse(updatedLog.tracks!))
+      dispatch({ type: 'SET_TRACKS', payload: JSON.parse(updatedLog.tracks!) })
+      dispatch({ type: 'SET_IS_CONFIRM_DIALOG_OPEN', payload: false })
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const onConfirmDialogCancel = async () => {
+    dispatch({ type: 'SET_IS_CONFIRM_DIALOG_OPEN', payload: false })
   }
 
   useEffect(() => {
     const updateTracks = async () => {
       const log = await getLog();
       
-      setTracks(JSON.parse(log.tracks!));
+      dispatch({ type: 'SET_TRACKS', payload: JSON.parse(log.tracks!) });
     }
 
     updateTracks();
@@ -125,7 +135,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
             <Icon iconName={IconName.XMARK} />
           </IconButton>
         </Grid>
-          {tracks.length > 0 && tracks.map((track, index) => {
+          {state.tracks.length > 0 && state.tracks.map((track, index) => {
             const trackSplit = track.split('/')
             const filename = trackSplit[trackSplit.length - 1];
 
@@ -135,7 +145,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
                   <TextField disabled={true} fullWidth value={filename} />
                 </Grid>
                 <Grid size={1}>
-                  <IconButton onClick={() => onDelete(filename, index)}><Icon iconName={IconName.TRASH} /></IconButton>
+                  <IconButton onClick={() => onDeleteTrack(filename, index)}><Icon iconName={IconName.TRASH} /></IconButton>
                 </Grid>
               </>
             )
@@ -153,16 +163,26 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
           {mode.toString() !== FormMode.VIEW && (
             <Button
               component='label'
-              loading={isLoading}
-              startIcon={<Icon iconName={IconName.PLUS} />}
+              loading={state.isLoading}
+              startIcon={<Icon iconName={IconName.UPLOAD} />}
               variant='contained'
             >
-              Add Track
+              Upload Track
               <input hidden onChange={handleFileUpload} type='file' />
             </Button>
           )}
         </Grid>
       </Grid>
+      {state.isConfirmDialogOpen && (
+        <ConfirmationDialog
+          contentText="Are you sure you want to delete this track?"
+          isLoading={state.isConfirmDialogLoading}
+          isOpen={state.isConfirmDialogOpen}
+          onCancel={onConfirmDialogCancel}
+          onConfirm={onConfirmDialogConfirm}
+          title="Confirm Delete"
+        />
+      )}
     </Drawer>
   )
 }
