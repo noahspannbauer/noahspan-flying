@@ -24,5 +24,6 @@ export class Log {
   instrumentApproaches?: number | null;
   instrumentHolds?: number | null;
   instrumentNavTrack?: number | null;
+  tracks?: string[];
   notes?: string;
 }

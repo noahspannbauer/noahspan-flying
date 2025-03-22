@@ -59,6 +59,11 @@ locals {
     prod = "noahspanflyingprod"
   }
 
+  storage_containers = {
+    test = ["tracks"]
+    prod = ["tracks"]
+  }
+
   storage_tables = {
     test = ["logs", "pilots"]
     prod = ["logs", "pilots"]

@@ -2,6 +2,7 @@ module "storage" {
   source = "github.com/noahspannbauer/noahspan-terraform/modules/storage"
   resource_group_name = var.RESOURCE_GROUP_NAME
   storage_account_name = module.environment.storage_account_name
+  storage_containers = module.environment.storage_containers
   storage_tables = module.environment.storage_tables
 }
 

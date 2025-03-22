@@ -19,6 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.27.0",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@nestjs/axios": "^3.0.3",
     "@nestjs/common": "^10.0.0",
@@ -29,10 +30,12 @@
     "@noahspan/azure-database": "^3.1.2",
     "@noahspan/noahspan-modules": "^1.1.5",
     "@schematics/angular": "^17.3.7",
+    "@types/multer": "^1.4.12",
     "dotenv": "^16.4.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.40.0",

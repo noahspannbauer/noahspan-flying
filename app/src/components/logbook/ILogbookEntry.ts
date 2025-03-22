@@ -1,3 +1,5 @@
+import { ColumnDef } from "@noahspan/noahspan-components";
+
 export interface ILogbookEntry {
   partitionKey: string;
   rowKey: string;
@@ -25,5 +27,6 @@ export interface ILogbookEntry {
   night: number | null;
   solo: number | null;
   pilotInCommand: number | null;
+  tracks: string | undefined;
   notes: string;
 }

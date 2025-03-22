@@ -12,7 +12,7 @@ import {
 import { FormMode } from '../../enums/formMode';
 import { useIsAuthenticated } from '@azure/msal-react';
 
-const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
+const ActionMenu = ({ id, onDelete, onOpenCloseForm, onOpenCloseTracks }: IActionMenuProps) => {
   const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
     null
   );
@@ -38,12 +38,21 @@ const ActionMenu = ({ id, onDelete, onOpenCloseForm }: IActionMenuProps) => {
         onClose={onCloseActionMenu}
       >
         {isAuthenticated &&
+        <>
           <MenuItem onClick={() => onOpenCloseForm(FormMode.EDIT, id)}>
             <ListItemIcon>
               <Icon iconName={IconName.PEN} size="lg" />
             </ListItemIcon>
             <ListItemText>Edit</ListItemText>
           </MenuItem>
+          <MenuItem onClick={() => onOpenCloseTracks(FormMode.EDIT, id)}>
+            <ListItemIcon>
+              <Icon iconName={IconName.MAP_LOCATION_DOT} size="lg" />
+            </ListItemIcon>
+            <ListItemText>Tracks</ListItemText>
+          </MenuItem>
+        </>
+
         }
         <MenuItem onClick={() => onOpenCloseForm(FormMode.VIEW, id)}>
           <ListItemIcon>
