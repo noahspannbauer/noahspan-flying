@@ -46,6 +46,10 @@ output "storage_account_name" {
   value = local.storage_account_name[var.environment]
 }
 
+output "storage_containers" {
+  value = local.storage_containers[var.environment]
+}
+
 output "storage_tables" {
   value = local.storage_tables[var.environment]
 }

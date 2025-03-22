@@ -7,6 +7,7 @@ import {
   ColumnDef,
   Grid,
   Icon,
+  IconButton,
   IconName,
   Spinner,
   Table,
@@ -20,10 +21,12 @@ import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { FormMode } from '../../enums/formMode';
+import { authColumns, unauthColumns } from './columns';
 import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 import { ILogbookEntry } from './ILogbookEntry';
 import LogbookCard from '../logbookCard/LogbookCard';
+import LogTracks from '../logTracks/LogTracks';
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -31,12 +34,41 @@ const Logbook: React.FC<unknown> = () => {
   const isAuthenticated = useIsAuthenticated();
   const { getAccessToken } = useAccessToken();
   const isMedium = useMediaQuery(theme.breakpoints.up('md'));
+  const actionsColumn: ColumnDef<ILogbookEntry> = {
+    header: 'Actions',
+    meta: {
+      align: 'center',
+      headerAlign: 'center'
+    },
+    cell: (info: any) => (
+      <ActionMenu
+        id={info.row.original.rowKey}
+        onDelete={onDeleteEntry}
+        onOpenCloseForm={onOpenCloseEntryForm}
+        onOpenCloseTracks={onOpenCloseTracks}
+      />
+    )
+  }
+  const tracksColumn: ColumnDef<ILogbookEntry> = {
+    accessorKey: 'tracks',
+    header: 'Tracks',
+    cell: (info: any) => {
+      if (info.row.original.tracks && info.row.original.tracks.length > 0) {
+        return (
+          <IconButton onClick={() => onOpenCloseTracks(FormMode.VIEW, info.row.original.rowKey)}><Icon iconName={IconName.MAP_LOCATION_DOT} /></IconButton>
+        )
+      }
+    }
+  }
 
   const getLogbookEntries = async () => {
     try {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
-      const response: AxiosResponse = await httpClient.get(`api/logs`);
+      const config = isAuthenticated
+        ? { headers: { Authorization: await getAccessToken() } }
+        : {};
+      const response: AxiosResponse = await httpClient.get(`api/logs`, config);
       const entries: ILogbookEntry[] = response.data;
       
       entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -91,6 +123,34 @@ const Logbook: React.FC<unknown> = () => {
     }
   };
 
+  const onOpenCloseTracks = (mode: FormMode, rowKey?: string) => {
+    switch(mode) {
+      case FormMode.EDIT:
+      case FormMode.VIEW:
+        dispatch({
+          type: 'SET_OPEN_CLOSE_TRACKS',
+          payload: {
+            tracksMode: mode,
+            isTracksOpen: true,
+            selectedRowKey: rowKey
+          }
+        })
+
+        break;
+      case FormMode.CANCEL:
+        dispatch({
+          type: 'SET_OPEN_CLOSE_TRACKS',
+          payload: {
+            tracksMode: mode,
+            isTracksOpen: false,
+            selectedRowKey: undefined
+          }
+        })
+
+        break;
+    }
+  }
+
   const onDeleteEntry = (entryId: string) => {
     dispatch({
       type: 'SET_DELETE',
@@ -133,292 +193,36 @@ const Logbook: React.FC<unknown> = () => {
     });
   };
 
-  const unauthColumns: ColumnDef<ILogbookEntry>[] = [
-    {
-      accessorKey: 'pilotName',
-      header: 'Pilot',
-    },
-    {
-      accessorKey: 'date',
-      header: 'Date'
-    },
-    {
-      accessorKey: 'aircraftMakeModel',
-      header: 'Aircraft Make & Model'
-    },
-    {
-      id: 'route',
-      header: 'Route of Flight',
-      meta: {
-        headerAlign: 'center'
-      },
-      columns: [
-        {
-          accessorKey: 'routeFrom',
-          header: 'From'
-        },
-        {
-          accessorKey: 'routeTo',
-          header: 'To'
-        }
-      ]
-    },
-    {
-      accessorKey: 'durationOfFlight',
-      header: 'Duration Of Flight',
-      meta: {
-        align: 'right',
-        headerAlign: 'right'
-      },
-      cell: (info: any) =>
-        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-    },
-    {
-      accessorKey: 'notes',
-      header: 'Notes'
-    },
-    {
-      header: 'Actions',
-      meta: {
-        align: 'center',
-        headerAlign: 'center'
-      },
-      cell: (info: any) => (
-        <ActionMenu
-          id={info.row.original.rowKey}
-          onDelete={onDeleteEntry}
-          onOpenCloseForm={onOpenCloseEntryForm}
-        />
-      )
-    }
-  ]
+  useEffect(() => {
+    let newColumns: ColumnDef<ILogbookEntry>[];
 
-  const authColumns: ColumnDef<ILogbookEntry>[] = [
-    {
-      accessorKey: 'pilotName',
-      header: 'Pilot',
-    },
-    {
-      accessorKey: 'date',
-      header: 'Date'
-    },
-    {
-      accessorKey: 'aircraftMakeModel',
-      header: 'Aircraft Make & Model'
-    },
-    {
-      accessorKey: 'aircraftIdentity',
-      header: 'Aircraft Identity',
-    },
-    {
-      id: 'route',
-      header: 'Route of Flight',
-      meta: {
-        headerAlign: 'center'
-      },
-      columns: [
-        {
-          accessorKey: 'routeFrom',
-          header: 'From'
-        },
-        {
-          accessorKey: 'routeTo',
-          header: 'To'
-        }
-      ]
-    },
-    {
-      accessorKey: 'durationOfFlight',
-      header: 'Duration Of Flight',
-      meta: {
-        align: 'right',
-        headerAlign: 'right'
-      },
-      cell: (info: any) =>
-        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-    },
-    {
-      accessorKey: 'singleEngineLand',
-      header: 'Single Engine Land',
-      meta: {
-        align: 'right',
-        headerAlign: 'right'
-      },
-      cell: (info: any) =>
-        info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-    },
-    {
-      id: 'landings',
-      header: 'Landings',
-      meta: {
-        headerAlign: 'center'
-      },
-      columns: [
-        {
-          accessorKey: 'landingsDay',
-          header: 'Day',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          }
-        },
-        {
-          accessorKey: 'landingsNight',
-          header: 'Night',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          }
-        }
-      ]
-    },
-    {
-      id: 'instrument',
-      header: 'Instrument',
-      meta: {
-        headerAlign: 'center'
-      },
-      columns: [
-        {
-          accessorKey: 'instrumentActual',
-          header: 'Actual',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'instrumentSimulated',
-          header: 'Simulated',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'instrumentApproaches',
-          header: 'Approaches',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          }
-        },
-        {
-          accessorKey: 'instrumentHolds',
-          header: 'Holds',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          }
-        },
-        {
-          accessorKey: 'instrumentNavTrack',
-          header: 'Nav/Track',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          }
-        }
-      ]
-    },
-    {
-      id: 'experienceTraining',
-      header: 'Type of pilot experience or training',
-      meta: {
-        headerAlign: 'center'
-      },
-      columns: [
-        {
-          accessorKey: 'groundTrainingReceived',
-          header: 'Ground Training Received',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'flightTrainingReceived',
-          header: 'Flight Training Received',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'crossCountry',
-          header: 'Cross Country',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'night',
-          header: 'Night',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'solo',
-          header: 'Solo',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        },
-        {
-          accessorKey: 'pilotInCommand',
-          header: 'Pilot In Command',
-          meta: {
-            align: 'right',
-            headerAlign: 'right'
-          },
-          cell: (info: any) =>
-            info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
-        }
-      ]
-    },
-    {
-      accessorKey: 'notes',
-      header: 'Notes'
-    },
-    {
-      header: 'Actions',
-      meta: {
-        align: 'center',
-        headerAlign: 'center'
-      },
-      cell: (info: any) => (
-        <ActionMenu
-          id={info.row.original.rowKey}
-          onDelete={onDeleteEntry}
-          onOpenCloseForm={onOpenCloseEntryForm}
-        />
-      )
+    if (isAuthenticated) {
+      newColumns = [...authColumns];
+    } else {
+      newColumns = [...unauthColumns];
     }
-  ];
+
+    const actionsColumnExists = newColumns.find((column) => column.id === 'actions');
+    const tracksColumnExists = newColumns.find((column) => column.id === 'actions');
+    
+    if (!actionsColumnExists) {
+      newColumns.push(actionsColumn);
+    }
+
+    if (!tracksColumnExists) {
+      const notesColumnIndex = newColumns.findIndex((column) => column.id === 'notes')
+
+      newColumns.splice(notesColumnIndex, 0, tracksColumn)
+    }
+
+    dispatch({ type: 'SET_COLUMNS', payload: newColumns })
+  }, [isAuthenticated])
 
   useEffect(() => {
     if (!state.isFormOpen) {
       getLogbookEntries();
     }
-  }, [state.isFormOpen]);
+  }, [state.isFormOpen, state.isTracksOpen]);
 
   return (
     <Box sx={{ margin: '20px' }}>
@@ -453,8 +257,8 @@ const Logbook: React.FC<unknown> = () => {
         )}
         {!state.isLoading && (
           <Grid size={12}>
-            {isMedium && state.entries.length > 0 && (
-              <Table columns={isAuthenticated ? authColumns : unauthColumns} data={state.entries} />
+            {isMedium && state.columns && state.columns.length > 0 && state.entries.length > 0 && (
+              <Table columns={state.columns} data={state.entries} />
             )}
             {!isMedium && state.entries.length > 0 &&
               <LogbookCard logs={state.entries} onDelete={onDeleteEntry} onOpenCloseForm={onOpenCloseEntryForm} />
@@ -490,6 +294,14 @@ const Logbook: React.FC<unknown> = () => {
           title="Confirm Delete"
         />
       )}
+      {state.isTracksOpen && 
+        <LogTracks
+          isDrawerOpen={state.isTracksOpen}
+          mode={state.tracksMode}
+          onOpenClose={(mode) => onOpenCloseTracks(mode)}
+          selectedRowKey={state.selectedEntryId}
+        />
+      }
     </Box>
   );
 };

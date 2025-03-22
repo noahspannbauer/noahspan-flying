@@ -44,11 +44,6 @@ import configuration from './config/configuration';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard
-    // },
-    // Reflector
   ]
 })
 export class AppModule {}

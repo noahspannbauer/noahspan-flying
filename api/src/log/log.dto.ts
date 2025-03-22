@@ -22,5 +22,6 @@ export class LogDto {
   night: number;
   solo: number;
   pilotInCommand: number;
+  tracks: string[];
   notes: string;
 }

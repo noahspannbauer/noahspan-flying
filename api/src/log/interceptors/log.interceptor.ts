@@ -6,6 +6,7 @@ export class LogInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
+    console.log(token)
 
     if (!token) {
       return handler.handle().pipe(
@@ -22,6 +23,7 @@ export class LogInterceptor implements NestInterceptor {
                 routeFrom: log.routeFrom,
                 routeTo: log.routeTo,
                 durationOfFlight: log.durationOfFlight,
+                tracks: log.tracks,
                 notes: log.notes
               };
             });

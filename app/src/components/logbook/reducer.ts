@@ -1,9 +1,11 @@
+import { ColumnDef } from '@noahspan/noahspan-components';
 import { FormMode } from '../../enums/formMode';
 import { Alert } from '../../interfaces/Alert.interface';
 import { ILogbookEntry } from './ILogbookEntry';
 import { ILogbookState } from './ILogbookState';
 
 type Action =
+  | { type: 'SET_COLUMNS'; payload: ColumnDef<ILogbookEntry>[] }
   | {
       type: 'SET_DELETE';
       payload: {
@@ -23,17 +25,21 @@ type Action =
         selectedEntryId: string | undefined;
         isFormOpen: boolean;
       };
-    };
+    }
+  | { type: 'SET_OPEN_CLOSE_TRACKS'; payload: { tracksMode: FormMode, selectedRowKey: string | undefined, isTracksOpen: boolean; }};
 
 export const initialState: ILogbookState = {
   alert: undefined,
+  columns: [],
   entries: [],
   formMode: FormMode.CANCEL,
   isConfirmDialogLoading: false,
   isConfirmDialogOpen: false,
   isFormOpen: false,
   isLoading: false,
-  selectedEntryId: undefined
+  isTracksOpen: false,
+  selectedEntryId: undefined,
+  tracksMode: FormMode.CANCEL
 };
 
 export const reducer = (
@@ -41,6 +47,12 @@ export const reducer = (
   action: Action
 ): ILogbookState => {
   switch (action.type) {
+    case 'SET_COLUMNS': {
+      return {
+        ...state,
+        columns: action.payload
+      }
+    }
     case 'SET_DELETE': {
       return {
         ...state,
@@ -85,6 +97,14 @@ export const reducer = (
         isFormOpen: action.payload.isFormOpen,
         selectedEntryId: action.payload.selectedEntryId
       };
+    }
+    case 'SET_OPEN_CLOSE_TRACKS': {
+      return {
+        ...state,
+        tracksMode: action.payload.tracksMode,
+        isTracksOpen: action.payload.isTracksOpen,
+        selectedEntryId: action.payload.selectedRowKey
+      }
     }
     default: {
       return state;

@@ -4,6 +4,7 @@ import { LogService } from './log.service';
 import { AzureTableStorageModule } from '@noahspan/azure-database';
 import { Log } from './log.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FileService } from '../file/file.service';
 
 @Module({
   imports: [
@@ -22,6 +23,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [LogController],
-  providers: [LogService]
+  providers: [
+    ConfigService,
+    FileService,
+    LogService
+  ]
 })
 export class LogModule {}

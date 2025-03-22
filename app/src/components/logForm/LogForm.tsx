@@ -174,7 +174,7 @@ const LogForm: React.FC<ILogFormProps> = ({
       }}
     >
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
           <Grid container spacing={2}>
             <Grid size={11}>
               <Typography variant="h4">{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Entry`}</Typography>
