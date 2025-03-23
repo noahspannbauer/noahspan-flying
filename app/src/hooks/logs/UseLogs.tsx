@@ -7,6 +7,7 @@ import { ILogbookEntry } from "../../components/logbook/ILogbookEntry";
 
 export const useLogs = () => {
   const [logs, setLogs] = useState<ILogbookEntry[]>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const httpClient: AxiosInstance = useHttpClient();
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
@@ -14,6 +15,8 @@ export const useLogs = () => {
   useEffect(() => {
     const getLogs = async () => {
       try {
+        setIsLoading(true);
+
         const config = isAuthenticated
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
@@ -28,6 +31,8 @@ export const useLogs = () => {
         setLogs(logs)
       } catch (error) {
         return error;
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -35,6 +40,7 @@ export const useLogs = () => {
   }, [])
 
   return {
-    logs
+    logs,
+    isLoading
   }
 }
