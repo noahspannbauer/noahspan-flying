@@ -7,7 +7,7 @@ import { useIsAuthenticated } from '@azure/msal-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import * as tj from '@mapbox/togeojson';
+import toGeoJSON from '@mapbox/togeojson';
 import rewind from '@mapbox/geojson-rewind';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -36,7 +36,7 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
           config
         );
         const dom = new DOMParser().parseFromString(response.data, 'text/xml')
-        const converted = tj.kml(dom);
+        const converted = toGeoJSON.kml(dom);
         
         rewind(converted, false);
         
