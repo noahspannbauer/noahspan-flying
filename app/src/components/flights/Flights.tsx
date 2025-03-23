@@ -5,16 +5,16 @@ import { useLogs } from "../../hooks/logs/UseLogs";
 import { ILogbookEntry } from "../logbook/ILogbookEntry";
 
 const Flights = () => {
-  const [flights, setFlights] = useState<any[]>([])
+  const [flights, setFlights] = useState<ILogbookEntry[]>([])
   const { logs } = useLogs();
 
   useEffect(() => {
-    const flights = logs?.filter((log) => {
+    const flights: ILogbookEntry[] | undefined = logs?.filter((log: ILogbookEntry) => {
       if (log.tracks && JSON.parse(log.tracks).length > 0) {
         return log;
       }
     })
-    console.log(flights)
+
     if (flights && flights.length > 0) {
       setFlights(flights)
     }
