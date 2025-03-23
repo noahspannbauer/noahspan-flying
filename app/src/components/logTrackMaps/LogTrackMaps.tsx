@@ -6,9 +6,8 @@ import { useAccessToken } from '../../hooks/accessToken/UseAcessToken';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import toGeoJSON from '@mapbox/togeojson';
-import rewind from '@placemarkio/geojson-rewind';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import ReactLeafletKml from 'react-leaflet-kml';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css';
@@ -35,12 +34,12 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
           `api/logs/log/${rowKey}/track?fileName=${filename}`,
           config
         );
-        const dom = new DOMParser().parseFromString(response.data, 'text/xml')
-        const converted = toGeoJSON.kml(dom);
+        const kml = new DOMParser().parseFromString(response.data, 'text/xml')
+        // const converted = toGeoJSON.kml(dom);
         
-        rewind(converted, false);
+        // rewind(converted, false);
         
-        convertedTracks.push(converted);
+        convertedTracks.push(kml);
       }
 
       setTracks(convertedTracks)
@@ -72,7 +71,7 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
                   attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <GeoJSON data={track} />
+                <ReactLeafletKml kml={track} />
               </MapContainer>
             </SwiperSlide>
           )

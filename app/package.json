@@ -13,10 +13,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.0.1",
     "@azure/msal-react": "^3.0.1",
-    "@mapbox/leaflet-omnivore": "^0.3.4",
-    "@mapbox/togeojson": "^0.16.2",
     "@noahspan/noahspan-components": "1.6.0",
-    "@placemarkio/geojson-rewind": "^1.0.2",
     "axios": "^1.7.2",
     "dotenv": "^16.4.7",
     "install": "^0.13.0",
