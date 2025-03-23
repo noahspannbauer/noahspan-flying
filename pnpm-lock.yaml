@@ -157,9 +157,6 @@ importers:
       '@azure/msal-react':
         specifier: ^3.0.1
         version: 3.0.1(@azure/msal-browser@4.0.1)(react@19.0.0-rc.1)
-      '@mapbox/geojson-rewind':
-        specifier: ^0.5.2
-        version: 0.5.2
       '@mapbox/leaflet-omnivore':
         specifier: ^0.3.4
         version: 0.3.4
@@ -169,6 +166,9 @@ importers:
       '@noahspan/noahspan-components':
         specifier: 1.6.0
         version: 1.6.0(@mui/system@6.4.8(@emotion/react@11.14.0(@types/react@18.3.18)(react@19.0.0-rc.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.18)(react@19.0.0-rc.1))(@types/react@18.3.18)(react@19.0.0-rc.1))(@types/react@18.3.18)(react@19.0.0-rc.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(less@4.2.2)(moment@2.30.1)(postcss@8.5.1)(react-dom@19.0.0-rc.1(react@19.0.0-rc.1))(react@19.0.0-rc.1)(storybook@8.6.8(prettier@3.2.5))(typescript@5.7.3)(webpack@5.97.1(esbuild@0.18.20))
+      '@placemarkio/geojson-rewind':
+        specifier: ^1.0.2
+        version: 1.0.2
       axios:
         specifier: ^1.7.2
         version: 1.7.9
@@ -1098,10 +1098,6 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@mapbox/geojson-rewind@0.5.2':
-    resolution: {integrity: sha512-tJaT+RbYGJYStt7wI3cq4Nl4SXxG8W7JDG5DMJu97V25RnbNg3QtQtf+KD+VLjNpWKYsRvXDNmNrBgEETr1ifA==}
-    hasBin: true
-
   '@mapbox/leaflet-omnivore@0.3.4':
     resolution: {integrity: sha512-KHdJXk7EBBygCuErNkI981y51Fd80odYlBmWzsHPtmdzqmvV0D+allIi8uMiTzfW1K3aasOnOw4p6OV0rOs4TQ==}
 
@@ -1513,6 +1509,9 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@placemarkio/geojson-rewind@1.0.2':
+    resolution: {integrity: sha512-ulBdZOCvKlUIe9v+/PDVfe4wDvfkJRzRXstGEHbAJGiUN8IDYw3wD3156DcN/rO9DiHfjcF8KUQlQ7iiMd+rrA==}
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
@@ -7039,11 +7038,6 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@mapbox/geojson-rewind@0.5.2':
-    dependencies:
-      get-stream: 6.0.1
-      minimist: 1.2.8
-
   '@mapbox/leaflet-omnivore@0.3.4':
     dependencies:
       brfs: 1.4.3
@@ -7589,6 +7583,8 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@placemarkio/geojson-rewind@1.0.2': {}
 
   '@popperjs/core@2.11.8': {}
 
