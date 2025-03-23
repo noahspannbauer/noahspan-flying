@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Pilots from './components/pilots/Pilots';
+import Flights from './components/flights/Flights';
 import Logbook from './components/logbook/Logbook';
+import Pilots from './components/pilots/Pilots';
 import SiteNav from './components/siteNav/SiteNav';
 import { useIsAuthenticated } from '@azure/msal-react';
 
@@ -19,8 +20,10 @@ const App = () => {
     <>
       <SiteNav />
       <Routes>
+        <Route path='/' element={<Flights />} />
+        <Route path="/logbook" element={<Logbook />} />
         <Route path="/pilots" element={<Pilots />} />
-        <Route path="/" element={<Logbook />} />
+        
       </Routes>
     </>
   );

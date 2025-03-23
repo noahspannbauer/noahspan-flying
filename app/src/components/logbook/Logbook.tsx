@@ -261,7 +261,7 @@ const Logbook: React.FC<unknown> = () => {
               <Table columns={state.columns} data={state.entries} />
             )}
             {!isMedium && state.entries.length > 0 &&
-              <LogbookCard logs={state.entries} onDelete={onDeleteEntry} onOpenCloseForm={onOpenCloseEntryForm} />
+              <LogbookCard logs={state.entries} onDelete={onDeleteEntry} mode='logbook' onOpenCloseForm={onOpenCloseEntryForm} />
             }
           </Grid>
         )}

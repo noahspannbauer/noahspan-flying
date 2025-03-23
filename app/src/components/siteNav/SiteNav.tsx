@@ -32,8 +32,12 @@ const SiteNav = () => {
   const getPages = () => {
     const pages = [
       {
-        name: 'Logbook',
+        name: 'Flights',
         url: '/'
+      },
+      {
+        name: 'Logbook',
+        url: '/logbook'
       },
       {
         name: 'Pilots',
@@ -79,7 +83,6 @@ const SiteNav = () => {
 
       return imageUrl;
     } catch (error) {
-      console.log(error);
       throw new Error();
     }
   };
