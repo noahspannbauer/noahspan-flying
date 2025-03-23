@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import toGeoJSON from '@mapbox/togeojson';
-import rewind from '@mapbox/geojson-rewind';
+import rewind from '@placemarkio/geojson-rewind';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css';
