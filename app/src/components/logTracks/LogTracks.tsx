@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { Button, Drawer, Grid, Icon, IconButton, IconName, TextField, theme, Typography, useMediaQuery } from "@noahspan/noahspan-components";
 import { useHttpClient } from "../../hooks/httpClient/UseHttpClient";
 import { AxiosInstance, AxiosResponse } from "axios";
@@ -9,6 +9,7 @@ import { useIsAuthenticated } from "@azure/msal-react";
 import { ILogbookEntry } from "../logbook/ILogbookEntry";
 import ConfirmationDialog from "../confirmationDialog/ConfirmationDialog";
 import { initialState, reducer } from "./reducer";
+import LogTrackMaps from "../logTrackMaps/LogTrackMaps";
 
 const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTracksProps) => {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -135,43 +136,49 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
             <Icon iconName={IconName.XMARK} />
           </IconButton>
         </Grid>
-          {state.tracks.length > 0 && state.tracks.map((track, index) => {
-            const trackSplit = track.split('/')
-            const filename = trackSplit[trackSplit.length - 1];
+        {mode === FormMode.EDIT &&
+          <>
+            {state.tracks.length > 0 && state.tracks.map((track, index) => {
+              const trackSplit = track.split('/')
+              const filename = trackSplit[trackSplit.length - 1];
 
-            return (
-              <>
-                <Grid size={11}>
-                  <TextField disabled={true} fullWidth value={filename} />
-                </Grid>
-                <Grid size={1}>
-                  <IconButton onClick={() => onDeleteTrack(filename, index)}><Icon iconName={IconName.TRASH} /></IconButton>
-                </Grid>
-              </>
-            )
-          })
+              return (
+                <>
+                  <Grid size={11}>
+                    <TextField disabled={true} fullWidth value={filename} />
+                  </Grid>
+                  <Grid size={1}>
+                    <IconButton onClick={() => onDeleteTrack(filename, index)}><Icon iconName={IconName.TRASH} /></IconButton>
+                  </Grid>
+                </>
+              )
+            })}
+            <Grid display='flex' gap={2} justifyContent='right' size={12}>
+              <Button
+                startIcon={<Icon iconName={IconName.XMARK} />}
+                variant="outlined"
+                onClick={onCancel}
+                size="small"
+              >
+                {mode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
+              </Button>
+              {mode.toString() !== FormMode.VIEW && (
+                <Button
+                  component='label'
+                  loading={state.isLoading}
+                  startIcon={<Icon iconName={IconName.UPLOAD} />}
+                  variant='contained'
+                >
+                  Upload Track
+                  <input hidden onChange={handleFileUpload} type='file' />
+                </Button>
+              )}
+            </Grid>
+          </>
         }
-        <Grid display='flex' gap={2} justifyContent='right' size={12}>
-          <Button
-            startIcon={<Icon iconName={IconName.XMARK} />}
-            variant="outlined"
-            onClick={onCancel}
-            size="small"
-          >
-            {mode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
-          </Button>
-          {mode.toString() !== FormMode.VIEW && (
-            <Button
-              component='label'
-              loading={state.isLoading}
-              startIcon={<Icon iconName={IconName.UPLOAD} />}
-              variant='contained'
-            >
-              Upload Track
-              <input hidden onChange={handleFileUpload} type='file' />
-            </Button>
-          )}
-        </Grid>
+        {mode === FormMode.VIEW && 
+          <LogTrackMaps rowKey={selectedRowKey!} trackUrls={state.tracks} />
+        }
       </Grid>
       {state.isConfirmDialogOpen && (
         <ConfirmationDialog
@@ -183,6 +190,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
           title="Confirm Delete"
         />
       )}
+      
     </Drawer>
   )
 }

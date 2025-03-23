@@ -13,16 +13,23 @@
   "dependencies": {
     "@azure/msal-browser": "^4.0.1",
     "@azure/msal-react": "^3.0.1",
-    "@noahspan/noahspan-components": "^1.6.0",
+    "@noahspan/noahspan-components": "1.6.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "install": "^0.13.0",
+    "leaflet": "^1.9.4",
+    "pure-react-carousel": "^1.32.0",
+    "react": "19.0.0-rc.1",
+    "react-dom": "19.0.0-rc.1",
     "react-hook-form": "^7.51.4",
-    "react-router-dom": "^6.23.0"
+    "react-leaflet": "^5.0.0",
+    "react-leaflet-kml": "^2.1.2",
+    "react-router-dom": "^6.23.0",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.40.0",
+    "@types/leaflet": "^1.9.16",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",

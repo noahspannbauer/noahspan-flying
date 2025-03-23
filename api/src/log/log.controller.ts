@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  StreamableFile,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -22,14 +23,15 @@ import { FileService } from '../file/file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('logs')
-@UseInterceptors(new LogInterceptor())
 export class LogController {
   constructor(
     private readonly fileService: FileService,
     private readonly logService: LogService
   ) {}
 
+ 
   @Get(':partitionKey/:rowKey')
+  @UseInterceptors(new LogInterceptor())
   async find(
     @Param('partitionKey') partitionKey: string,
     @Param('rowKey') rowKey: string
@@ -44,6 +46,7 @@ export class LogController {
   }
 
   @Get()
+  @UseInterceptors(new LogInterceptor())
   async findAll(): Promise<Log[]> {
     try {
       return await this.logService.findAll();
@@ -121,11 +124,18 @@ export class LogController {
     }
   }
 
+  @Get(':partitionKey/:rowKey/track')
+  async downloadTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<string> {
+    const containerName = 'tracks';
+    const downloadedFile: string = await this.fileService.downloadFile(containerName, rowKey, fileName)
+
+    return downloadedFile;
+  }
+
   @UseGuards(AuthGuard)
   @Delete(':partitionKey/:rowKey/track')
   async deleteTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<void> {
     try {
-      console.log(fileName)
       const containerName = 'tracks';
       
       return await this.fileService.deleteFile(containerName, rowKey, fileName)
