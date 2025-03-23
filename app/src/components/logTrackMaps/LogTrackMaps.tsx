@@ -35,10 +35,7 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
           config
         );
         const kml = new DOMParser().parseFromString(response.data, 'text/xml')
-        // const converted = toGeoJSON.kml(dom);
-        
-        // rewind(converted, false);
-        
+         
         convertedTracks.push(kml);
       }
 
