@@ -53,7 +53,7 @@ const Logbook: React.FC<unknown> = () => {
     accessorKey: 'tracks',
     header: 'Tracks',
     cell: (info: any) => {
-      if (info.row.original.tracks && info.row.original.tracks.length > 0) {
+      if (info.row.original.tracks && JSON.parse(info.row.original.tracks).length > 0) {
         return (
           <IconButton onClick={() => onOpenCloseTracks(FormMode.VIEW, info.row.original.rowKey)}><Icon iconName={IconName.MAP_LOCATION_DOT} /></IconButton>
         )
