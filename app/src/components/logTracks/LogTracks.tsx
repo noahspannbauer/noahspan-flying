@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { Button, Drawer, Grid, Icon, IconButton, IconName, TextField, theme, Typography, useMediaQuery } from "@noahspan/noahspan-components";
+import { Button, Drawer, Grid, Icon, IconButton, IconName, Spinner, TextField, theme, Typography, useMediaQuery } from "@noahspan/noahspan-components";
 import { useHttpClient } from "../../hooks/httpClient/UseHttpClient";
 import { AxiosInstance, AxiosResponse } from "axios";
 import { useAccessToken } from "../../hooks/accessToken/UseAcessToken";
@@ -132,13 +132,23 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
           <Typography variant="h4">{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Tracks`}</Typography>
         </Grid>
         <Grid display="flex" justifyContent="right" size={1}>
-          <IconButton onClick={onCancel}>
+          <IconButton disabled={state.isLoading ? true : false} onClick={onCancel}>
             <Icon iconName={IconName.XMARK} />
           </IconButton>
         </Grid>
         {mode === FormMode.EDIT &&
           <>
-            {state.tracks.length > 0 && state.tracks.map((track, index) => {
+            {state.isLoading &&
+              <>
+                <Grid display="flex" justifyContent="center" size={12}>
+                  <Spinner />
+                </Grid>
+                <Grid display="flex" justifyContent="center" size={12}>
+                  Loading...
+                </Grid>
+              </>
+            }
+            {!state.isLoading && state.tracks.length > 0 && state.tracks.map((track, index) => {
               const trackSplit = track.split('/')
               const filename = trackSplit[trackSplit.length - 1];
 
@@ -155,6 +165,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
             })}
             <Grid display='flex' gap={2} justifyContent='right' size={12}>
               <Button
+                disabled={state.isLoading ? true : false}
                 startIcon={<Icon iconName={IconName.XMARK} />}
                 variant="outlined"
                 onClick={onCancel}
@@ -165,7 +176,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
               {mode.toString() !== FormMode.VIEW && (
                 <Button
                   component='label'
-                  loading={state.isLoading}
+                  disabled={state.isLoading ? true : false}
                   startIcon={<Icon iconName={IconName.UPLOAD} />}
                   variant='contained'
                 >

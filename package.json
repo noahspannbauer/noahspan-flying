@@ -1,6 +1,6 @@
 {
   "name": "@noahspan/flying",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "scripts": {
     "start": "concurrently 'npm run start:azure -w api' 'wait-on tcp:0.0.0.0:7071 && npm run dev -w app'",
     "format": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\"",
