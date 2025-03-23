@@ -8,7 +8,6 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
   return (
     <Grid container spacing={2}>
       {logs.map((log) => {
-        console.log(log)
         return (
           <Grid size={12}>
             <Card key={log.rowKey}>
