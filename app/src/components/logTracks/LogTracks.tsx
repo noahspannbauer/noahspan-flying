@@ -56,7 +56,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
       const uploadResponse: AxiosResponse = await httpClient.post(`api/logs/log/${selectedRowKey}/track`, formData, formDataConfig);
       const uploadUrl = uploadResponse.data.url;
       const log = await getLog();
-      const tracks: string[] = JSON.parse(log.tracks!);
+      const tracks: string[] = log.tracks ? JSON.parse(log.tracks!) : [];
 
       tracks.push(uploadUrl)
       log.tracks = JSON.stringify(tracks);
@@ -171,7 +171,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
                 onClick={onCancel}
                 size="small"
               >
-                {mode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
+                Close
               </Button>
               {mode.toString() !== FormMode.VIEW && (
                 <Button
