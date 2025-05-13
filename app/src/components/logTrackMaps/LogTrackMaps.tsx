@@ -44,22 +44,20 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
   }, [trackUrls])
 
   return (
-    <>
-      <MapContainer 
-        center={[45.14489, -93.21019]} 
-        scrollWheelZoom={false}
-        style={{ height: '500px', width: '100%' }}
-        zoom={8}
-      >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {tracks.length > 0 && tracks.map((track) => (
-          <ReactLeafletKml kml={track} />
-        ))}
-      </MapContainer>
-    </>
+    <MapContainer 
+      center={[45.14489, -93.21019]} 
+      scrollWheelZoom={false}
+      style={{ height: '500px', width: '100%' }}
+      zoom={8}
+    >
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {tracks.length > 0 && tracks.map((track) => (
+        <ReactLeafletKml kml={track} />
+      ))}
+    </MapContainer>
   );
 }
 
