@@ -52,7 +52,7 @@ const Flights = () => {
                         <Skeleton height={300} />
                       </Grid>
                       <Grid size={12}>
-                        {[...Array(6)].map((_element, index) => {
+                        {[...Array(4)].map((_element, index) => {
                           return (
                             <>
                               <Skeleton height={20} width={300} />
