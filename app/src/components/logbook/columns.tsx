@@ -60,7 +60,7 @@ const durationOfFlight: ColumnDef<ILogbookEntry> = {
     headerAlign: 'right'
   },
   cell: (info: CellContext<ILogbookEntry, unknown>) =>
-    info.getValue() ? parseFloat(info.getValue()).toFixed(1) : '',
+    info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
   footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
 }
 const notes: ColumnDef<ILogbookEntry> = {
