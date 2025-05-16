@@ -61,7 +61,7 @@ const durationOfFlight: ColumnDef<ILogbookEntry> = {
   },
   cell: (info: CellContext<ILogbookEntry, unknown>) =>
     info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
-  footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
+  footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
 }
 const notes: ColumnDef<ILogbookEntry> = {
   id: 'notes',
@@ -97,9 +97,9 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
       align: 'right',
       headerAlign: 'right'
     },
-    cell: (info: any) =>
-      info.getValue() ? parseFloat(info.getValue()).toFixed(1) : '',
-    footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
+    cell: (info: CellContext<ILogbookEntry, unknown>) =>
+      info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
+    footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
   },
   {
     id: 'landings',
@@ -112,7 +112,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsDay',
         accessorKey: 'landingsDay',
         header: 'Day',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -122,7 +122,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsNight',
         accessorKey: 'landingsNight',
         header: 'Night',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -141,31 +141,31 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentActual',
         accessorKey: 'instrumentActual',
         header: 'Actual',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : '',
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
       },
       {
         id: 'instrumentSimulated',
         accessorKey: 'instrumentSimulated',
         header: 'Simulated',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'instrumentApproaches',
         accessorKey: 'instrumentApproaches',
         header: 'Approaches',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -175,7 +175,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentHolds',
         accessorKey: 'instrumentHolds',
         header: 'Holds',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -185,7 +185,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentNavTrack',
         accessorKey: 'instrumentNavTrack',
         header: 'Nav/Track',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -204,73 +204,73 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'groundTrainingReceived',
         accessorKey: 'groundTrainingReceived',
         header: 'Ground Training Received',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'flightTrainingReceived',
         accessorKey: 'flightTrainingReceived',
         header: 'Flight Training Received',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'crossCountry',
         accessorKey: 'crossCountry',
         header: 'Cross Country',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'night',
         accessorKey: 'night',
         header: 'Night',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'solo',
         accessorKey: 'solo',
         header: 'Solo',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'pilotInCommand',
         accessorKey: 'pilotInCommand',
         header: 'Pilot In Command',
-        footer: (info) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: any) =>
-          info.getValue() ? parseFloat(info.getValue()).toFixed(1) : ''
+        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+          info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       }
     ]
   },
