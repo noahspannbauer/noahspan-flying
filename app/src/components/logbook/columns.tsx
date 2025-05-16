@@ -112,7 +112,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsDay',
         accessorKey: 'landingsDay',
         header: 'Day',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -122,7 +122,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsNight',
         accessorKey: 'landingsNight',
         header: 'Night',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
