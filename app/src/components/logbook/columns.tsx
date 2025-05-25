@@ -6,7 +6,8 @@ import {
 import { ILogbookEntry } from './ILogbookEntry';
 
 const columnTotal = (info: HeaderContext<ILogbookEntry, unknown>): number => {
-  const values: number[] = info.table.getFilteredRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
+  const blah = info.table
+  const values: number[] = info.table.getPaginationRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
   let total: number = 0;
   
   if (values.length > 0) {
