@@ -22,7 +22,13 @@
 
 
 
-FROM node:18-slim AS base
+FROM node:22-slim AS base
+
+FROM base AS migrate
+WORKDIR migrations
+COPY ./migrations .
+RUN npm i -g pnpm
+RUN pnpm install
 
 FROM base AS api
 WORKDIR api

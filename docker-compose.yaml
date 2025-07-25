@@ -1,34 +1,63 @@
 version: '3.8'
 
 services:
-  azurite:
-    container_name: azurite-flying
-    image: mcr.microsoft.com/azure-storage/azurite
-    ports:
-      - '10000:10000'
-      - '10001:10001'
-      - '10002:10002'
-    command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
-    volumes: 
-      - ./azurite-flying:/data
+  # azurite:
+  #   container_name: azurite-flying
+  #   image: mcr.microsoft.com/azure-storage/azurite
+  #   ports:
+  #     - '10000:10000'
+  #     - '10001:10001'
+  #     - '10002:10002'
+  #   command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
+  #   volumes: 
+  #     - ./azurite-flying:/data
 
-  api:
-    container_name: flying-api
-    build:
-      context: .
-      target: api
-    ports:
-      - '3000:3000'
-    env_file:
-      - ./api/.env.compose
+  restore:
+    container_name: restore
+    image: litestream/litestream:0.3.13
+    volumes:
+      - ./database/flying.db:/var/lib/flying/flying.db
+      - ./database/litestream_dev.yml:/etc/litestream.yml
+      - backup:/var/lib/backup
+      - data:/var/lib/flying
+    command: restore -if-db-not-exists -if-replica-exists /var/lib/flying/flying.db
 
-  app:
-    container_name: flying-app
-    build:
-      context: .
-      target: app
-    ports: 
-      - '8080:8080'
+  # api:
+  #   container_name: flying-api
+  #   build:
+  #     context: .
+  #     target: api
+  #   ports:
+  #     - '3000:3000'
+  #   env_file:
+  #     - ./api/.env.compose
+  #   volumes:
+  #     - data:/var/lib/flying
+  #   depends_on:
+  #     migrate:
+  #       condition: service_completed_successfully
+
+  # replicate:
+  #   container_name: replicate
+  #   image: litestream/litestream:0.3.13
+  #   volumes:
+  #     - ./database/litestream_dev.yml:/etc/litestream.yml
+  #     - backup:/var/lib/backup
+  #     - data:/var/lib/flying
+  #   command: replicate
+  #   depends_on:
+  #     migrate:
+  #       condition: service_completed_successfully
+
+  # app:
+  #   container_name: flying-app
+  #   build:
+  #     context: .
+  #     target: app
+  #   ports: 
+  #     - '8080:8080'
 
 volumes:
-  azurite-flying:
+  # azurite-flying:
+  backup:
+  data:

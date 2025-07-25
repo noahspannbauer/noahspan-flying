@@ -6,3 +6,4 @@ node_modules
 .dapr
 **/**/secrets.json
 .prod
+database
