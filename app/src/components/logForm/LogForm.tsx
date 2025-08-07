@@ -28,7 +28,7 @@ import { FormMode } from '../../enums/formMode';
 import { usePilots } from '../../hooks/pilots/UsePilots';
 
 const LogForm: React.FC<ILogFormProps> = ({
-  entryId,
+  logId,
   isDrawerOpen,
   mode,
   onOpenClose
@@ -39,7 +39,6 @@ const LogForm: React.FC<ILogFormProps> = ({
   const isAuthenticated = useIsAuthenticated();
   const defaultValues = {
     pilotId: '',
-    pilotName: '',
     date: null,
     aircraftMakeModel: '',
     aircraftIdentity: '',
@@ -79,14 +78,14 @@ const LogForm: React.FC<ILogFormProps> = ({
 
       const accessToken: string = await getAccessToken();
 
-      if (!entryId) {
+      if (!logId) {
         await httpClient.post(`api/logs`, data, {
           headers: {
             Authorization: accessToken
           }
         });
       } else {
-        await httpClient.put(`api/logs/log/${entryId}`, data, {
+        await httpClient.put(`api/logs/${logId}`, data, {
           headers: {
             Authorization: accessToken
           }
@@ -120,21 +119,13 @@ const LogForm: React.FC<ILogFormProps> = ({
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/logs/log/${entryId}`,
+          `api/logs/${logId}`,
           config
         );
-        const entry = response.data;
+        const log = response.data;
 
-        // if (mode !== FormMode.ADD) {
-        //   const pilot = pilots?.find((pilot) => pilot.id === entry.pilotId);
-        //   console.log(pilot.name)
-        //   dispatch({
-        //     type: 'SET_SELECTED_ENTRY_PILOT_NAME',
-        //     payload: pilot.name
-        //   });
-        // }
-
-        methods.reset(entry);
+        log.pilotId = log.pilot.id
+        methods.reset(log);
       } catch (error) {
         const axiosError = error as AxiosError;
 
@@ -144,10 +135,10 @@ const LogForm: React.FC<ILogFormProps> = ({
       }
     };
 
-    if (entryId && isDrawerOpen) {
+    if (logId && isDrawerOpen) {
       getEntry();
     }
-  }, [entryId]);
+  }, [logId]);
 
   useEffect(() => {
     if (pilots && FormMode.ADD) {
@@ -213,10 +204,6 @@ const LogForm: React.FC<ILogFormProps> = ({
                         const pilot = pilots?.find(
                           (pilot) => (pilot.id = event.target.value)
                         );
-
-                        if (pilot) {
-                          methods.setValue('pilotName', pilot.name);
-                        }
 
                         methods.setValue('pilotId', event.target.value);
                       }}

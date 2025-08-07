@@ -37,10 +37,11 @@ import { ConfigService } from '@nestjs/config';
     return blockBlobClient;
   }
 
-  async uploadFile(file: Express.Multer.File, containerName: string, rowKey: string): Promise<string> {
+  async uploadFile(file: Express.Multer.File, containerName: string, logId: string): Promise<string> {
+    console.log(file)
     this.containerName = containerName;
 
-    const blockBlobClient = await this.getBlobClient(`${rowKey}/${file.originalname}`);
+    const blockBlobClient = await this.getBlobClient(`${logId}/${file.originalname}`);
     const fileUrl = blockBlobClient.url;
     
     await blockBlobClient.uploadData(file.buffer);

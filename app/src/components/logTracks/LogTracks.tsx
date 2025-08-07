@@ -29,7 +29,7 @@ const LogTracks = ({ isDrawerOpen, mode, onOpenClose, selectedRowKey }: LogTrack
 
   const getLog = async (): Promise<ILogbookEntry> => {
     const logResponse: AxiosResponse = await httpClient.get(
-      `api/logs/log/${selectedRowKey}`,
+      `api/logs/${selectedRowKey}`,
       await getConfig()
     );
     const logData: ILogbookEntry = logResponse.data;

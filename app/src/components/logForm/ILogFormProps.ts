@@ -1,7 +1,7 @@
 import { FormMode } from '../../enums/formMode';
 
 export interface ILogFormProps {
-  entryId?: string;
+  logId?: string;
   isDrawerOpen: boolean;
   mode: FormMode;
   onOpenClose: (mode: FormMode) => void;

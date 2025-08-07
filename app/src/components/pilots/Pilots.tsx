@@ -36,7 +36,7 @@ const Pilots: React.FC<unknown> = () => {
       const response: AxiosResponse = await httpClient.get(
         `api/pilots`
       );
- 
+      console.log(response);
       if (response.data.length > 0) {
         dispatch({ type: 'SET_PILOTS', payload: response.data });
 
@@ -136,13 +136,14 @@ const Pilots: React.FC<unknown> = () => {
     },
     {
       header: 'Actions',
-      cell: (info: any) => (
-        <ActionMenu 
-          id={info.row.original.rowKey} 
+      cell: (info: any) => {
+        console.log(info)
+        return <ActionMenu 
+          id={info.row.original.id} 
           onDelete={onDeleteEntry}
           onOpenCloseForm={onOpenClosePilotForm}
         />
-      )
+      }
     }
   ];
 

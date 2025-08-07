@@ -42,9 +42,9 @@ const Logbook: React.FC<unknown> = () => {
     },
     cell: (info: any) => (
       <ActionMenu
-        id={info.row.original.rowKey}
-        onDelete={onDeleteEntry}
-        onOpenCloseForm={onOpenCloseEntryForm}
+        id={info.row.original.id}
+        onDelete={onDeleteLog}
+        onOpenCloseForm={onOpenCloseLogForm}
         onOpenCloseTracks={onOpenCloseTracks}
       />
     )
@@ -94,16 +94,16 @@ const Logbook: React.FC<unknown> = () => {
     }
   };
 
-  const onOpenCloseEntryForm = (mode: FormMode, entryId?: string) => {
+  const onOpenCloseLogForm = (mode: FormMode, logId?: string) => {
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
       case FormMode.VIEW:
         dispatch({
-          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          type: 'SET_OPEN_CLOSE_LOG_FORM',
           payload: {
             formMode: mode,
-            selectedEntryId: entryId,
+            selectedLogId: logId,
             isFormOpen: true
           }
         });
@@ -111,10 +111,10 @@ const Logbook: React.FC<unknown> = () => {
         break;
       case FormMode.CANCEL:
         dispatch({
-          type: 'SET_OPEN_CLOSE_ENTRY_FORM',
+          type: 'SET_OPEN_CLOSE_LOG_FORM',
           payload: {
             formMode: mode,
-            selectedEntryId: undefined,
+            selectedLogId: undefined,
             isFormOpen: false
           }
         });
@@ -151,10 +151,10 @@ const Logbook: React.FC<unknown> = () => {
     }
   }
 
-  const onDeleteEntry = (entryId: string) => {
+  const onDeleteLog = (logId: string) => {
     dispatch({
       type: 'SET_DELETE',
-      payload: { isConfirmationDialogOpen: true, selectedEntryId: entryId }
+      payload: { isConfirmationDialogOpen: true, selectedLogId: logId }
     });
   };
 
@@ -167,11 +167,11 @@ const Logbook: React.FC<unknown> = () => {
         ? { headers: { Authorization: `${token}` } }
         : {};
 
-      await httpClient.delete(`api/logs/log/${state.selectedEntryId}`, config);
+      await httpClient.delete(`api/logs/${state.selectedLogId}`, config);
 
       dispatch({
         type: 'SET_DELETE',
-        payload: { isConfirmationDialogOpen: false, selectedEntryId: undefined }
+        payload: { isConfirmationDialogOpen: false, selectedLogId: undefined }
       });
       await getLogbookEntries();
     } catch (error) {
@@ -189,7 +189,7 @@ const Logbook: React.FC<unknown> = () => {
   const onConfirmationDialogCancel = () => {
     dispatch({
       type: 'SET_DELETE',
-      payload: { isConfirmationDialogOpen: false, selectedEntryId: undefined }
+      payload: { isConfirmationDialogOpen: false, selectedLogId: undefined }
     });
   };
 
@@ -233,7 +233,7 @@ const Logbook: React.FC<unknown> = () => {
         <Grid display="flex" justifyContent="right" size={isMedium ? 1 : 6}>
           {isAuthenticated &&
             <Button
-              onClick={() => onOpenCloseEntryForm(FormMode.ADD)}
+              onClick={() => onOpenCloseLogForm(FormMode.ADD)}
               startIcon={<Icon iconName={IconName.PLUS} />}
               variant="contained"
               data-testid="pilot-add-button"
@@ -261,7 +261,7 @@ const Logbook: React.FC<unknown> = () => {
               <Table columns={state.columns} data={state.entries} />
             )}
             {!isMedium && state.entries.length > 0 &&
-              <LogbookCard logs={state.entries} onDelete={onDeleteEntry} mode='logbook' onOpenCloseForm={onOpenCloseEntryForm} />
+              <LogbookCard logs={state.entries} onDelete={onDeleteLog} mode='logbook' onOpenCloseForm={onOpenCloseLogForm} />
             }
           </Grid>
         )}
@@ -278,10 +278,10 @@ const Logbook: React.FC<unknown> = () => {
       </Grid>
       {state.isFormOpen && (
         <LogForm
-          entryId={state.selectedEntryId}
+          logId={state.selectedLogId}
           isDrawerOpen={state.isFormOpen}
           mode={state.formMode}
-          onOpenClose={(mode) => onOpenCloseEntryForm(mode)}
+          onOpenClose={(mode) => onOpenCloseLogForm(mode)}
         />
       )}
       {state.isConfirmDialogOpen && (
@@ -299,7 +299,7 @@ const Logbook: React.FC<unknown> = () => {
           isDrawerOpen={state.isTracksOpen}
           mode={state.tracksMode}
           onOpenClose={(mode) => onOpenCloseTracks(mode)}
-          selectedRowKey={state.selectedEntryId}
+          selectedRowKey={state.selectedLogId}
         />
       }
     </Box>

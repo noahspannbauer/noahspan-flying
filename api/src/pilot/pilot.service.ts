@@ -1,54 +1,46 @@
-import { InjectRepository, Repository } from '@noahspan/azure-database';
-import { Inject, Injectable } from '@nestjs/common';
-import { Pilot } from './pilot.entity';
-import { Log } from 'src/log/log.entity';
-import { LogService } from 'src/log/log.service';
+import { Injectable } from '@nestjs/common';
+import { PilotEntity } from './pilot.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { PilotDto } from './pilot.dto';
+import { CustomError } from 'src/error/customError';
 
 @Injectable()
 export class PilotService {
   constructor(
-    @InjectRepository(Pilot) private readonly pilotRepository: Repository<Pilot>,
-    @InjectRepository(Log) private readonly logRepository: Repository<Log>
+    @InjectRepository(PilotEntity) private readonly pilotRepository: Repository<PilotEntity>
   ) {}
 
-  async find(partitionKey: string, rowKey: string): Promise<Pilot> {
-    return await this.pilotRepository.find(partitionKey, rowKey);
+  async find(id: string): Promise<PilotEntity> {
+    try {
+      const pilotEntity = await this.pilotRepository.findOneBy({ id });
+
+      if (pilotEntity) {
+        return pilotEntity
+      } else {
+        throw new CustomError('Pilot not found', 'Not found', 404)
+      }
+    } catch (error) {
+      throw error
+    }
   }
 
-  async findAll(): Promise<Pilot[]> {
-    return await this.pilotRepository.findAll();
+  async findAll(): Promise<PilotEntity[]> {
+    return await this.pilotRepository.find();
   }
 
-  async create(pilot: Pilot): Promise<Pilot> {
-    // try {
-    //   return await this.pilotRepository.create(pilot);
-    // } catch (error) {
-    //   throw new Error(error);
-    // }
-    return await this.pilotRepository.create(pilot);
+  async create(pilot: PilotDto): Promise<InsertResult> {
+    return await this.pilotRepository.insert(pilot);
   }
 
   async update(
-    partitionKey: string,
-    rowKey: string,
-    pilot: Pilot
-  ): Promise<Pilot> {
-    return await this.pilotRepository.update(partitionKey, rowKey, pilot);
+    id: string,
+    pilot: PilotDto
+  ): Promise<UpdateResult> {
+    return await this.pilotRepository.update(id, pilot);
   }
 
-  async delete(partitionKey: string, rowKey: string): Promise<void> {
-    const pilotLogs: Log[] = await this.logRepository.findAll({
-      queryOptions: {
-        filter: `pilotId eq '${rowKey}'`
-      }
-    })
-
-    for (const pilotLog of pilotLogs) {
-      await this.logRepository.delete(pilotLog.partitionKey, pilotLog.rowKey);
-    }
-
-    await this.pilotRepository.delete(partitionKey, rowKey);
-
-    return
+  async delete(id: string): Promise<DeleteResult> {
+    return await this.pilotRepository.delete({ id });
   }
 }

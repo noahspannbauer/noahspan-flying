@@ -5,5 +5,5 @@ export interface ILogFormState {
   isDisabled: boolean;
   isLoading: boolean;
   pilotOptions: { label: string; value: string }[];
-  selectedEntryPilotName: string;
+  selectedPilotName: string;
 }

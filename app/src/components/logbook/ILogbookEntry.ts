@@ -1,8 +1,4 @@
-import { ColumnDef } from "@noahspan/noahspan-components";
-
 export interface ILogbookEntry {
-  partitionKey: string;
-  rowKey: string;
   id: string;
   pilotId: string;
   pilotName: string;

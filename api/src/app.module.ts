@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard, AuthModule, UserModule } from '@noahspan/noahspan-modules';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from './config/typeorm-cli.config';
+import { TrackModule } from './track/track.module';
 
 @Module({
   imports: [
@@ -23,20 +25,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       },
     }),
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [configuration]
     }),
     FeatureFlagModule,
     LogModule,
     PilotModule,
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'sqlite',
-        database: configService.get<string>('dbPath'),
-        entities: [__dirname + "/**/*.entity{.ts,.js}"],
-        synchronize: false
-      })
-    }),
+    TrackModule,
+    TypeOrmModule.forRoot(dataSourceOptions),
     UserModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],

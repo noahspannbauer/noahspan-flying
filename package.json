@@ -25,5 +25,10 @@
   },
   "lint-staged": {
     "**/*": "prettier --write \"**/src/**/*.ts\" \"**/test/**/*.ts\" --ignore-unknown"
-  }
+  },
+  "workspaces": [
+    "api",
+    "app",
+    "tests"
+  ]
 }

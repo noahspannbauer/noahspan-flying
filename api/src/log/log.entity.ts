@@ -1,35 +1,36 @@
-export class Log {
-  partitionKey: string;
-  rowKey: string;
-  pilotId: string;
-  pilotName: string;
-  date: string;
-  aircraftMakeModel: string;
-  aircraftIdentity: string;
-  routeFrom: string;
-  routeTo: string;
-  durationOfFlight: number | null;
-  singleEngineLand: number | null;
-  simulatorAtd?: number | null;
-  landingsDay?: number | null;
-  landingsNight?: number | null;
-  groundTrainingReceived?: number;
-  flightTrainingReceived?: number;
-  crossCountry?: number | null;
-  night?: number | null;
-  solo?: number | null;
-  pilotInCommand?: number | null;
-  instrumentActual?: number | null;
-  instrumentSimulated?: number | null;
-  instrumentApproaches?: number | null;
-  instrumentHolds?: number | null;
-  instrumentNavTrack?: number | null;
-  tracks?: string[];
-  notes?: string;
-}
+// export class Log {
+//   partitionKey: string;
+//   rowKey: string;
+//   pilotId: string;
+//   pilotName: string;
+//   date: string;
+//   aircraftMakeModel: string;
+//   aircraftIdentity: string;
+//   routeFrom: string;
+//   routeTo: string;
+//   durationOfFlight: number | null;
+//   singleEngineLand: number | null;
+//   simulatorAtd?: number | null;
+//   landingsDay?: number | null;
+//   landingsNight?: number | null;
+//   groundTrainingReceived?: number;
+//   flightTrainingReceived?: number;
+//   crossCountry?: number | null;
+//   night?: number | null;
+//   solo?: number | null;
+//   pilotInCommand?: number | null;
+//   instrumentActual?: number | null;
+//   instrumentSimulated?: number | null;
+//   instrumentApproaches?: number | null;
+//   instrumentHolds?: number | null;
+//   instrumentNavTrack?: number | null;
+//   tracks?: string[];
+//   notes?: string;
+// }
 
 import { PilotEntity } from 'src/pilot/pilot.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { TrackEntity } from 'src/track/track.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity({ name: 'logs' })
 export class LogEntity {
@@ -54,53 +55,56 @@ export class LogEntity {
   @Column()
   durationOfFlight: number;
 
-  @Column()
-  singleEngineLand: number;
+  @Column({ nullable: true })
+  singleEngineLand: number | null;
 
-  @Column()
-  simulatorAtd: number;
+  @Column({ nullable: true })
+  simulatorAtd: number | null;
 
-  @Column()
-  landingsDay: number;
+  @Column({ nullable: true })
+  landingsDay: number | null;
 
-  @Column()
-  landingsNight: number;
+  @Column({ nullable: true })
+  landingsNight: number | null;
 
-  @Column()
-  groundTrainingReceived: number;
+  @Column({ nullable: true })
+  groundTrainingReceived: number | null;
 
-  @Column()
-  flightTrainingReceived: number;
+  @Column({ nullable: true })
+  flightTrainingReceived: number | null;
 
-  @Column()
-  crossCountry: number;
+  @Column({ nullable: true })
+  crossCountry: number | null;
 
-  @Column()
-  night: number;
+  @Column({ nullable: true })
+  night: number | null;
 
-  @Column()
-  solo: number;
+  @Column({ nullable: true })
+  solo: number | null;
 
-  @Column()
-  pilotInCommand: number;
+  @Column({ nullable: true })
+  pilotInCommand: number | null;
 
-  @Column()
-  instrumentActual: number;
+  @Column({ nullable: true })
+  instrumentActual: number | null;
 
-  @Column()
-  instrumentSimulated: number;
+  @Column({ nullable: true })
+  instrumentSimulated: number | null;
 
-  @Column()
-  instrumentApproaches: number;
+  @Column({ nullable: true })
+  instrumentApproaches: number | null;
 
-  @Column()
-  instrumentHolds: number;
+  @Column({ nullable: true })
+  instrumentHolds: number | null;
 
-  @Column()
-  instrumentNavTrack: number;
+  @Column({ nullable: true })
+  instrumentNavTrack: number | null;
 
-  @Column()
-  notes: string;
+  @Column({ nullable: true })
+  notes: string | null;
+
+  @OneToMany(() => TrackEntity, (track: TrackEntity) => track.log, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  tracks: TrackEntity[]
 
   @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.logs)
   @JoinColumn({ name: 'pilotId' })

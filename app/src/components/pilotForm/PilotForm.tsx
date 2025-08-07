@@ -36,16 +36,12 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
   const [selectedPerson, setSelectedPerson] = useState<Person>({
-    userPrincipalName: '',
     displayName: ''
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   const defaultValues = {
-    partitionKey: 'pilot',
-    rowKey: 'noah@noahspannbauer.com',
-    id: '',
     name: '',
     address: '',
     city: '',
@@ -53,10 +49,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     postalCode: '',
     email: '',
     phone: '',
-    medicalClass: '',
-    medicalExpiration: '',
-    certificates: [],
-    endorsements: []
   };
   const methods = useForm({
     defaultValues: defaultValues
@@ -100,7 +92,6 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     value: Person,
     _reason: string
   ) => {
-    methods.setValue('id', value.userPrincipalName!.toString());
     methods.setValue('name', value.displayName!.toString());
     setSelectedPerson(value);
   };
@@ -159,16 +150,12 @@ const PilotForm: React.FC<IPilotFormProps> = ({
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/pilots/pilot/${pilotId}`,
+          `api/pilots/${pilotId}`,
           config
         );
         const pilot = response.data;
 
-        pilot.certificates = JSON.parse(pilot.certificates);
-        pilot.endorsements = JSON.parse(pilot.endorsements)
-
         setSelectedPerson({
-          userPrincipalName: pilot.id,
           displayName: pilot.name
         });
         methods.reset(pilot);
@@ -380,7 +367,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 </Grid>
               </>
             }
-            {isAuthenticated &&
+            {/* {isAuthenticated &&
               <Grid size={12}>
                 <PilotFormMedical
                   isDisabled={isDisabled}
@@ -392,7 +379,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
             </Grid>
             <Grid size={12}>
               <PilotFormEndorsements isDisabled={isDisabled} mode={mode} />
-            </Grid>
+            </Grid> */}
             <Grid display="flex" gap={2} justifyContent="right" size={12}>
               <Button
                 disabled={

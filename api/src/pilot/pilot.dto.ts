@@ -1,10 +1,6 @@
-import { Certificate } from "./certificate/certificate.entity";
-import { Endorsement } from "./endorsement/endorsement.entity";
+import { LogEntity } from "src/log/log.entity";
 
 export class PilotDto {
-  partitionKey: string;
-  rowKey: string;
-  id: string;
   name: string;
   address: string;
   city: string;
@@ -12,8 +8,4 @@ export class PilotDto {
   postalCode: string;
   email?: string;
   phone?: string;
-  medicalClass?: string;
-  medicalExpiration?: string;
-  certificates: Certificate;
-  endorsements: Endorsement
 }

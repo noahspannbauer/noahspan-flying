@@ -10,7 +10,7 @@ type Action =
       type: 'SET_DELETE';
       payload: {
         isConfirmationDialogOpen: boolean;
-        selectedEntryId: string | undefined;
+        selectedLogId: string | undefined;
       };
     }
   | { type: 'SET_ENTRIES'; payload: ILogbookEntry[] }
@@ -19,10 +19,10 @@ type Action =
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
   | {
-      type: 'SET_OPEN_CLOSE_ENTRY_FORM';
+      type: 'SET_OPEN_CLOSE_LOG_FORM';
       payload: {
         formMode: FormMode;
-        selectedEntryId: string | undefined;
+        selectedLogId: string | undefined;
         isFormOpen: boolean;
       };
     }
@@ -38,7 +38,7 @@ export const initialState: ILogbookState = {
   isFormOpen: false,
   isLoading: false,
   isTracksOpen: false,
-  selectedEntryId: undefined,
+  selectedLogId: undefined,
   tracksMode: FormMode.CANCEL
 };
 
@@ -57,7 +57,7 @@ export const reducer = (
       return {
         ...state,
         isConfirmDialogOpen: action.payload.isConfirmationDialogOpen,
-        selectedEntryId: action.payload.selectedEntryId
+        selectedLogId: action.payload.selectedLogId
       };
     }
     case 'SET_ENTRIES': {
@@ -90,12 +90,12 @@ export const reducer = (
         isLoading: action.payload
       };
     }
-    case 'SET_OPEN_CLOSE_ENTRY_FORM': {
+    case 'SET_OPEN_CLOSE_LOG_FORM': {
       return {
         ...state,
         formMode: action.payload.formMode,
         isFormOpen: action.payload.isFormOpen,
-        selectedEntryId: action.payload.selectedEntryId
+        selectedLogId: action.payload.selectedLogId
       };
     }
     case 'SET_OPEN_CLOSE_TRACKS': {
@@ -103,7 +103,7 @@ export const reducer = (
         ...state,
         tracksMode: action.payload.tracksMode,
         isTracksOpen: action.payload.isTracksOpen,
-        selectedEntryId: action.payload.selectedRowKey
+        selectedLogId: action.payload.selectedRowKey
       }
     }
     default: {

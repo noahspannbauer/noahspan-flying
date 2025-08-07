@@ -7,20 +7,17 @@ import {
   Param,
   Post,
   Put,
-  Query,
-  StreamableFile,
-  UploadedFile,
   UseGuards,
   UseInterceptors
 } from '@nestjs/common';
 import { LogDto } from './log.dto';
-import { Log } from './log.entity';
+import { LogEntity } from './log.entity';
 import { LogService } from './log.service';
 import { CustomError } from '../error/customError';
 import { AuthGuard } from '@noahspan/noahspan-modules';
 import { LogInterceptor } from './interceptors/log.interceptor';
 import { FileService } from '../file/file.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 @Controller('logs')
 export class LogController {
@@ -30,14 +27,13 @@ export class LogController {
   ) {}
 
  
-  @Get(':partitionKey/:rowKey')
+  @Get(':id')
   @UseInterceptors(new LogInterceptor())
   async find(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string
-  ): Promise<Log> {
+    @Param('id') id: string,
+  ): Promise<LogEntity> {
     try {
-      return await this.logService.find(partitionKey, rowKey);
+      return await this.logService.find(id);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -47,7 +43,7 @@ export class LogController {
 
   @Get()
   @UseInterceptors(new LogInterceptor())
-  async findAll(): Promise<Log[]> {
+  async findAll(): Promise<LogEntity[]> {
     try {
       return await this.logService.findAll();
     } catch (error) {
@@ -57,35 +53,26 @@ export class LogController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() logDto: LogDto): Promise<Log> {
+  async create(@Body() logDto: LogDto): Promise<InsertResult> {
     try {
-      const log = new Log();
-
-      Object.assign(log, logDto);
-
-      return await this.logService.create(log);
+      return await this.logService.create(logDto);
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
-  @UseGuards(AuthGuard)  
-  @Put(':partitionKey/:rowKey')
+  // @UseGuards(AuthGuard)  
+  @Put(':id')
   async update(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string,
+    @Param('id') id: string,
     @Body() logDto: LogDto
-  ): Promise<Log> {
+  ): Promise<UpdateResult> {
     try {
-      const log = new Log();
-
-      Object.assign(log, logDto);
-
-      return await this.logService.update(partitionKey, rowKey, log);
+      return await this.logService.update(id, logDto);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -93,52 +80,13 @@ export class LogController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @Delete(':partitionKey/:rowKey')
+  // @UseGuards(AuthGuard)
+  @Delete(':id')
   async delete(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string
-  ): Promise<void> {
+    @Param('id') id: string,
+  ): Promise<DeleteResult> {
     try {
-      return await this.logService.delete(partitionKey, rowKey);
-    } catch (error) {
-      const customError = error as CustomError;
-
-      throw new HttpException(customError.message, customError.statusCode);
-    }
-  }
-
-  @UseGuards(AuthGuard)
-  @Post(':partitionKey/:rowKey/track')
-  @UseInterceptors(FileInterceptor('file'))
-  async createTrack(@Param('rowKey') rowKey: string, @UploadedFile() file: Express.Multer.File) {
-    try {
-      const containerName = 'tracks';
-      const url = await this.fileService.uploadFile(file, containerName, rowKey);
-  
-      return { url }
-    } catch (error) {
-      const customError = error as CustomError;
-
-      throw new HttpException(customError.message, customError.statusCode);
-    }
-  }
-
-  @Get(':partitionKey/:rowKey/track')
-  async downloadTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<string> {
-    const containerName = 'tracks';
-    const downloadedFile: string = await this.fileService.downloadFile(containerName, rowKey, fileName)
-
-    return downloadedFile;
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete(':partitionKey/:rowKey/track')
-  async deleteTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<void> {
-    try {
-      const containerName = 'tracks';
-      
-      return await this.fileService.deleteFile(containerName, rowKey, fileName)
+      return await this.logService.delete(id);
     } catch (error) {
       const customError = error as CustomError;
 

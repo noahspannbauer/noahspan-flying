@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  # azurite:
-  #   container_name: azurite-flying
-  #   image: mcr.microsoft.com/azure-storage/azurite
-  #   ports:
-  #     - '10000:10000'
-  #     - '10001:10001'
-  #     - '10002:10002'
-  #   command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
-  #   volumes: 
-  #     - ./azurite-flying:/data
+  azurite:
+    container_name: azurite-flying
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - '10000:10000'
+      - '10001:10001'
+      - '10002:10002'
+    command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
+    volumes: 
+      - ./azurite-flying:/data
 
   restore:
     container_name: restore

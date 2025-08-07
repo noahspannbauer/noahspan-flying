@@ -13,6 +13,6 @@ export interface ILogbookState {
   isFormOpen: boolean;
   isLoading: boolean;
   isTracksOpen: boolean;
-  selectedEntryId: string | undefined;
+  selectedLogId: string | undefined;
   tracksMode: FormMode;
 }
