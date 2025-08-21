@@ -12,24 +12,25 @@ import 'swiper/css';
 import './LogTrackMaps.css';
 import 'leaflet/dist/leaflet.css';
 
-const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
-  const [tracks, setTracks] = useState<any[]>([])
+const LogTrackMaps = ({ logId, tracks }: LogTrackMapsProps) => {
+  const [kmls, setKmls] = useState<any[]>([])
   const httpClient: AxiosInstance = useHttpClient();
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   
   useEffect(() => {
+    console.log(tracks)
     const getTracks = async () => {
       const convertedTracks: any[] = []
 
-      for (const trackUrl of trackUrls) {
-        const trackUrlSplit = trackUrl.split('/')
+      for (const track of tracks) {
+        const trackUrlSplit = track.url.split('/')
         const filename = trackUrlSplit[trackUrlSplit.length - 1];
         const config = isAuthenticated
           ? { headers: { Authorization: await getAccessToken() } }
           : {};
         const response: AxiosResponse = await httpClient.get(
-          `api/logs/log/${rowKey}/track?fileName=${filename}`,
+          `api/tracks/${logId}/${filename}`,
           config
         );
         const kml = new DOMParser().parseFromString(response.data, 'text/xml')
@@ -37,11 +38,11 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
         convertedTracks.push(kml);
       }
 
-      setTracks(convertedTracks)
+      setKmls(convertedTracks)
     }
 
     getTracks();
-  }, [trackUrls])
+  }, [tracks])
 
   return (
     <MapContainer 
@@ -54,8 +55,8 @@ const LogTrackMaps = ({ rowKey, trackUrls }: LogTrackMapsProps) => {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {tracks.length > 0 && tracks.map((track) => (
-        <ReactLeafletKml kml={track} />
+      {kmls.length > 0 && kmls.map((kml) => (
+        <ReactLeafletKml kml={kml} />
       ))}
     </MapContainer>
   );

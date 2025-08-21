@@ -5,7 +5,7 @@ type Action =
   | { type: 'SET_IS_CONFORM_DIALOG_LOADING'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
   | { type: 'SET_ON_DELETE_TRACK'; payload: { isConfirmDialogOpen: boolean, selectedTrack: { fileName: string, index: number } }}
-  | { type: 'SET_TRACKS'; payload: string[] };
+  | { type: 'SET_TRACKS'; payload: { id: string; order: number; url: string }[] };
 
 export const initialState: LogTracksState = {
   isConfirmDialogOpen: false,

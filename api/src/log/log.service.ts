@@ -20,12 +20,14 @@ export class LogService {
       where: { id: id },
       relations: ['pilot', 'tracks']
     });
-    console.log(logEntity);
+
     return logEntity;
   }
 
   async findAll(): Promise<LogEntity[]> {
-    return await this.logRepository.find();
+    return await this.logRepository.find({
+      relations: ['pilot', 'tracks']
+    });
   }
 
   async create(logDto: LogDto): Promise<InsertResult> {

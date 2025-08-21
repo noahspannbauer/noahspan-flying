@@ -10,8 +10,9 @@ const Flights = () => {
   const isMedium = useMediaQuery(theme.breakpoints.up('md'));
 
   useEffect(() => {
+    console.log(logs)
     const flights: ILogbookEntry[] | undefined = logs?.filter((log: ILogbookEntry) => {
-      if (log.tracks && JSON.parse(log.tracks).length > 0) {
+      if (log.tracks && log.tracks.length > 0) {
         return log;
       }
     })

@@ -6,5 +6,5 @@ export interface LogTracksState {
     fileName: string,
     index: number
   } | undefined;
-  tracks: string[];
+  tracks: { id: string; order: number; url: string; }[];
 }

@@ -1,23 +1,24 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
+import { LogEntity } from '../log.entity';
 
 export class LogInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token)
 
     if (!token) {
       return handler.handle().pipe(
-        map((data) => {
+        map((data: LogEntity[]) => {
+
           if (data.length) {
-            const logs = data.map((log) => {
+            const logs = data.map((log: LogEntity) => {
               return {
-                partitionKey: log.partitionKey,
-                rowKey: log.rowKey,
-                pilotId: log.pilotId,
-                pilotName: log.pilotName,
+                id: log.id,
+                pilot: {
+                  name: log.pilot.name
+                },
                 date: log.date,
                 aircraftMakeModel: log.aircraftMakeModel,
                 routeFrom: log.routeFrom,

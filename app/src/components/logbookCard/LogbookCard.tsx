@@ -8,14 +8,15 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
   return (
     <Grid container spacing={2}>
       {logs.map((log) => {
-        console.log(log)
+        const date = new Date(log.date);
+        const formattedDate: string = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+
         return (
           <Grid size={12}>
-            <Card key={log.rowKey}>
+            <Card key={log.id}>
               <CardHeader
-                action={mode === 'logbook' ? <ActionMenu id={log.rowKey} onDelete={onDelete!} onOpenCloseForm={onOpenCloseForm!} /> : null}
-                subheader={log.pilotName}
-                title={log.date}
+                action={mode === 'logbook' ? <ActionMenu id={log.id} onDelete={onDelete!} onOpenCloseForm={onOpenCloseForm!} /> : null}
+                title={formattedDate}
                 slotProps={{
                   subheader: {
                     fontSize: '16px'
@@ -27,11 +28,11 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
               />
               <CardContent>
                 <Grid container spacing={1}>
-                  {mode === 'flights' && log.tracks && JSON.parse(log.tracks).length > 0 &&
+                  {mode === 'flights' && log.tracks && log.tracks.length > 0 &&
                     <Grid size={12}>
                       <LogTrackMaps 
-                        rowKey={log.rowKey}
-                        trackUrls={JSON.parse(log.tracks)}
+                        logId={log.id}
+                        tracks={log.tracks}
                       />
                     </Grid>
                   }
@@ -59,13 +60,13 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
                   <Grid size={12}>
                     <Typography variant="body1">{log.durationOfFlight}</Typography>
                   </Grid>
-                  {mode === 'logbook' && log.tracks && JSON.parse(log.tracks).length > 0 && 
+                  {mode === 'logbook' && log.tracks && log.tracks.length > 0 && 
                     <>
                       <Grid size={12}>
                         <Typography variant="subtitle2">Tracks</Typography>
                       </Grid>
-                      {JSON.parse(log.tracks).map((track: string) => {
-                        const trackSplit = track.split('/')
+                      {log.tracks.map((track: { id: string; order: number; url: string}) => {
+                        const trackSplit = track.url.split('/')
                         const filename = trackSplit[trackSplit.length - 1];
 
                         return (

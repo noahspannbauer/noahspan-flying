@@ -1,5 +1,4 @@
 import { PilotEntity } from "src/pilot/pilot.entity";
-import { TrackEntity } from "src/track/track.entity";
 
 export class LogDto {
   pilotId: string;
@@ -26,5 +25,4 @@ export class LogDto {
   pilotInCommand?: number;
   notes?: string;
   pilot?: PilotEntity;
-  tracks?: TrackEntity[];
 }

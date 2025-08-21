@@ -10,32 +10,51 @@ import { FileService } from "src/file/file.service";
 
 @Injectable()
 export class TrackService {
+  private readonly containerName: string = 'tracks'
+  
   constructor(
     @InjectRepository(TrackEntity) private readonly trackRepository: Repository<TrackEntity>,
     private readonly fileService: FileService,
     private readonly logService: LogService
   ) {}
 
-  // async find(id: string): Promise<TrackEntity> {
-  //   return await this.trackRepository.findOneBy({ id });
-  // }
+  async find(id: string): Promise<TrackEntity> {
+    try {
+      return await this.trackRepository.findOneBy({ id });
+    } catch (error) {
+      throw new CustomError('Track not found', 'Not found', 404)
+    }
+  }
 
-  // async findAll(logId: string): Promise<TrackEntity[]> {
-  //   try {
-  //     await this.trackRepository.findOneBy({ })
-  //   } catch (error) {
+  async findAll(logId: string): Promise<TrackEntity[]> {
+    try {
+      const logEntity: LogEntity = await this.logService.find(logId);
 
-  //   }
-    
-  // }
+      if (logEntity) {
+        console.log(logEntity)
+        const tracks = await this.trackRepository.find({
+          where: { log: 
+            {
+              id: logEntity.id
+            } 
+          },
+        })
+
+        console.log(tracks)
+        return tracks;
+      }
+    } catch (error) {
+      console.log(error)
+      throw new CustomError('Tracks not found', 'Not found', 404);
+    }
+  }
 
   async create(logId: string, order: number, file: Express.Multer.File): Promise<InsertResult> {
     try {
       const logEntity: LogEntity = await this.logService.find(logId);
 
       if (logEntity) {
-        const containerName = 'tracks';
-        const url = await this.fileService.uploadFile(file, containerName, logId);
+        const url = await this.fileService.uploadFile(file, this.containerName, logId);
         const track = this.trackRepository.create({
           log: logEntity,
           order: order,
@@ -52,37 +71,31 @@ export class TrackService {
     }
   }
 
-  // async update(id: string, track: TrackDto): Promise<UpdateResult> {
-  //   return await this.trackRepository.update(id, track);
-  // }
-
-  async delete(id: string): Promise<DeleteResult> {
+  async update(id: string, track: TrackDto): Promise<UpdateResult> {
     try {
-
-    } catch (error) {
-
+      return await this.trackRepository.update(id, track);
+    } catch(error) {
+      throw error
     }
-    return await this.trackRepository.delete({ id });
   }
 
-  // async createTrack()
+  async delete(id: string, logId: string, fileName: string): Promise<DeleteResult> {
+    try {
+      await this.fileService.deleteFile(this.containerName, logId, fileName);
 
-  // async downloadTrack(): Promise<string> {
-  //   const containerName = 'tracks';
-  //   const downloadedFile: string = await this.fileService.downloadFile(containerName, rowKey, fileName);
+      return await this.trackRepository.delete({ id });
+    } catch (error) {
+      throw error
+    }
+  }
 
-  //   return downloadedFile;
-  // }
+  async downloadTrackFile(logId: string, fileName: string): Promise<string> {
+    try {
+      const downloadedFile: string = await this.fileService.downloadFile(this.containerName, logId, fileName);
 
-  // async deleteTrack(): Promsie<void> {
-  //   try {
-  //     const containerName = 'tracks';
-
-  //     return await this.fileService.deleteFile(containerName, rowKey, fileName)
-  //   } catch (error) {
-  //     const customError = error as CustomError;
-
-  //     throw customError;
-  //   }
-  // }
+      return downloadedFile;
+    } catch (error) {
+      throw error
+    }
+  }
 }

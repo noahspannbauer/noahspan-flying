@@ -19,14 +19,25 @@ const columnTotal = (info: HeaderContext<ILogbookEntry, unknown>): number => {
 
 const pilotName: ColumnDef<ILogbookEntry> = {
   id: 'pilotName',
-  accessorKey: 'pilotName',
+  accessorKey: 'pilot',
   header: 'Pilot',
-  footer: 'PAGE TOTALS'
+  footer: 'PAGE TOTALS',
+  cell: (info: CellContext<ILogbookEntry, unknown>) => {
+    const pilot: any = info.getValue();
+
+    return pilot.name
+  }
 }
 const date: ColumnDef<ILogbookEntry> = {
   id: 'date',
   accessorKey: 'date',
-  header: 'Date'
+  header: 'Date',
+  cell: (info: CellContext<ILogbookEntry, unknown>) => {
+    const date = new Date(info.getValue() as string);
+    const formattedDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+
+    return formattedDate;
+  }
 }
 const aircraftMakeModel: ColumnDef<ILogbookEntry> = {
   id: 'aircraftMakeModel',

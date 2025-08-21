@@ -4,5 +4,5 @@ export interface LogTracksProps {
   isDrawerOpen: boolean;
   mode: FormMode;
   onOpenClose: (mode: FormMode) => void;
-  selectedRowKey: string | undefined;
+  selectedLogId: string | undefined;
 }

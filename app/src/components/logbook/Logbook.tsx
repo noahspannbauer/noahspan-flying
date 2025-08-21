@@ -53,7 +53,7 @@ const Logbook: React.FC<unknown> = () => {
     accessorKey: 'tracks',
     header: 'Tracks',
     cell: (info: any) => {
-      if (info.row.original.tracks && JSON.parse(info.row.original.tracks).length > 0) {
+      if (info.row.original.tracks.length > 0) {
         return (
           <IconButton onClick={() => onOpenCloseTracks(FormMode.VIEW, info.row.original.rowKey)}><Icon iconName={IconName.MAP_LOCATION_DOT} /></IconButton>
         )
@@ -70,7 +70,7 @@ const Logbook: React.FC<unknown> = () => {
         : {};
       const response: AxiosResponse = await httpClient.get(`api/logs`, config);
       const entries: ILogbookEntry[] = response.data;
-      
+      console.log(entries)
       entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
       if (response.data.length > 0) {
@@ -299,7 +299,7 @@ const Logbook: React.FC<unknown> = () => {
           isDrawerOpen={state.isTracksOpen}
           mode={state.tracksMode}
           onOpenClose={(mode) => onOpenCloseTracks(mode)}
-          selectedRowKey={state.selectedLogId}
+          selectedLogId={state.selectedLogId}
         />
       }
     </Box>

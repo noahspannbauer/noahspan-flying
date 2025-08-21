@@ -29,7 +29,7 @@ export class TrackController {
   ) {}
 
   // @Get('id')
-  // async fin(@Param('id') id: string): Promise<TrackEntity> {
+  // async find(@Param('id') id: string): Promise<TrackEntity> {
   //   try {
   //     return await this.trackService.find(id);
   //   } catch (error) {
@@ -39,21 +39,22 @@ export class TrackController {
   //   }
   // }
 
-  // @Get()
-  // async findAdd(): Promise<TrackEntity[]> {
-  //   try {
-  //     return await this.trackService.findAll();
-  //   } catch (error) {
-  //     const customError = error as CustomError;
+  @Get(':logId')
+  async findAll(@Param('logId') logId: string): Promise<TrackEntity[]> {
+    try {
+      return await this.trackService.findAll(logId);
+    } catch (error) {
+      const customError = error as CustomError;
 
-  //     throw new HttpException(customError.message, customError.statusCode)
-  //   }
-  // }
+      throw new HttpException(customError.message, customError.statusCode);
+    }
+  }
 
+  @UseGuards(AuthGuard)
   @Post(':logId/:order')
+  @UseInterceptors(FileInterceptor('file'))
   async create(@Param('logId') logId: string, @Param('order') order: number, @UploadedFile() file: Express.Multer.File): Promise<InsertResult> {
     try {
-      console.log(file)
       return await this.trackService.create(logId, order, file);
     } catch (error) {
       const customError = error as CustomError;
@@ -62,21 +63,12 @@ export class TrackController {
     }
   }
 
-  // @Put(':id')
-  // async update(@Param('id') id: string, @Body() trackDto: TrackDto): Promise<UpdateResult> {
-  //   try {
-  //     return await this.trackService.update(id, trackDto);
-  //   } catch (error) {
-  //     const customError = error as CustomError;
-
-  //     throw new HttpException(customError.message, customError.statusCode)
-  //   }
-  // }
-
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<DeleteResult> {
+  async delete(@Param('id') id: string, @Query('fileName') fileName: string, @Query('logId') logId: string): Promise<DeleteResult> {
     try {
-      return await this.trackService.delete(id);
+
+      return await this.trackService.delete(id, logId, fileName);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -84,37 +76,10 @@ export class TrackController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @Post(':partitionKey/:rowKey/track')
-  @UseInterceptors(FileInterceptor('file'))
-  async createTrack(@Param('rowKey') rowKey: string, @UploadedFile() file: Express.Multer.File) {
+  @Get(':logId/:fileName')
+  async downloadTrack(@Param('logId') logId: string, @Param('fileName') fileName: string): Promise<string> {
     try {
-      const containerName = 'tracks';
-      const url = await this.fileService.uploadFile(file, containerName, rowKey);
-  
-      return { url }
-    } catch (error) {
-      const customError = error as CustomError;
-
-      throw new HttpException(customError.message, customError.statusCode);
-    }
-  }
-
-  @Get(':partitionKey/:rowKey/track')
-  async downloadTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<string> {
-    const containerName = 'tracks';
-    const downloadedFile: string = await this.fileService.downloadFile(containerName, rowKey, fileName)
-
-    return downloadedFile;
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete(':partitionKey/:rowKey/track')
-  async deleteTrack(@Param('rowKey') rowKey: string, @Query('fileName') fileName: string): Promise<void> {
-    try {
-      const containerName = 'tracks';
-      
-      return await this.fileService.deleteFile(containerName, rowKey, fileName)
+      return await this.trackService.downloadTrackFile(logId, fileName);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -122,10 +87,6 @@ export class TrackController {
     }
   }
 }
-
-
-
-
 
 
 

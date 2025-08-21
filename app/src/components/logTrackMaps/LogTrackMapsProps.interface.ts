@@ -1,4 +1,4 @@
 export interface LogTrackMapsProps {
-  rowKey: string;
-  trackUrls: string[];
+  logId: string;
+  tracks: {id: string; order: number; url: string}[];
 }
