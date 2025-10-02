@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
-import { FeatureFlagModule } from './featureFlag/feature-flag.module'
+import { HealthModule } from './health/health.module';
 import { LogModule } from './log/log.module';
 import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER, APP_GUARD, Reflector } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthGuard, AuthModule, UserModule } from '@noahspan/noahspan-modules';
+import { AuthModule, MsGraphModule } from '@noahspan/noahspan-modules';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from './config/typeorm-cli.config';
+import { dataSourceOptions } from './database/data-source';
 import { TrackModule } from './track/track.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -18,9 +20,9 @@ import { TrackModule } from './track/track.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return {
-          clientId: configService.get<string>('clientId'),
-          clientSecret: configService.get<string>('clientSecret'),
-          tenantId: configService.get<string>('tenantId')
+          audience: configService.get<string>('audience'),
+          issuerUrl: configService.get<string>('issuer'),
+          jwksUri: configService.get<string>('jwksUri')
         };
       },
     }),
@@ -28,12 +30,15 @@ import { TrackModule } from './track/track.module';
       isGlobal: true,
       load: [configuration]
     }),
-    FeatureFlagModule,
-    LogModule,
+    // HealthModule,
+    // LogModule,
     PilotModule,
-    TrackModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'client', 'dist')
+    }),
+    // TrackModule,
     TypeOrmModule.forRoot(dataSourceOptions),
-    UserModule.registerAsync({
+    MsGraphModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -49,7 +54,7 @@ import { TrackModule } from './track/track.module';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
-    },
+    }
   ]
 })
 export class AppModule {}

@@ -22,24 +22,25 @@
 
 
 
-FROM node:22-slim AS base
-
-FROM base AS migrate
-WORKDIR migrations
-COPY ./migrations .
-RUN npm i -g pnpm
-RUN pnpm install
+FROM --platform=linux/amd64 node:22-slim AS base
 
 FROM base AS api
+COPY ./api/entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
+
 WORKDIR api
-COPY ./.prod/api .
+COPY ./api/dist ./dist
+COPY ./api/package.json package-lock.json .
+RUN npm ci
+
 EXPOSE 3000
-CMD ["node", "dist/main.js"]
+
+ENTRYPOINT ["/entrypoint.sh"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 FROM base AS app
-WORKDIR /app
-COPY ./.prod/app .
+WORKDIR app
+COPY ./app/dist ./dist
 RUN npm i -g serve
 EXPOSE 8080
 CMD [ "serve", "-s", "dist", "-p", "8080" ]

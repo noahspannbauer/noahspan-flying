@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@source "../node_modules/@noahspan/noahspan-components/dist/**/*.{js,ts,jsx,tsx}";
+
+@plugin "daisyui" {
+  themes: lofi --default;
+}
+
+@plugin "@tailwindcss/typography";
+
+body {
+  @apply bg-base-300;
+}

@@ -20,12 +20,6 @@ jobs:
           sparse-checkout: |
             api
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          version: 10
-          run_install: false
-
       - name: Install Nest CLI
         run: |
           npm install -g @nestjs/cli
@@ -37,16 +31,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm install
+          npm ci
 
       - name: Build
         run: |
-          pnpm --filter api build
-
-      - name: Deploy
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          pnpm --filter api --prod deploy ./.prod/api
+          npm run build
 
       - name: Log into Docker Hub
         if: ${{ github.event_name != 'pull_request' }}

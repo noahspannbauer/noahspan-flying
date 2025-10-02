@@ -14,8 +14,8 @@ import { PilotDto } from './pilot.dto';
 import { PilotEntity } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
-import { AuthGuard } from '@noahspan/noahspan-modules'
 import { PilotInterceptor } from './interceptors/pilot.interceptor';
+import { AuthGuard } from '@noahspan/noahspan-modules';
 
 @Controller('pilots')
 // @UseInterceptors(new PilotInterceptor())
@@ -34,6 +34,7 @@ export class PilotController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAll() {
     try {
       return await this.pilotService.findAll();
@@ -44,7 +45,7 @@ export class PilotController {
     }
   }
 
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() pilotDto: PilotDto) {
     try {

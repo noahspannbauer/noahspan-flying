@@ -3,15 +3,26 @@ import { AppModule } from './app.module';
 import { HttpService } from '@nestjs/axios';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { InternalServerErrorException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const httpService = new HttpService();
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: 'http://localhost:8080', // Allow requests from your frontend's origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // If you need to send cookies or authorization headers
+  });
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.use(
+    session({
+      secret: 'blah',
+      resave: false,
+      saveUninitialized: false
+    })
+  )
 
   httpService.axiosRef.interceptors.response.use(
     (response) => {

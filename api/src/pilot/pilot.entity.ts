@@ -1,22 +1,3 @@
-// import { EntityString } from '@noahspan/azure-database';
-
-// export class Pilot {
-//   @EntityString() partitionKey: string;
-//   @EntityString() rowKey: string;
-//   @EntityString() id: string;
-//   @EntityString() name: string;
-//   @EntityString() address?: string;
-//   @EntityString() city?: string;
-//   @EntityString() state?: string;
-//   @EntityString() postalCode?: string;
-//   @EntityString() email?: string;
-//   @EntityString() phone?: string;
-//   @EntityString() medicalClass?: string;
-//   @EntityString() medicalExpiration: string;
-//   @EntityString() certificates: string;
-//   @EntityString() endorsements: string;
-// }
-
 import { LogEntity } from 'src/log/log.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { CertificateEntity } from '../certificate/certificate.entity';
@@ -48,6 +29,9 @@ export class PilotEntity {
 
   @Column()
   phone: string;
+
+  @Column()
+  userId: string | null;
 
   @OneToMany(() => LogEntity, (log: LogEntity) => log.pilot, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
   logs: LogEntity[];

@@ -15,6 +15,14 @@ variable "CLIENT_SECRET" {
   sensitive = true
 }
 
+variable "DB_PATH" {
+  type = string
+}
+
+variable "DB_SYNC" {
+  type = string
+}
+
 variable "DNS_ZONE_RESOURCE_GROUP" {
   type = string
 }

@@ -19,17 +19,17 @@ jobs:
       version_number: ${{ github.run_id }}
     secrets: inherit
 
-  # deploy-api:
-  #   name: deploy-api
-  #   needs: 
-  #     - changes
-  #     - build-api
-  #   uses: ./.github/workflows/deploy.yaml
-  #   with:
-  #     app_name: flying-api
-  #     environment_name: test
-  #     version_number: ${{ github.run_id }}
-  #   secrets: inherit
+  deploy-api:
+    name: deploy-api
+    needs: 
+      - changes
+      - build-api
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      app_name: flying-api
+      environment_name: test
+      version_number: ${{ github.run_id }}
+    secrets: inherit
 
   build-app:
     if: ${{ needs.changes.outputs.app == 'true' }}
@@ -42,14 +42,14 @@ jobs:
       version_number: ${{ github.run_id }}
     secrets: inherit
 
-  # deploy-app:
-  #   name: deploy-app
-  #   needs: 
-  #     - changes
-  #     - build-app
-  #   uses: ./.github/workflows/deploy.yaml
-  #   with:
-  #     app_name: flying-app
-  #     environment_name: test
-  #     version_number: ${{ github.run_id }}
-  #   secrets: inherit
+  deploy-app:
+    name: deploy-app
+    needs: 
+      - changes
+      - build-app
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      app_name: flying-app
+      environment_name: test
+      version_number: ${{ github.run_id }}
+    secrets: inherit
