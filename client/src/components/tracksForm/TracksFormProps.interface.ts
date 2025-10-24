@@ -1,6 +1,6 @@
 import { FormMode } from "../../enums/formMode";
 
-export interface LogTracksProps {
+export interface TracksFormProps {
   isDrawerOpen: boolean;
   mode: FormMode;
   onOpenClose: (mode: FormMode) => void;

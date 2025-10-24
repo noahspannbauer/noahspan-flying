@@ -1,11 +1,11 @@
 import { ColumnDef } from '@noahspan/noahspan-components';
 import { FormMode } from '../../enums/formMode';
 import { Alert } from '../../interfaces/Alert.interface';
-import { ILogbookEntry } from './ILogbookEntry';
-import { ILogbookState } from './ILogbookState';
+import { LogbookEntry } from './LogbookEntry.interface';
+import { LogbookState } from './LogbookState.interface';
 
 type Action =
-  | { type: 'SET_COLUMNS'; payload: ColumnDef<ILogbookEntry>[] }
+  | { type: 'SET_COLUMNS'; payload: ColumnDef<LogbookEntry>[] }
   | {
       type: 'SET_DELETE';
       payload: {
@@ -13,39 +13,25 @@ type Action =
         selectedLogId: string | undefined;
       };
     }
-  | { type: 'SET_ENTRIES'; payload: ILogbookEntry[] }
+  | { type: 'SET_ENTRIES'; payload: LogbookEntry[] }
   | { type: 'SET_ALERT'; payload: Alert | undefined }
-  | { type: 'SET_FORM_MODE'; payload: FormMode }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
-  | { type: 'SET_IS_LOADING'; payload: boolean }
-  | {
-      type: 'SET_OPEN_CLOSE_LOG_FORM';
-      payload: {
-        formMode: FormMode;
-        selectedLogId: string | undefined;
-        isFormOpen: boolean;
-      };
-    }
-  | { type: 'SET_OPEN_CLOSE_TRACKS'; payload: { tracksMode: FormMode, selectedRowKey: string | undefined, isTracksOpen: boolean; }};
+  | { type: 'SET_IS_LOADING'; payload: boolean };
 
-export const initialState: ILogbookState = {
+
+export const initialState: LogbookState = {
   alert: undefined,
   columns: [],
   entries: [],
-  formMode: FormMode.CANCEL,
   isConfirmDialogLoading: false,
   isConfirmDialogOpen: false,
-  isFormOpen: false,
-  isLoading: false,
-  isTracksOpen: false,
-  selectedLogId: undefined,
-  tracksMode: FormMode.CANCEL
+  isLoading: false
 };
 
 export const reducer = (
-  state: ILogbookState,
+  state: LogbookState,
   action: Action
-): ILogbookState => {
+): LogbookState => {
   switch (action.type) {
     case 'SET_COLUMNS': {
       return {
@@ -57,7 +43,6 @@ export const reducer = (
       return {
         ...state,
         isConfirmDialogOpen: action.payload.isConfirmationDialogOpen,
-        selectedLogId: action.payload.selectedLogId
       };
     }
     case 'SET_ENTRIES': {
@@ -72,12 +57,6 @@ export const reducer = (
         alert: action.payload
       };
     }
-    case 'SET_FORM_MODE': {
-      return {
-        ...state,
-        formMode: action.payload
-      };
-    }
     case 'SET_IS_CONFIRMATION_DIALOG_LOADING': {
       return {
         ...state,
@@ -89,22 +68,6 @@ export const reducer = (
         ...state,
         isLoading: action.payload
       };
-    }
-    case 'SET_OPEN_CLOSE_LOG_FORM': {
-      return {
-        ...state,
-        formMode: action.payload.formMode,
-        isFormOpen: action.payload.isFormOpen,
-        selectedLogId: action.payload.selectedLogId
-      };
-    }
-    case 'SET_OPEN_CLOSE_TRACKS': {
-      return {
-        ...state,
-        tracksMode: action.payload.tracksMode,
-        isTracksOpen: action.payload.isTracksOpen,
-        selectedLogId: action.payload.selectedRowKey
-      }
     }
     default: {
       return state;

@@ -1,4 +1,4 @@
-import { LogTracksState } from "./LogTracksState.interface";
+import { TracksFormState } from "./TracksFormState.interface";
 
 type Action = 
   | { type: 'SET_IS_CONFIRM_DIALOG_OPEN'; payload: boolean }
@@ -7,7 +7,7 @@ type Action =
   | { type: 'SET_ON_DELETE_TRACK'; payload: { isConfirmDialogOpen: boolean, selectedTrack: { fileName: string, index: number } }}
   | { type: 'SET_TRACKS'; payload: { id: string; order: number; url: string }[] };
 
-export const initialState: LogTracksState = {
+export const initialState: TracksFormState = {
   isConfirmDialogOpen: false,
   isConfirmDialogLoading: false,
   isLoading: false,
@@ -15,7 +15,7 @@ export const initialState: LogTracksState = {
   tracks: []
 }
 
-export const reducer = (state: LogTracksState, action: Action): LogTracksState => {
+export const reducer = (state: TracksFormState, action: Action): TracksFormState => {
   switch (action.type) {
     case 'SET_IS_CONFIRM_DIALOG_OPEN': {
       return {

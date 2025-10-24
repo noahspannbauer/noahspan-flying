@@ -1,31 +1,32 @@
 import { Alert } from '../../interfaces/Alert.interface';
-import { ILogFormState } from './ILogFormState';
+import { LogFormState } from './LogFormState.interface';
+import { Selection } from '@heroui/react';
 
 type Action =
   | { type: 'SET_ALERT'; payload: Alert | undefined }
-  | { type: 'SET_EXPERIENCE_COLLAPSE_OPEN'; payload: boolean }
-  | { type: 'SET_INSTRUMENT_COLLAPSE_OPEN'; payload: boolean }
+  | { type: 'SET_EXPERIENCE_SELECTED_KEYS'; payload: Selection }
+  | { type: 'SET_INSTRUMENT_SELECTED_KEYS'; payload: Selection }
   | { type: 'SET_IS_DISABLED'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
-  | { type: 'SET_LANDINGS_COLLAPSE_OPEN'; payload: boolean }
-  | { type: 'SET_PILOT_OPTIONS'; payload: { label: string; value: string }[] }
+  | { type: 'SET_LANDINGS_SELECTED_KEYS'; payload: Selection }
+  | { type: 'SET_PILOT_OPTIONS'; payload: { key: string, label: string; }[] }
   | { type: 'SET_SELECTED_PILOT_NAME'; payload: string };
 
-export const initialState: ILogFormState = {
+export const initialState: LogFormState = {
   alert: undefined,
-  experienceCollapseOpen: true,
-  instrumentCollapseOpen: false,
+  experienceSelectedKeys: new Set([]),
+  instrumentSelectedKeys: new Set([]),
   isDisabled: false,
   isLoading: true,
-  landingsCollapseOpen: true,
+  landingsSelectedKeys: new Set(['1']),
   pilotOptions: [],
   selectedPilotName: ''
 };
 
 export const reducer = (
-  state: ILogFormState,
+  state: LogFormState,
   action: Action
-): ILogFormState => {
+): LogFormState => {
   switch (action.type) {
     case 'SET_ALERT': {
       return {
@@ -33,10 +34,10 @@ export const reducer = (
         alert: action.payload
       };
     }
-    case 'SET_EXPERIENCE_COLLAPSE_OPEN': {
+    case 'SET_EXPERIENCE_SELECTED_KEYS': {
       return {
         ...state,
-        experienceCollapseOpen: action.payload
+        experienceSelectedKeys: action.payload
       }
     }
     case 'SET_IS_DISABLED': {
@@ -45,10 +46,10 @@ export const reducer = (
         isDisabled: action.payload
       };
     }
-    case 'SET_INSTRUMENT_COLLAPSE_OPEN': {
+    case 'SET_INSTRUMENT_SELECTED_KEYS': {
       return {
         ...state,
-        instrumentCollapseOpen: action.payload
+        instrumentSelectedKeys: action.payload
       }
     }
     case 'SET_IS_LOADING': {
@@ -57,10 +58,10 @@ export const reducer = (
         isLoading: action.payload
       };
     }
-    case 'SET_LANDINGS_COLLAPSE_OPEN': {
+    case 'SET_LANDINGS_SELECTED_KEYS': {
       return {
         ...state,
-        landingsCollapseOpen: action.payload
+        landingsSelectedKeys: action.payload
       }
     }
     case 'SET_PILOT_OPTIONS': {

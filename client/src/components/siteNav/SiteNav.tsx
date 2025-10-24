@@ -1,38 +1,36 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
-import {
-  Dropdown,
-  Icon, 
-  IconName,
-  Navbar,
-} from '@noahspan/noahspan-components';
-import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { User } from '@microsoft/microsoft-graph-types';
 import { getOidc, useOidc } from '../../auth/oidcConfig';
+import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@heroui/react';
+import httpClient from '../../httpClient/httpClient'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlane } from '@fortawesome/free-solid-svg-icons'
+import { useLocation } from 'react-router-dom';
 
 const SiteNav = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userPhoto, setUserPhoto] = useState<string>();
-  const [pages, setPages] = useState<{ name: string; url: string; }[]>([]);
-  const httpClient: AxiosInstance = useHttpClient();
+  const [pages, setPages] = useState<{ name: string; path: string; }[]>([]);
   const appContext = useAppContext();
   const { isUserLoggedIn, login, logout } = useOidc()
   const navigate = useNavigate();
+  const { pathname } = useLocation()
   const getPages = () => {
     const pages = [
       {
         name: 'Flights',
-        url: '/'
+        path: '/'
       },
       {
         name: 'Logbook',
-        url: '/logbook'
+        path: '/logbook'
       },
       {
         name: 'Pilots',
-        url: '/pilots'
+        path: '/pilots'
       }
     ];
 
@@ -85,16 +83,16 @@ const SiteNav = () => {
     navigate(url);
   };
 
-  const Settings = () => {
-    return (
-      <div>
-        <Icon iconName={IconName.SIGN_OUT} />
-        <span>
-          Sign Out
-        </span>
-      </div>
-    );
-  };
+  // const Settings = () => {
+  //   return (
+  //     <div>
+  //       <Icon iconName={IconName.SIGN_OUT} />
+  //       <span>
+  //         Sign Out
+  //       </span>
+  //     </div>
+  //   );
+  // };
 
   useEffect(() => {
     const setUserProfile = async () => {
@@ -138,17 +136,38 @@ const SiteNav = () => {
     getPages();
   }, [])
 
+  useEffect(() => {
+    console.log(pathname)
+  }, [pathname])
+
   return (
-    <Navbar
-      authenticated={isUserLoggedIn}
-      color='base'
-      handlePageClick={handlePageClick}
-      handleSignIn={handleSignIn}
-      logo={<Icon className='mt-1' iconName={IconName.PLANE} size="2x" />}
-      pages={pages}
-      settings={<Settings />}
-      userPhoto={userPhoto}
-    />
+    <Navbar isBordered maxWidth='full' position='static'>
+      <NavbarBrand>
+        <img
+          height={35}
+          width={35}
+          src='noahspan-logo.png'
+          style={{ marginRight: '5px' }}
+        />
+        <FontAwesomeIcon icon={faPlane} size='2x' />
+      </NavbarBrand>
+      <NavbarContent justify='center'>
+        {pages.length > 0 && pages.map((page) => {
+          return (
+            <NavbarItem isActive={pathname === page.path ? true : false}>
+              <Link color={pathname === page.path ? 'primary' : 'foreground'} href={page.path}>
+                {page.name}
+              </Link>
+            </NavbarItem>
+          )
+        })}
+      </NavbarContent>
+      <NavbarContent justify='end'>
+        <Button color='default' onClick={handleSignIn} variant='flat'>
+          Sign In
+        </Button>
+      </NavbarContent>
+    </Navbar>
   );
 };
 

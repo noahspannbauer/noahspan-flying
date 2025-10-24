@@ -18,7 +18,7 @@ export class LogService {
   async find(id: string): Promise<LogEntity> {
     const logEntity: LogEntity = await this.logRepository.findOne({
       where: { id: id },
-      relations: ['pilot', 'tracks']
+      // relations: ['pilot', 'tracks']
     });
 
     return logEntity;

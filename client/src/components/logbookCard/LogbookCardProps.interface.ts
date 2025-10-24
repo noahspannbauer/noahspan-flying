@@ -1,8 +1,8 @@
 import { FormMode } from "../../enums/formMode";
-import { ILogbookEntry } from "../logbook/ILogbookEntry";
+import { LogbookEntry } from "../logbook/LogbookEntry.interface";
 
 export interface LogbookCardProps {
-  logs: ILogbookEntry[];
+  logs: LogbookEntry[];
   mode: 'flights' | 'logbook';
   onDelete?: (entryId: string) => void;
   onOpenCloseForm?: (formMode: FormMode, id: string) => void;

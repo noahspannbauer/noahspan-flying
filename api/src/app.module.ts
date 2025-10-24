@@ -31,12 +31,12 @@ import { join } from 'path';
       load: [configuration]
     }),
     // HealthModule,
-    // LogModule,
+    LogModule,
     PilotModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist')
     }),
-    // TrackModule,
+    TrackModule,
     TypeOrmModule.forRoot(dataSourceOptions),
     MsGraphModule.registerAsync({
       inject: [ConfigService],

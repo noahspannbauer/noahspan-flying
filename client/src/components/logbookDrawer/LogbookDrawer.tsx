@@ -1,0 +1,154 @@
+import { Alert, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Tab, Tabs } from "@heroui/react";
+import { LogbookDrawerProps } from "./LogbookDrawerProps.interface";
+import LogForm from "../logForm/LogForm";
+import TracksForm from "../tracksForm/TracksForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock, faMapLocationDot, faSave, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FormProvider, useForm } from "react-hook-form";
+import { FormMode } from "../../enums/formMode";
+import httpClient from "../../httpClient/httpClient";
+import { AxiosError } from "axios";
+import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
+
+const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
+  const defaultValues = {
+    pilotId: '',
+    date: null,
+    aircraftMakeModel: '',
+    aircraftIdentity: '',
+    routeFrom: '',
+    routeTo: '',
+    durationOfFlight: null,
+    singleEngineLand: null,
+    simulatorAtd: null,
+    landingsDay: null,
+    landingsNight: null,
+    groundTrainingReceived: null,
+    flightTrainingReceived: null,
+    crossCountry: null,
+    night: null,
+    solo: null,
+    pilotInCommand: null,
+    instrumentActual: null,
+    instrumentSimulated: null,
+    instrumentApproaches: null,
+    instrumentHolds: null,
+    instrumentNavTrack: null,
+    notes: '',
+    tracks: []
+  };
+  const methods = useForm();
+  const logbookContext = useLogbookContext()
+
+  const onCancel = () => {
+    methods.reset(defaultValues);
+    logbookContext.dispatch({ type: 'SET_IS_FORM_DISABLED', payload: false });
+    onOpenClose(FormMode.CANCEL);
+  };
+
+  const onSubmit = async (data: unknown) => {
+    console.log(data)
+    try {
+      logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: true });
+
+      if (!logbookContext.state.selectedLogId) {
+        await httpClient.post(`api/logs`, data);
+      } else {
+        await httpClient.put(`api/logs/${logbookContext.state.selectedLogId}`, data);
+      }
+
+      methods.reset(defaultValues);
+      logbookContext.dispatch({ type: 'SET_IS_FORM_DISABLED', payload: false });
+      logbookContext.dispatch({ type: 'SET_FORM_MODE', payload: FormMode.CANCEL });
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'danger', message: axiosError.message }});
+    } finally {
+      logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: false });
+    }
+  };
+
+  return (
+    <Drawer
+      isOpen={logbookContext.state.isDrawerOpen}
+    >
+      <DrawerContent>
+        <FormProvider {...methods}>
+          <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
+            <DrawerHeader>
+              {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
+            </DrawerHeader>
+            <DrawerBody>
+              {logbookContext.state.formAlert && (
+                <div className='col-span-12'>
+                  <Alert
+                    onClose={() =>
+                      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
+                    }
+                    color={logbookContext.state.formAlert.severity}
+                    title={logbookContext.state.formAlert.message}
+                  />
+                </div>
+              )}
+              <Tabs color='default' fullWidth={true} variant='solid'>
+                <Tab
+                  key='time'
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <FontAwesomeIcon icon={faClock} />
+                      <span>Time</span>
+                    </div>
+                  }
+                >
+                  <LogForm />
+                </Tab>
+                <Tab
+                  key='tracks'
+                  title={
+                    <div className="flex items-center space-x-2">
+                      <FontAwesomeIcon icon={faMapLocationDot} />
+                      <span>Tracks</span>
+                    </div>
+                  }
+                >
+                  <TracksForm />
+                </Tab>
+              </Tabs>
+            </DrawerBody>
+            <DrawerFooter>
+              <div className='grid grid-cols-12 gap-3'>
+                <div className='col-span-12 justify-self-end self-center'>
+                  <Button
+                    disabled={
+                      logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
+                        ? logbookContext.state.isFormDisabled
+                        : false
+                    }
+                    startContent={<FontAwesomeIcon icon={faXmark} />}
+                    onPress={onCancel}
+                  >
+                    {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
+                  </Button>
+                  {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
+                    <Button
+                      className='ml-[10px]'
+                      color='primary'
+                      disabled={logbookContext.state.isFormDisabled}
+                      startContent={<FontAwesomeIcon icon={faSave} />}
+                      type="submit"
+                    >
+                      Save
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </DrawerFooter>
+          </form>
+        </FormProvider>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+
+export default LogbookDrawer

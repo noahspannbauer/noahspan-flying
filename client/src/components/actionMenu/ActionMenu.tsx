@@ -3,27 +3,42 @@ import { IActionMenuProps } from './IActionMenuProps';
 import {
   IconButton,
   Icon,
-  IconName
+  IconName,
+  Dropdown
 } from '@noahspan/noahspan-components';
 import { FormMode } from '../../enums/formMode';
 import { useAuth } from 'react-oidc-context';
 
 const ActionMenu = ({ id, onDelete, onOpenCloseForm, onOpenCloseTracks }: IActionMenuProps) => {
-  const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
-    null
-  );
-  const auth = useAuth();
+  // const [anchorElAction, setAnchorElAction] = useState<null | HTMLElement>(
+  //   null
+  // );
+  // const auth = useAuth();
 
-  const onOpenActionMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElAction(event.currentTarget);
-  };
+  // const onOpenActionMenu = (event: React.MouseEvent<HTMLElement>) => {
+  //   setAnchorElAction(event.currentTarget);
+  // };
 
-  const onCloseActionMenu = () => {
-    setAnchorElAction(null);
-  };
+  // const onCloseActionMenu = () => {
+  //   setAnchorElAction(null);
+  // };
+
+  const options = [
+    'Item 1',
+    'Item 2'
+  ]
 
   return (
-    <></>
+    <>
+      <Dropdown
+        onOptionSelected={() => console.log('clicked!')}
+        options={options}
+      >
+        <IconButton>
+          <Icon className='text-2xl' iconName={IconName.ELLIPSIS_VERTICAL} />
+        </IconButton>
+      </Dropdown>
+    </>
     // <div>
     //   <IconButton onClick={onOpenActionMenu}>
     //     <Icon iconName={IconName.ELLIPSIS_VERTICAL} size="sm" />

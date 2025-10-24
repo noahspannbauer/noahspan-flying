@@ -1,22 +1,14 @@
 import { useEffect, useState } from 'react';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
-import { useAuth } from 'react-oidc-context';
+import httpClient from '../../httpClient/httpClient';
 
 export const usePilots = () => {
   const [pilots, setPilots] = useState<any[]>();
-  const httpClient: AxiosInstance = useHttpClient();
-  const auth = useAuth();
 
   const getPilot = async (pilotId: string) => {
     try {
       const response: AxiosResponse = await httpClient.get(
-        `api/pilots/${pilotId}`,
-        {
-          headers: {
-            Authorization: auth.user?.access_token
-          }
-        }
+        `api/pilots/${pilotId}`
       );
 
       return response.data;
@@ -29,14 +21,9 @@ export const usePilots = () => {
     const getPilots = async () => {
       try {
         const response: AxiosResponse = await httpClient.get(
-          `api/pilots`,
-          {
-            headers: {
-              Authorization: auth.user?.access_token
-            }
-          }
+          `/api/pilots`
         );
-
+        console.log(response)
         setPilots(response.data);
       } catch (error) {
         return error;

@@ -1,37 +1,56 @@
-import { Card, Skeleton } from "@noahspan/noahspan-components";
+import { Icon, IconName, Skeleton } from "@noahspan/noahspan-components";
+import { Card } from '@heroui/react';
 import LogbookCard from "../logbookCard/LogbookCard";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useLogs } from "../../hooks/logs/UseLogs";
-import { ILogbookEntry } from "../logbook/ILogbookEntry";
+import { LogbookEntry } from "../logbook/LogbookEntry.interface";
+import { initialState, reducer } from "./reducer";
+import { Alert } from '@heroui/react'
 
 const Flights = () => {
-  const [flights, setFlights] = useState<ILogbookEntry[]>([]);
-  const { logs, isLoading } = useLogs();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { logs, logsLoading } = useLogs();
 
   useEffect(() => {
-    console.log(logs)
-    const flights: ILogbookEntry[] | undefined = logs?.filter((log: ILogbookEntry) => {
+    const flights: LogbookEntry[] | undefined = logs?.filter((log: LogbookEntry) => {
       if (log.tracks && log.tracks.length > 0) {
         return log;
       }
     })
 
     if (flights && flights.length > 0) {
-      setFlights(flights)
+      dispatch({ type: 'SET_FLIGHTS', payload: flights})
+    } else {
+      dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'There are no flights' }})
     }
   }, [logs])
+
+  useEffect(() => {
+    console.log(logsLoading)
+  }, [logsLoading])
   
   return (
     <div className='max-w-screen-lg mx-auto'>
       <div className='prose mt-5 mb-5'>
         <h1>Flights</h1>
       </div>
-      {!isLoading &&
+      {!logsLoading && state.alert && (
         <div>
-          <LogbookCard logs={flights} mode='flights' />
+          <Alert
+            onClose={() =>
+              dispatch({ type: 'SET_ALERT', payload: undefined })
+            }
+            color={state.alert.severity}
+            title={state.alert.message}
+          />
+        </div>
+      )}
+      {!logsLoading &&
+        <div>
+          <LogbookCard logs={state.flights} mode='flights' />
         </div>
       }
-      {!isLoading && [...Array(6)].map((_element, index) => {
+      {logsLoading && [...Array(6)].map((_element, index) => {
         return (
           <div className='mb-5'>
             <Card

@@ -12,10 +12,10 @@ const httpClient: AxiosInstance = axios.create(config)
 
 httpClient.interceptors.request.use(async (config) => {
   const oidc = await getOidc();
-  console.log('blah')
+
   if (oidc.isUserLoggedIn) {
     const { accessToken } = await oidc.getTokens();
-    console.log(accessToken)
+
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
 

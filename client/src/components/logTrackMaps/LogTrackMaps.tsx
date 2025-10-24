@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { LogTrackMapsProps } from './LogTrackMapsProps.interface';
-import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { useAuth } from 'react-oidc-context'
 import { MapContainer, TileLayer } from 'react-leaflet';
@@ -10,10 +9,10 @@ import 'swiper/css/pagination';
 import 'swiper/css';
 import './LogTrackMaps.css';
 import 'leaflet/dist/leaflet.css';
+import httpClient from '../../httpClient/httpClient'
 
 const LogTrackMaps = ({ logId, tracks }: LogTrackMapsProps) => {
   const [kmls, setKmls] = useState<any[]>([])
-  const httpClient: AxiosInstance = useHttpClient();
   const auth = useAuth()
   
   useEffect(() => {

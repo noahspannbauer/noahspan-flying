@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useOidc } from "../../auth/oidcConfig";
 import { UserRole } from "../../enums/userRole";
 
-export const useUserRole = (): UserRole | undefined => {
+export const useUserRole = () => {
   const [userRole, setUserRole] = useState<UserRole>()
   const { isUserLoggedIn, decodedIdToken } = useOidc();
 
@@ -24,5 +24,7 @@ export const useUserRole = (): UserRole | undefined => {
     }
   }, [decodedIdToken, isUserLoggedIn])
 
-  return userRole
+  return {
+    userRole
+  }
 }

@@ -8,6 +8,9 @@ export class LogEntity {
   id: string
 
   @Column()
+  pilotId: string;
+
+  @Column()
   date: Date;
 
   @Column()

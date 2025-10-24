@@ -55,6 +55,7 @@ export class TrackService {
 
       if (logEntity) {
         const url = await this.fileService.uploadFile(file, this.containerName, logId);
+        console.log(url)
         const track = this.trackRepository.create({
           log: logEntity,
           order: order,

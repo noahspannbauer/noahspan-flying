@@ -1,4 +1,4 @@
-export interface LogTracksState {
+export interface TracksFormState {
   isConfirmDialogOpen: boolean;
   isConfirmDialogLoading: boolean;
   isLoading: boolean;

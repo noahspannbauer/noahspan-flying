@@ -1,6 +1,8 @@
-export interface ILogbookEntry {
+import { Pilot } from "../pilots/Pilot.interface";
+
+export interface LogbookEntry {
   id: string;
-  pilot: string;
+  pilot: Pilot;
   date: string;
   aircraftMakeModel: string;
   aircraftIdentity: string;
@@ -22,6 +24,6 @@ export interface ILogbookEntry {
   night: number | null;
   solo: number | null;
   pilotInCommand: number | null;
-  tracks: {id: string; order: number; url: string}[];
+  tracks: [];
   notes: string;
 }

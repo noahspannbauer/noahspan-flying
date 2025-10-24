@@ -24,5 +24,5 @@ export class LogDto {
   solo?: number;
   pilotInCommand?: number;
   notes?: string;
-  pilot?: PilotEntity;
+  tracks?: []
 }

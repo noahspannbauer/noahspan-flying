@@ -3,9 +3,9 @@ import {
   ColumnDef,
   HeaderContext,
 } from '@noahspan/noahspan-components';
-import { ILogbookEntry } from './ILogbookEntry';
+import { LogbookEntry } from './LogbookEntry.interface';
 
-const columnTotal = (info: HeaderContext<ILogbookEntry, unknown>): number => {
+const columnTotal = (info: HeaderContext<LogbookEntry, unknown>): number => {
   const blah = info.table
   const values: number[] = info.table.getPaginationRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
   let total: number = 0;
@@ -17,34 +17,35 @@ const columnTotal = (info: HeaderContext<ILogbookEntry, unknown>): number => {
   return total;
 } 
 
-const pilotName: ColumnDef<ILogbookEntry> = {
+const pilotName: ColumnDef<LogbookEntry> = {
   id: 'pilotName',
   accessorKey: 'pilot',
   header: 'Pilot',
   footer: 'PAGE TOTALS',
-  cell: (info: CellContext<ILogbookEntry, unknown>) => {
+  cell: (info: CellContext<LogbookEntry, unknown>) => {
     const pilot: any = info.getValue();
 
     return pilot.name
   }
 }
-const date: ColumnDef<ILogbookEntry> = {
+const date: ColumnDef<LogbookEntry> = {
   id: 'date',
   accessorKey: 'date',
   header: 'Date',
-  cell: (info: CellContext<ILogbookEntry, unknown>) => {
+  cell: (info: CellContext<LogbookEntry, unknown>) => {
     const date = new Date(info.getValue() as string);
-    const formattedDate = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+    console.log(date)
+    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 
     return formattedDate;
   }
 }
-const aircraftMakeModel: ColumnDef<ILogbookEntry> = {
+const aircraftMakeModel: ColumnDef<LogbookEntry> = {
   id: 'aircraftMakeModel',
   accessorKey: 'aircraftMakeModel',
   header: 'Aircraft Make & Model'
 }
-const route: ColumnDef<ILogbookEntry> = {
+const route: ColumnDef<LogbookEntry> = {
   id: 'route',
   header: 'Route of Flight',
   meta: {
@@ -63,7 +64,7 @@ const route: ColumnDef<ILogbookEntry> = {
     }
   ]
 }
-const durationOfFlight: ColumnDef<ILogbookEntry> = {
+const durationOfFlight: ColumnDef<LogbookEntry> = {
   id: 'durationOfFlight',
   accessorKey: 'durationOfFlight',
   header: 'Duration Of Flight',
@@ -71,17 +72,17 @@ const durationOfFlight: ColumnDef<ILogbookEntry> = {
     align: 'right',
     headerAlign: 'right'
   },
-  cell: (info: CellContext<ILogbookEntry, unknown>) =>
+  cell: (info: CellContext<LogbookEntry, unknown>) =>
     info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
-  footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
+  footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
 }
-const notes: ColumnDef<ILogbookEntry> = {
+const notes: ColumnDef<LogbookEntry> = {
   id: 'notes',
   accessorKey: 'notes',
   header: 'Notes'
 }
 
-export const unauthColumns: ColumnDef<ILogbookEntry>[] = [
+export const unauthColumns: ColumnDef<LogbookEntry>[] = [
   pilotName,
   date,
   aircraftMakeModel,
@@ -90,7 +91,7 @@ export const unauthColumns: ColumnDef<ILogbookEntry>[] = [
   notes
 ]
 
-export const authColumns: ColumnDef<ILogbookEntry>[] = [
+export const authColumns: ColumnDef<LogbookEntry>[] = [
   pilotName,
   date,
   aircraftMakeModel,
@@ -109,9 +110,9 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
       align: 'right',
       headerAlign: 'right'
     },
-    cell: (info: CellContext<ILogbookEntry, unknown>) =>
+    cell: (info: CellContext<LogbookEntry, unknown>) =>
       info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
-    footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
+    footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : ''
   },
   {
     id: 'landings',
@@ -124,7 +125,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsDay',
         accessorKey: 'landingsDay',
         header: 'Day',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -134,7 +135,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'landingsNight',
         accessorKey: 'landingsNight',
         header: 'Night',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -153,31 +154,31 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentActual',
         accessorKey: 'instrumentActual',
         header: 'Actual',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
       },
       {
         id: 'instrumentSimulated',
         accessorKey: 'instrumentSimulated',
         header: 'Simulated',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'instrumentApproaches',
         accessorKey: 'instrumentApproaches',
         header: 'Approaches',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -187,7 +188,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentHolds',
         accessorKey: 'instrumentHolds',
         header: 'Holds',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -197,7 +198,7 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'instrumentNavTrack',
         accessorKey: 'instrumentNavTrack',
         header: 'Nav/Track',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
@@ -216,72 +217,72 @@ export const authColumns: ColumnDef<ILogbookEntry>[] = [
         id: 'groundTrainingReceived',
         accessorKey: 'groundTrainingReceived',
         header: 'Ground Training Received',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'flightTrainingReceived',
         accessorKey: 'flightTrainingReceived',
         header: 'Flight Training Received',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'crossCountry',
         accessorKey: 'crossCountry',
         header: 'Cross Country',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'night',
         accessorKey: 'night',
         header: 'Night',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'solo',
         accessorKey: 'solo',
         header: 'Solo',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       },
       {
         id: 'pilotInCommand',
         accessorKey: 'pilotInCommand',
         header: 'Pilot In Command',
-        footer: (info: HeaderContext<ILogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
+        footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
           align: 'right',
           headerAlign: 'right'
         },
-        cell: (info: CellContext<ILogbookEntry, unknown>) =>
+        cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
       }
     ]

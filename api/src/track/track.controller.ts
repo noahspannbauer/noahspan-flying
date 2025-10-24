@@ -39,9 +39,11 @@ export class TrackController {
   //   }
   // }
 
+  @UseGuards(AuthGuard)
   @Get(':logId')
   async findAll(@Param('logId') logId: string): Promise<TrackEntity[]> {
     try {
+      console.log('logId: ' + logId)
       return await this.trackService.findAll(logId);
     } catch (error) {
       const customError = error as CustomError;

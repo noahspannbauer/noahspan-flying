@@ -1,99 +1,30 @@
 import React, { useEffect, useReducer } from 'react';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Collapse,
-  CollapseContent,
-  CollapseTitle,
-  Alert,
-  Button,
-  DatePicker,
-  Drawer,
-  Icon,
-  IconButton,
-  IconName,
-  Input,
-  Select
-} from '@noahspan/noahspan-components';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { ILogFormProps } from './ILogFormProps';
+import { Alert, Button, DatePicker, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Input, NumberInput, Select, Selection, SelectItem, SharedSelection, Textarea } from '@heroui/react'
+import { useForm, Controller, FormProvider, useFormContext } from 'react-hook-form';
+import { LogFormProps } from './LogFormProps.interface';
 import { initialState, reducer } from './reducer';
 import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { usePilots } from '../../hooks/pilots/UsePilots';
-import httpClient from '../../httpClient/httpClient';
 import { useOidc } from '../../auth/oidcConfig';
+import httpClient from '../../httpClient/httpClient';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { parseAbsolute, parseDate, getLocalTimeZone, CalendarDate, ZonedDateTime } from '@internationalized/date';
+import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 
-const LogForm: React.FC<ILogFormProps> = ({
-  logId,
-  isDrawerOpen,
-  mode,
-  onOpenClose
-}) => {
+const LogForm = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const defaultValues = {
-    pilotId: '',
-    date: null,
-    aircraftMakeModel: '',
-    aircraftIdentity: '',
-    routeFrom: '',
-    routeTo: '',
-    durationOfFlight: null,
-    singleEngineLand: null,
-    simulatorAtd: null,
-    landingsDay: null,
-    landingsNight: null,
-    groundTrainingReceived: null,
-    flightTrainingReceived: null,
-    crossCountry: null,
-    night: null,
-    solo: null,
-    pilotInCommand: null,
-    instrumentActual: null,
-    instrumentSimulated: null,
-    instrumentApproaches: null,
-    instrumentHolds: null,
-    instrumentNavTrack: null,
-    notes: ''
-  };
-  const methods = useForm();
+  const { control, formState, reset, setValue } = useFormContext()
   const { pilots } = usePilots();
   const { isUserLoggedIn } = useOidc();
-
-  const onCancel = () => {
-    methods.reset(defaultValues);
-    dispatch({ type: 'SET_IS_DISABLED', payload: false });
-    onOpenClose(FormMode.CANCEL);
-  };
-
-  const onSubmit = async (data: unknown) => {
-    try {
-      dispatch({ type: 'SET_IS_LOADING', payload: true });
-
-      if (!logId) {
-        await httpClient.post(`api/logs`, data);
-      } else {
-        await httpClient.put(`api/logs/${logId}`, data);
-      }
-
-      methods.reset(defaultValues);
-      dispatch({ type: 'SET_IS_DISABLED', payload: false });
-      onOpenClose(FormMode.CANCEL);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-
-      dispatch({ type: 'SET_ALERT', payload: { severity: 'error', message: axiosError.message }});
-    } finally {
-      dispatch({ type: 'SET_IS_LOADING', payload: false });
-    }
-  };
+  const logbookContext = useLogbookContext()
 
   useEffect(() => {
-    if (mode === FormMode.VIEW) {
+    if (logbookContext.state.formMode === FormMode.VIEW) {
       dispatch({ type: 'SET_IS_DISABLED', payload: true });
     }
-  }, [mode]);
+  }, [logbookContext.state.formMode]);
 
   useEffect(() => {
     const getEntry = async () => {
@@ -101,734 +32,712 @@ const LogForm: React.FC<ILogFormProps> = ({
         dispatch({ type: 'SET_IS_LOADING', payload: true });
 
         const response: AxiosResponse = await httpClient.get(
-          `api/logs/${logId}`
+          `api/logs/${logbookContext.state.selectedLogId}`
         );
         const log = response.data;
 
-        log.pilotId = log.pilot.id
-        methods.reset(log);
+        reset(log);
       } catch (error) {
         const axiosError = error as AxiosError;
 
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'error', message: axiosError.message }});
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'danger', message: axiosError.message }});
       } finally {
         dispatch({ type: 'SET_IS_LOADING', payload: false });
       }
     };
 
-    if (logId && isDrawerOpen) {
+    if (logbookContext.state.selectedLogId) {
       getEntry();
     }
-  }, [logId]);
+  }, [logbookContext.state.selectedLogId]);
 
   useEffect(() => {
     if (pilots && FormMode.ADD) {
       const newPilotsOptions = pilots.map((pilot) => {
         return {
+          key: pilot.id,
           label: pilot.name,
-          value: pilot.id
         };
       });
-
+      console.log(newPilotsOptions)
       dispatch({ type: 'SET_PILOT_OPTIONS', payload: newPilotsOptions });
     }
   }, [pilots]);
 
-  return (
-    <Drawer
-      open={isDrawerOpen}
-      position='right'
-      width='50%'
-    >
-      <FormProvider {...methods}>
-        <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
-          <div className='grid grid-cols-12 gap-3'>
-            <div className='col-span-10 self-center'>
-              <h2 style={{ margin: 0 }}>{`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Entry`}</h2>
-            </div>
-            <div className='col-span-2 justify-self-end self-center'>
-              <IconButton onClick={onCancel}>
-                <Icon iconName={IconName.XMARK} />
-              </IconButton>
-            </div>
-            {state.alert && (
-              <div>
-                <Alert
-                  onClose={() =>
-                    dispatch({ type: 'SET_ALERT', payload: undefined })
-                  }
-                  severity={state.alert.severity}
-                >
-                  {state.alert.message}
-                </Alert>
-              </div>
-            )}
-            <div className='col-span-4 self-center'>
-              <span>Pilot *</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="pilotId"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => {
-                  return (
-                    <Select
-                      disabled={state.isDisabled}
-                      onChange={(event: any) => {
-                        const pilot = pilots?.find(
-                          (pilot) => (pilot.id = event.target.value)
-                        );
+  useEffect(() => {
+    console.log(state.isDisabled)
+  }, [state.isDisabled])
 
-                        methods.setValue('pilotId', event.target.value);
-                      }}
-                      options={
-                        state.pilotOptions && state.pilotOptions.length > 0
-                          ? state.pilotOptions
-                          : []
-                      }
-                      value={value ? value : ''}
-                      width='w-full'
-                    />
-                  );
+  return (
+    <div className='grid grid-cols-12 gap-3'>
+      <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='pilot'>Pilot</span>
+      </div>
+      <div className='col-span-8 self-center'>
+        <Controller
+          name="pilotId"
+          control={control}
+          render={({ field: { value } }) => {
+            return (
+              <Select
+                aria-labelledby='pilot'
+                isDisabled={state.isDisabled}
+                fullWidth={true}
+                isRequired={true}
+                onSelectionChange={(keys: SharedSelection) => {
+                  setValue('pilotId', keys.currentKey);
                 }}
-              />
-            </div>
-            <div className='col-span-4 self-center'>
-              <span>Date *</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="date"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <DatePicker
-                    disabled={state.isDisabled}
-                    locale='en'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </div>
-            <div className='col-span-4 self-center'>
-              <span>Aircraft Make and Model *</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="aircraftMakeModel"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    disabled={state.isDisabled}
-                    color={methods.formState.errors.address ? 'error' : undefined}
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
-                    width='w-full'
-                  />
-                )}
-              />
-            </div>
-            {isUserLoggedIn &&
-              <>
-                <div className='col-span-4 self-center'>
-                  <span>Aircraft Identity *</span>
-                </div>
-                <div className='col-span-8'>
-                  <Controller
-                    name="aircraftIdentity"
-                    control={methods.control}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        disabled={state.isDisabled}
-                        color={methods.formState.errors.address ? 'error' : undefined}
-                        helperText={
-                          methods.formState.errors.address
-                            ? methods.formState.errors.address.message?.toString()
-                            : undefined
-                        }
-                        onChange={onChange}
-                        value={value}
-                        width='w-full'
-                      />
-                    )}
-                  />
-                </div>
-              </>
-            }
-            <div className='col-span-4 self-center'>
-              <span>Route From</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="routeFrom"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    disabled={state.isDisabled}
-                    color={methods.formState.errors.address ? 'error' : undefined}
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
-                    width='w-full'
-                  />
-                )}
-              />
-            </div>
-            <div className='col-span-4 self-center'>
-              <span>Route To</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="routeTo"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    disabled={state.isDisabled}
-                    color={methods.formState.errors.address ? 'error' : undefined}
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
-                    width='w-full'
-                  />
-                )}
-              />
-            </div>
-            <div className='col-span-4 self-center'>
-              <span>Duration Of Flight</span>
-            </div>
-            <div className='col-span-8'>
-              <Controller
-                name="durationOfFlight"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    disabled={state.isDisabled}
-                    color={methods.formState.errors.address ? 'error' : undefined}
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    type="number"
-                    value={value}
-                    width='w-full'
-                  />
-                )}
-              />
-            </div>
-            {isUserLoggedIn &&
-              <>
-                <div className='col-span-4 self-center'>
-                  <span>Single Engine Land</span>
-                </div>
-                <div className='col-span-8'>
-                  <Controller
-                    name="singleEngineLand"
-                    control={methods.control}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        disabled={state.isDisabled}
-                        color={methods.formState.errors.address ? 'error' : undefined}
-                        helperText={
-                          methods.formState.errors.address
-                            ? methods.formState.errors.address.message?.toString()
-                            : undefined
-                        }
-                        onChange={onChange}
-                        type="number"
-                        value={value}
-                        width='w-full'
-                      />
-                    )}
-                  />
-                </div>
-              </>
-            }
-            {isUserLoggedIn &&
-              <>
-                <div className='col-span-4 self-center'>
-                  <span>Simulator or ATD</span>
-                </div>
-                <div className='col-span-8'>
-                  <Controller
-                    name="simulatorAtd"
-                    control={methods.control}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        disabled={state.isDisabled}
-                        color={methods.formState.errors.address ? 'error' : undefined}
-                        helperText={
-                          methods.formState.errors.address
-                            ? methods.formState.errors.address.message?.toString()
-                            : undefined
-                        }
-                        onChange={onChange}
-                        type="number"
-                        value={value}
-                        width='w-full'
-                      />
-                    )}
-                  />
-                </div>
-              </>
-            }
-            {isUserLoggedIn &&
-              <div className='col-span-12'>
-                <Collapse
-                  onClick={() => dispatch({ type: 'SET_LANDINGS_COLLAPSE_OPEN', payload: !state.landingsCollapseOpen })}
-                  open={state.landingsCollapseOpen}
-                >
-                  <CollapseTitle>
-                    <span>Landings</span>
-                  </CollapseTitle>
-                  <CollapseContent>
-                    <div className='grid grid-cols-12 gap-3'>
-                      <div className='col-span-4 self-center'>
-                        <span>Day</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="landingsDay"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Night</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="landingsNight"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </CollapseContent>
-                </Collapse>
-              </div>
-            }
-            {isUserLoggedIn &&
-              <div className='col-span-12'>
-                <Collapse
-                  onClick={() => dispatch({ type: 'SET_EXPERIENCE_COLLAPSE_OPEN', payload: !state.experienceCollapseOpen })}
-                  open={state.experienceCollapseOpen}
-                >
-                  <CollapseTitle>
-                    Type of Pilot Experience or Training
-                  </CollapseTitle>
-                  <CollapseContent>
-                    <div className='grid grid-cols-12 gap-3'>
-                      <div className='col-span-4 self-center'>
-                        <span>
-                          Ground Training Received
-                        </span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="groundTrainingReceived"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>
-                          Flight Training Received
-                        </span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="flightTrainingReceived"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Cross Country</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="crossCountry"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Night</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="night"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Solo</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="solo"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Pilot in Command</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="pilotInCommand"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </CollapseContent>
-                </Collapse>
-              </div>
-            }
-            {isUserLoggedIn &&
-              <div className='col-span-12'>
-                <Collapse
-                  onClick={() => dispatch({ type: 'SET_INSTRUMENT_COLLAPSE_OPEN', payload: !state.instrumentCollapseOpen })}
-                  open={state.instrumentCollapseOpen}
-                >
-                  <CollapseTitle>
-                    Instrument
-                  </CollapseTitle>
-                  <CollapseContent>
-                    <div className='grid grid-cols-12 gap-3'>
-                      <div className='col-span-4 self-center'>
-                        <span>Actual</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="instrumentActual"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Simulated</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="instrumentSimulated"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>
-                          Instrument Approaches
-                        </span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="instrumentApproaches"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Holds</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="instrumentHolds"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                      <div className='col-span-4 self-center'>
-                        <span>Nav / Track</span>
-                      </div>
-                      <div className='col-span-8'>
-                        <Controller
-                          name="instrumentNavTrack"
-                          control={methods.control}
-                          render={({ field: { onChange, value } }) => (
-                            <Input
-                              disabled={state.isDisabled}
-                              color={
-                                methods.formState.errors.address ? 'error' : undefined
-                              }
-                              helperText={
-                                methods.formState.errors.address
-                                  ? methods.formState.errors.address.message?.toString()
-                                  : undefined
-                              }
-                              onChange={onChange}
-                              type="number"
-                              value={value}
-                              width='w-full'
-                            />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </CollapseContent>
-                </Collapse>
-              </div>
-            }
-            <div className='col-span-12'>
-              <span>Notes</span>
-            </div>
-            <div className='col-span-12'>
-              <Controller
-                name="notes"
-                control={methods.control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    disabled={state.isDisabled}
-                    color={methods.formState.errors.address ? 'error' : undefined}
-                    helperText={
-                      methods.formState.errors.address
-                        ? methods.formState.errors.address.message?.toString()
-                        : undefined
-                    }
-                    onChange={onChange}
-                    value={value}
-                    width='w-full'
-                  />
-                )}
-              />
-            </div>
-            <div className='col-span-12 justify-self-end self-center'>
-              <Button
-                disabled={
-                  state.isDisabled && mode.toString() !== FormMode.VIEW
-                    ? state.isDisabled
-                    : false
-                }
-                startContent={<Icon iconName={IconName.XMARK} />}
-                onClick={onCancel}
-                outline={true}
+                selectedKeys={[value]}
+                size='lg'
               >
-                {mode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
-              </Button>
-              {mode.toString() !== FormMode.VIEW && (
-                <Button
-                  color='primary'
-                  disabled={state.isDisabled}
-                  startContent={<Icon iconName={IconName.SAVE} />}
-                  type="submit"
-                >
-                  Save
-                </Button>
-              )}
-            </div>
+                {state.pilotOptions?.map((pilotOption: { key: string; label: string, }) => {
+                return (
+                  <SelectItem key={pilotOption.key}>{pilotOption.label}</SelectItem>
+                ) 
+                })}
+              </Select>
+            );
+          }}
+        />
+      </div>
+      <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='date'>Date</span>
+      </div>
+      <div className='col-span-8'>
+        <Controller
+          name="date"
+          control={control}
+          render={({ field: { onChange, value } }) => {
+            const parsedAbsoluteDate = value ? parseAbsolute(value, getLocalTimeZone()) : value
+
+            return(
+            <DatePicker
+              aria-labelledby='date'
+              isDisabled={state.isDisabled}
+              isRequired={true}
+              onChange={(selectedDate) => {
+                let date = selectedDate as CalendarDate;
+
+                setValue('date', date.toDate(getLocalTimeZone()).toISOString())
+              }}
+              size='lg'
+              value={parsedAbsoluteDate ? new CalendarDate(parsedAbsoluteDate.year, parsedAbsoluteDate.month, parsedAbsoluteDate.day) : value}
+            />
+            )
+          }}
+        />
+      </div>
+      <div className= {`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='aircraftMakeModle'>Aircraft Make and Model</span>
+      </div>
+      <div className='col-span-8'>
+        <Controller
+          name="aircraftMakeModel"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              aria-labelledby='aircraftMakeModel'
+              isDisabled={state.isDisabled}
+              color={formState.errors.address ? 'danger' : undefined}
+              errorMessage={
+                formState.errors.address
+                  ? formState.errors.address.message?.toString()
+                  : undefined
+              }
+              isRequired={true}
+              onChange={onChange}
+              size='lg'
+              value={value}
+            />
+          )}
+        />
+      </div>
+      {isUserLoggedIn &&
+        <>
+          <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+            <span id='aircraftIdentity'>Aircraft Identity</span>
           </div>
-        </form>
-      </FormProvider>
-    </Drawer>
+          <div className='col-span-8'>
+            <Controller
+              name="aircraftIdentity"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  aria-labelledby='aircraftIdentity'
+                  isDisabled={state.isDisabled}
+                  color={formState.errors.address ? 'danger' : undefined}
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isRequired={true}
+                  onChange={onChange}
+                  size='lg'
+                  value={value}
+                />
+              )}
+            />
+          </div>
+        </>
+      }
+      <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='routeFrom'>Route From</span>
+      </div>
+      <div className='col-span-8'>
+        <Controller
+          name="routeFrom"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              aria-labelledby='routeFrom'
+              isDisabled={state.isDisabled}
+              color={formState.errors.address ? 'danger' : undefined}
+              errorMessage={
+                formState.errors.address
+                  ? formState.errors.address.message?.toString()
+                  : undefined
+              }
+              isRequired={true}
+              onChange={onChange}
+              size='lg'
+              value={value}
+            />
+          )}
+        />
+      </div>
+      <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='routeTo'>Route To</span>
+      </div>
+      <div className='col-span-8'>
+        <Controller
+          name="routeTo"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              aria-labelledby='routeTo'
+              isDisabled={state.isDisabled}
+              color={formState.errors.address ? 'danger' : undefined}
+              errorMessage={
+                formState.errors.address
+                  ? formState.errors.address.message?.toString()
+                  : undefined
+              }
+              isRequired={true}
+              onChange={onChange}
+              size='lg'
+              value={value}
+            />
+          )}
+        />
+      </div>
+      <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+        <span id='durationOfFlight'>Duration Of Flight</span>
+      </div>
+      <div className='col-span-8'>
+        <Controller
+          name="durationOfFlight"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <NumberInput
+              aria-labelledby='durationOfFlight'
+              isDisabled={state.isDisabled}
+              color={formState.errors.address ? 'danger' : undefined}
+              errorMessage={
+                formState.errors.address
+                  ? formState.errors.address.message?.toString()
+                  : undefined
+              }
+              isRequired={true}
+              isWheelDisabled={state.isDisabled}
+              onChange={onChange}
+              radius='lg'
+              size='sm'
+              type="number"
+              value={value}
+            />
+          )}
+        />
+      </div>
+      {isUserLoggedIn &&
+        <>
+          <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>
+            <span id='singleEngineLand'>Single Engine Land</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="singleEngineLand"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='singleEngineLand'
+                  isDisabled={state.isDisabled}
+                  color={formState.errors.address ? 'danger' : undefined}
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isRequired={true}
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center text-small'>
+            <span id='simulatorAtd'>Simulator or ATD</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="simulatorAtd"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='simulaterAtd'
+                  isDisabled={state.isDisabled}
+                  color={formState.errors.address ? 'danger' : undefined}
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-12'>
+            <h4>Landings</h4>
+          </div>
+          <div className='col-span-4 self-center text-small'>
+            <span id='landingsDay'>Day</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="landingsDay"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='landingsDay'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center text-small'>
+            <span id='landingsNight'>Night</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="landingsNight"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='landingsNight'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-12'>
+            <h4>Type of Training or Experience</h4>
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='groundTrainingsReceived'>
+              Ground Training Received
+            </span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="groundTrainingReceived"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='groundTrainingReceived'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                  width='w-full'
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='flightTrainingReceived'>
+              Flight Training Received
+            </span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="flightTrainingReceived"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='flightTrainingReceived'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='crossCountry'>Cross Country</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="crossCountry"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='crossCountry'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='night'>Night</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="night"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='night'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='solo'>Solo</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="solo"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='solo'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='pilotInCommand'>Pilot in Command</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="pilotInCommand"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='pilotInCommand'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-12 self-center'>
+            <h4>Instrument</h4>
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='instrumentActual'>Actual</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="instrumentActual"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='instrumentActual'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='instrumentSimulated'>Simulated</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="instrumentSimulated"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='instrumentSimulated'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='instrumentApproaches'>
+              Instrument Approaches
+            </span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="instrumentApproaches"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='instrumentApproaches'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='instrumentHolds'>Holds</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="instrumentHolds"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='instrumentHolds'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+          <div className='col-span-4 self-center'>
+            <span id='instrumentNavTrack'>Nav / Track</span>
+          </div>
+          <div className='col-span-8'>
+            <Controller
+              name="instrumentNavTrack"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <NumberInput
+                  aria-labelledby='instrumentNavTrack'
+                  isDisabled={state.isDisabled}
+                  color={
+                    formState.errors.address ? 'danger' : undefined
+                  }
+                  errorMessage={
+                    formState.errors.address
+                      ? formState.errors.address.message?.toString()
+                      : undefined
+                  }
+                  fullWidth={true}
+                  isWheelDisabled={state.isDisabled}
+                  onChange={onChange}
+                  radius='lg'
+                  size='sm'
+                  type="number"
+                  value={value}
+                />
+              )}
+            />
+          </div>
+        </>
+      }
+      <div className='col-span-12'>
+        <h4 id='notes'>Notes</h4>
+      </div>
+      <div className='col-span-12'>
+        <Controller
+          name="notes"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Textarea
+              aria-labelledby='notes'
+              isDisabled={state.isDisabled}
+              color={formState.errors.address ? 'danger' : undefined}
+              errorMessage={
+                formState.errors.address
+                  ? formState.errors.address.message?.toString()
+                  : undefined
+              }
+              fullWidth={true}
+              onChange={onChange}
+              value={value}
+            />
+          )}
+        />
+      </div>
+    </div>
+
   );
 };
 

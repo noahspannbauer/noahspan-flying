@@ -36,6 +36,9 @@
     "tests"
   ],
   "dependencies": {
-    "daisyui": "^5.1.10"
+    "@heroui/react": "^2.8.5",
+    "@tanstack/react-table": "^8.21.3",
+    "daisyui": "^5.1.10",
+    "framer-motion": "^12.23.24"
   }
 }

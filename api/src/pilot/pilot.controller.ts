@@ -14,11 +14,12 @@ import { PilotDto } from './pilot.dto';
 import { PilotEntity } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
-import { PilotInterceptor } from './interceptors/pilot.interceptor';
+import { PilotInterceptor } from './pilot.interceptor';
 import { AuthGuard } from '@noahspan/noahspan-modules';
 
 @Controller('pilots')
-// @UseInterceptors(new PilotInterceptor())
+@UseInterceptors(new PilotInterceptor())
+@UseGuards(AuthGuard)
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 
@@ -34,7 +35,6 @@ export class PilotController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   async findAll() {
     try {
       return await this.pilotService.findAll();
@@ -45,7 +45,6 @@ export class PilotController {
     }
   }
 
-  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() pilotDto: PilotDto) {
     try {
@@ -57,7 +56,6 @@ export class PilotController {
     }
   }
 
-  // @UseGuards(AuthGuard)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -72,7 +70,6 @@ export class PilotController {
     }
   }
 
-  // @UseGuards(AuthGuard)
   @Delete(':id')
   async delete(
     @Param('id') id: string,

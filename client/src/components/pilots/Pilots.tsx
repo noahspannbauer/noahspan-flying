@@ -1,14 +1,15 @@
 import { useEffect, useReducer, useState } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
 import {
-  Alert,
-  Button,
-  ColumnDef,
+  // Alert,
+  // Button,
+  // ColumnDef,
+  // Dropdown,
   Icon,
+  IconButton,
   IconName,
-  Table,
+  // Table,
 } from '@noahspan/noahspan-components';
-import { useHttpClient } from '../../hooks/httpClient/UseHttpClient';
 import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { Pilot } from './Pilot.interface';
@@ -19,34 +20,47 @@ import PilotCard from '../pilotCard/PilotCard';
 import { getOidc, useOidc } from '../../auth/oidcConfig';
 import { useUserRole } from '../../hooks/userRole/UseUserRole';
 import { UserRole } from '../../enums/userRole';
+import httpClient from '../../httpClient/httpClient'
+import { ScreenSize } from '../../enums/screenSize';
+import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
+import { Alert, Button, Dropdown, DropdownItem, DropdownSection, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, DropdownTrigger, DropdownMenu } from '@heroui/react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisVertical, faPen, faEye, faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const httpClient: AxiosInstance = useHttpClient();
-  const { isUserLoggedIn, decodedIdToken } = useOidc();
-  const userRole = useUserRole();
+  // const { httpClient } = useHttpClient();
+  const { userRole } = useUserRole();
+  const { screenSize } = useBreakpoints()
 
   const getPilots = async () => {
     try {
-      const response: AxiosResponse = await httpClient.get(
-        `api/pilots`
-      );
-      console.log(response);
-      if (response.data.length > 0) {
-        dispatch({ type: 'SET_PILOTS', payload: response.data });
+      // const oidc = await getOidc();
+      let response: AxiosResponse;
+      // if (oidc.isUserLoggedIn) {  
+        // const { accessToken } = await oidc.getTokens();
+        console.log('blah')
+        response = await httpClient.get(
+          `api/pilots`
+        );
 
-        if (state.alert) {
-          dispatch({ type: 'SET_ALERT', payload: undefined })
+        console.log(response);
+        if (response.data.length > 0) {
+          dispatch({ type: 'SET_PILOTS', payload: response.data });
+
+          if (state.alert) {
+            dispatch({ type: 'SET_ALERT', payload: undefined })
+          }
+        } else {
+          dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No pilots found.' }})
         }
-      } else {
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No pilots found.' }})
-      }
+      // }
     } catch (error) {
       const axiosError = error as AxiosError;
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'error', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'danger', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
       })
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false })
@@ -105,7 +119,7 @@ const Pilots: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -119,23 +133,94 @@ const Pilots: React.FC<unknown> = () => {
     });
   };
 
-  const columns: ColumnDef<Pilot>[] = [
+  const columns = [
     {
-      accessorKey: 'name',
-      header: 'Name'
+      id: 'name',
+      name: 'Name'
     },
     {
-      header: 'Actions',
-      cell: (info: any) => {
-        console.log(info)
-        return <ActionMenu 
-          id={info.row.original.id} 
-          onDelete={onDeleteEntry}
-          onOpenCloseForm={onOpenClosePilotForm}
-        />
+      id: 'actions',
+      name: 'Actions'
+    }
+  ]
+
+  // const columns: ColumnDef<Pilot>[] = [
+  //   {
+  //     accessorKey: 'name',
+  //     header: 'Name'
+  //   },
+  //   {
+  //     header: 'Actions',
+  //     cell: (info: any) => {
+  //       return (
+  //         <Dropdown
+  //           options={[
+  //             'Edit',
+  //             'View',
+  //             'Delete'
+  //           ]}
+  //           onOptionSelected={() => console.log(info.row.original.id)}
+  //         >
+  //           <IconButton>
+  //             <Icon className='text-xl' iconName={IconName.ELLIPSIS_VERTICAL} />
+  //           </IconButton>
+  //         </Dropdown>
+  //       )
+  //       // return <ActionMenu 
+  //       //   id={info.row.original.id} 
+  //       //   onDelete={onDeleteEntry}
+  //       //   onOpenCloseForm={onOpenClosePilotForm}
+  //       // />
+  //     }
+  //   }
+  // ];
+
+  const renderCell = (pilot: any, columnKey: any) => {
+    const cellValue = pilot[columnKey]
+    console.log(cellValue)
+    switch (columnKey) {
+      case 'actions': {
+        return (
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly variant='light' size='lg'>
+                <FontAwesomeIcon icon={faEllipsisVertical} />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownSection showDivider>
+                <DropdownItem 
+                  key='edit'
+                  onPress={() => onOpenClosePilotForm(FormMode.EDIT)}
+                  startContent={<FontAwesomeIcon icon={faPen} />}
+                >
+                  Edit
+                </DropdownItem>
+                <DropdownItem 
+                  key='view'
+                  onPress={() => onOpenClosePilotForm(FormMode.VIEW)}
+                  startContent={<FontAwesomeIcon icon={faEye} />}  
+                >
+                  View
+                </DropdownItem>
+              </DropdownSection>
+                <DropdownSection>
+                  <DropdownItem 
+                    key='Delete'
+                    startContent={<FontAwesomeIcon icon={faTrash} />}
+                  >
+                    Delete
+                  </DropdownItem>
+                </DropdownSection>
+            </DropdownMenu>
+          </Dropdown>
+        )
+      }
+      default: {
+        return cellValue
       }
     }
-  ];
+  }
 
   useEffect(() => {
     if (!state.isFormOpen) {
@@ -150,7 +235,7 @@ const Pilots: React.FC<unknown> = () => {
         <h1>Pilots</h1>
       </div>
       <div className='col-span-2 justify-self-end self-center'>
-        {userRole && userRole !== UserRole.READ &&
+        {userRole === UserRole.WRITE &&
           <Button
             color='primary'
             onClick={() => onOpenClosePilotForm(FormMode.ADD)}
@@ -167,20 +252,40 @@ const Pilots: React.FC<unknown> = () => {
             onClose={() =>
               dispatch({ type: 'SET_ALERT', payload: undefined })
             }
-            severity={state.alert.severity}
-          >
-            {state.alert.message}
-          </Alert>
+            color={state.alert.severity}
+            title={state.alert.message}
+          />
         </div>
       )}
       <div className='col-span-12'>
-        {state.pilots.length > 0 &&
-          <Table columns={columns} data={state.pilots} />
+        {state.pilots.length > 0 && screenSize !== ScreenSize.SM &&
+          // <Table columns={columns} data={state.pilots} />
+          <Table>
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.id}
+                  align={column.id === "actions" ? "center" : "start"}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody items={state.pilots}>
+              {(item) => (
+                <TableRow key={item.id}>
+                  {(columnKey => (
+                    <TableCell>
+                      {renderCell(item, columnKey)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         }
-        {state.pilots.length > 0 && 
-          <div className='lg:hidden'>
-            <PilotCard pilots={state.pilots} onDelete={onDeleteEntry} onOpenCloseForm={onOpenClosePilotForm} />
-          </div>
+        {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
+          <PilotCard pilots={state.pilots} onDelete={onDeleteEntry} onOpenCloseForm={onOpenClosePilotForm} />
         }
       </div>
     </div>

@@ -1,18 +1,13 @@
 import { ColumnDef } from '@noahspan/noahspan-components';
 import { FormMode } from '../../enums/formMode';
 import { Alert } from '../../interfaces/Alert.interface';
-import { ILogbookEntry } from './ILogbookEntry';
+import { LogbookEntry } from './LogbookEntry.interface';
 
-export interface ILogbookState {
+export interface LogbookState {
   alert: Alert | undefined;
-  columns: ColumnDef<ILogbookEntry>[];
-  entries: ILogbookEntry[];
-  formMode: FormMode;
+  columns: ColumnDef<LogbookEntry>[];
+  entries: LogbookEntry[];
   isConfirmDialogLoading: boolean;
   isConfirmDialogOpen: boolean;
-  isFormOpen: boolean;
   isLoading: boolean;
-  isTracksOpen: boolean;
-  selectedLogId: string | undefined;
-  tracksMode: FormMode;
 }
