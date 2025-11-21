@@ -76,10 +76,10 @@ export class LogEntity {
   @Column({ nullable: true })
   notes: string | null;
 
-  @OneToMany(() => TrackEntity, (track: TrackEntity) => track.log, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => TrackEntity, (track: TrackEntity) => track.log)
   tracks: TrackEntity[]
 
-  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.logs)
+  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.logs, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
   @JoinColumn({ name: 'pilotId' })
   pilot: PilotEntity;
 }

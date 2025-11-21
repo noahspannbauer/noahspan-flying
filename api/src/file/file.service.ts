@@ -58,11 +58,32 @@ import { ConfigService } from '@nestjs/config';
     return downloaded
   }
 
-  async deleteFile(containerName: string, rowKey:string, fileName: string): Promise<void> {
+  async deleteFile(containerName: string, logId: string, fileName: string): Promise<void> {
       this.containerName = containerName;
 
-      const blockBlobClient = await this.getBlobClient(`${rowKey}/${fileName}`);
+      const blockBlobClient = await this.getBlobClient(`${logId}/${fileName}`);
 
       await blockBlobClient.deleteIfExists();
+  }
+
+  async deleteFolder(containerName: string, logId: string): Promise<void> {
+    const blobService = await this.getBlobServiceInstance();
+
+    this.containerName = containerName;
+
+    const containerClient = blobService.getContainerClient(containerName);
+    const blobsToDelete = []
+
+    for await (const blob of containerClient.listBlobsFlat({ prefix: logId })) {
+      blobsToDelete.push(blob.name)
+    }
+
+    for (const blobName of blobsToDelete) {
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      await blockBlobClient.delete();
+    }
+
+    return;
   }
 }

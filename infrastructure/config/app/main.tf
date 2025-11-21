@@ -1,7 +1,12 @@
 locals {
   app_name = {
-    test = "flying-app-test"
-    prod = "flying-app-prod"
+    test = "flying-test"
+    prod = "flying-prod"
+  }
+
+  container_app_environment_name = {
+    test = "noahspan-test"
+    prod = "noahspan-prod"
   }
 
   container_image = {

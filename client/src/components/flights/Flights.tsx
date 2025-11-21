@@ -20,8 +20,9 @@ const Flights = () => {
 
     if (flights && flights.length > 0) {
       dispatch({ type: 'SET_FLIGHTS', payload: flights})
+      dispatch({ type: 'SET_ALERT', payload: undefined })
     } else {
-      dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'There are no flights' }})
+      dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No flights found' }})
     }
   }, [logs])
 

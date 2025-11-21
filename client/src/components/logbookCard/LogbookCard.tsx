@@ -1,86 +1,72 @@
-import { Card, CardBody, CardContent, CardHeader } from "@noahspan/noahspan-components";
+import { Accordion, AccordionItem, Card, CardBody, CardHeader } from '@heroui/react'
 import { LogbookCardProps } from "./LogbookCardProps.interface";
-import ActionMenu from "../actionMenu/ActionMenu";
-import LogTrackMaps from "../logTrackMaps/LogTrackMaps";
-
+import TrackMap from "../trackMap/TrackMap";
 
 const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps) => {  
   return (
     <div>
       {logs.map((log) => {
+        console.log(log)
         const date = new Date(log.date);
         const formattedDate: string = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
 
         return (
           <div>
-            <Card key={log.id}>
-              <CardBody>
-                <CardHeader><ActionMenu id={log.id} onDelete={onDelete!} onOpenCloseForm={onOpenCloseForm!} /></CardHeader>
-                <CardContent>
-                  <div>
-                    {mode === 'flights' && log.tracks && log.tracks.length > 0 &&
-                      <div>
-                        <LogTrackMaps 
-                          logId={log.id}
-                          tracks={log.tracks}
-                        />
-                      </div>
-                    }
-                    <div>
-                      <span>Aircraft Make and Model</span>
-                    </div>
-                    <div>
-                      <span>{log.aircraftMakeModel}</span>
-                    </div>
-                    <div>
-                      <span>Route From</span>
-                    </div>
-                    <div>
-                      <span>{log.routeFrom}</span>
-                    </div>
-                    <div>
-                      <span>Route To</span>
-                    </div>
-                    <div>
-                      <span>{log.routeTo}</span>
-                    </div>
-                    <div>
-                      <span>Duration Of Flight</span>
-                    </div>
-                    <div>
-                      <span>{log.durationOfFlight}</span>
-                    </div>
-                    {mode === 'logbook' && log.tracks && log.tracks.length > 0 && 
-                      <>
-                        <div>
-                          <span>Tracks</span>
-                        </div>
-                        {log.tracks.map((track: { id: string; order: number; url: string}) => {
-                          const trackSplit = track.url.split('/')
-                          const filename = trackSplit[trackSplit.length - 1];
-
-                          return (
-                            <div>
-                              <span>{filename}</span>
-                            </div>
-                          )
-                          
-                        })}
-                      </>
-                    }
-                    {log.notes &&
-                      <>
-                        <div>
-                          <span>Notes</span>
-                        </div>
-                        <div>
-                          <span>{log.notes}</span>
-                        </div>
-                      </>
-                    }
+            <Card className='p-4' key={log.id}>
+              <CardHeader>
+                <h2 className='font-bold text-2xl'>{formattedDate}</h2>
+              </CardHeader>
+              <CardBody>    
+                {mode === 'flights' && log.tracks && log.tracks.length > 0 &&
+                  <div className='mb-5'>
+                    <TrackMap
+                      height='400px'
+                      logId={log.id}
+                      tracks={log.tracks}
+                    />
                   </div>
-                  
-                </CardContent>
+                }
+                <Accordion variant='bordered'>
+                  <AccordionItem key='1' title='Details'>
+                    <div className='grid grid-cols-12 gap-3 mr-[30%] ml-[30%] mt-4 mb-4'>
+                      <div className='col-span-6 font-bold'>
+                        <span>Aircraft Make and Model</span>
+                      </div>
+                      <div className='col-span-6'>
+                        <span>{log.aircraftMakeModel}</span>
+                      </div>
+                      <div className='col-span-6 font-bold'>
+                        <span>Route From</span>
+                      </div>
+                      <div className='col-span-6'>
+                        <span>{log.routeFrom}</span>
+                      </div>
+                      <div className='col-span-6 font-bold'>
+                        <span>Route To</span>
+                      </div>
+                      <div className='col-span-6'>
+                        <span>{log.routeTo}</span>
+                      </div>
+                      <div className='col-span-6 font-bold'>
+                        <span>Duration Of Flight</span>
+                      </div>
+                      <div className='col-span-6'>
+                        <span>{log.durationOfFlight}</span>
+                      </div>
+                      {log.notes &&
+                        <>
+                          <div className='col-span-6 font-bold'>
+                            <span>Notes</span>
+                          </div>
+                          <div className='col-span-6'>
+                            <span>{log.notes}</span>
+                          </div>
+                        </>
+                      }
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+
               </CardBody>
             </Card>
           </div>

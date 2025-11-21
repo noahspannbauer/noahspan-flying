@@ -15,7 +15,7 @@ export class CertificateEntity {
   @Column()
   issueDate: Date
 
-  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.certificates)
+  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.certificates, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'pilotId' })
   pilot: PilotEntity;
 }

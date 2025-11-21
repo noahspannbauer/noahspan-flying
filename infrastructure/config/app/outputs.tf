@@ -2,6 +2,10 @@ output "app_name" {
   value = local.app_name[var.environment]
 }
 
+output "container_app_environment_name" {
+  value = local.container_app_environment_name[var.environment]
+}
+
 output "container_image" {
   value = local.container_image[var.environment]
 }

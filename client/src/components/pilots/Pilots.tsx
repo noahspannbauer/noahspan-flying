@@ -1,23 +1,10 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import PilotForm from '../pilotForm/PilotForm';
-import {
-  // Alert,
-  // Button,
-  // ColumnDef,
-  // Dropdown,
-  Icon,
-  IconButton,
-  IconName,
-  // Table,
-} from '@noahspan/noahspan-components';
-import { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
-import { Pilot } from './Pilot.interface';
 import { initialState, reducer } from './reducer';
-import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 import PilotCard from '../pilotCard/PilotCard';
-import { getOidc, useOidc } from '../../auth/oidcConfig';
 import { useUserRole } from '../../hooks/userRole/UseUserRole';
 import { UserRole } from '../../enums/userRole';
 import httpClient from '../../httpClient/httpClient'
@@ -25,36 +12,31 @@ import { ScreenSize } from '../../enums/screenSize';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
 import { Alert, Button, Dropdown, DropdownItem, DropdownSection, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, DropdownTrigger, DropdownMenu } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faPen, faEye, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  // const { httpClient } = useHttpClient();
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints()
 
   const getPilots = async () => {
     try {
-      // const oidc = await getOidc();
       let response: AxiosResponse;
-      // if (oidc.isUserLoggedIn) {  
-        // const { accessToken } = await oidc.getTokens();
-        console.log('blah')
-        response = await httpClient.get(
-          `api/pilots`
-        );
 
-        console.log(response);
-        if (response.data.length > 0) {
-          dispatch({ type: 'SET_PILOTS', payload: response.data });
+      response = await httpClient.get(
+        `api/pilots`
+      );
 
-          if (state.alert) {
-            dispatch({ type: 'SET_ALERT', payload: undefined })
-          }
-        } else {
-          dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No pilots found.' }})
+      if (response.data.length > 0) {
+        dispatch({ type: 'SET_PILOTS', payload: response.data });
+
+        if (state.alert) {
+          dispatch({ type: 'SET_ALERT', payload: undefined })
         }
-      // }
+      } else {
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No pilots found.' }})
+        dispatch({ type: 'SET_PILOTS', payload: [] });
+      }
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -68,6 +50,7 @@ const Pilots: React.FC<unknown> = () => {
   };
 
   const onOpenClosePilotForm = async (mode: FormMode, pilotId?: string) => {
+    console.log(pilotId)
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
@@ -96,7 +79,7 @@ const Pilots: React.FC<unknown> = () => {
     }
   };
 
-  const onDeleteEntry = (pilotId: string) => {
+  const onDeletePilot = (pilotId: string) => {
     dispatch({
       type: 'SET_DELETE',
       payload: { isConfirmDialogOpen: true, selectedPilotId: pilotId }
@@ -107,7 +90,7 @@ const Pilots: React.FC<unknown> = () => {
     try {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: true });
 
-      await httpClient.delete(`api/pilots/pilot/${state.selectedPilotId}`);
+      await httpClient.delete(`api/pilots/${state.selectedPilotId}`);
 
       dispatch({
         type: 'SET_DELETE',
@@ -144,40 +127,9 @@ const Pilots: React.FC<unknown> = () => {
     }
   ]
 
-  // const columns: ColumnDef<Pilot>[] = [
-  //   {
-  //     accessorKey: 'name',
-  //     header: 'Name'
-  //   },
-  //   {
-  //     header: 'Actions',
-  //     cell: (info: any) => {
-  //       return (
-  //         <Dropdown
-  //           options={[
-  //             'Edit',
-  //             'View',
-  //             'Delete'
-  //           ]}
-  //           onOptionSelected={() => console.log(info.row.original.id)}
-  //         >
-  //           <IconButton>
-  //             <Icon className='text-xl' iconName={IconName.ELLIPSIS_VERTICAL} />
-  //           </IconButton>
-  //         </Dropdown>
-  //       )
-  //       // return <ActionMenu 
-  //       //   id={info.row.original.id} 
-  //       //   onDelete={onDeleteEntry}
-  //       //   onOpenCloseForm={onOpenClosePilotForm}
-  //       // />
-  //     }
-  //   }
-  // ];
-
   const renderCell = (pilot: any, columnKey: any) => {
     const cellValue = pilot[columnKey]
-    console.log(cellValue)
+
     switch (columnKey) {
       case 'actions': {
         return (
@@ -191,14 +143,14 @@ const Pilots: React.FC<unknown> = () => {
               <DropdownSection showDivider>
                 <DropdownItem 
                   key='edit'
-                  onPress={() => onOpenClosePilotForm(FormMode.EDIT)}
+                  onPress={() => onOpenClosePilotForm(FormMode.EDIT, pilot.id)}
                   startContent={<FontAwesomeIcon icon={faPen} />}
                 >
                   Edit
                 </DropdownItem>
                 <DropdownItem 
                   key='view'
-                  onPress={() => onOpenClosePilotForm(FormMode.VIEW)}
+                  onPress={() => onOpenClosePilotForm(FormMode.VIEW, pilot.id)}
                   startContent={<FontAwesomeIcon icon={faEye} />}  
                 >
                   View
@@ -207,6 +159,7 @@ const Pilots: React.FC<unknown> = () => {
                 <DropdownSection>
                   <DropdownItem 
                     key='Delete'
+                    onPress={() => onDeletePilot(pilot.id)}
                     startContent={<FontAwesomeIcon icon={faTrash} />}
                   >
                     Delete
@@ -238,8 +191,8 @@ const Pilots: React.FC<unknown> = () => {
         {userRole === UserRole.WRITE &&
           <Button
             color='primary'
-            onClick={() => onOpenClosePilotForm(FormMode.ADD)}
-            startContent={<Icon iconName={IconName.PLUS} />}
+            onPress={() => onOpenClosePilotForm(FormMode.ADD)}
+            startContent={<FontAwesomeIcon icon={faPlus} />}
             data-testid="pilot-add-button"
           >
             Add Pilot
@@ -247,7 +200,7 @@ const Pilots: React.FC<unknown> = () => {
         }
       </div>
       {!state.isLoading && state.alert && (
-        <div>
+        <div className='col-span-12'>
           <Alert
             onClose={() =>
               dispatch({ type: 'SET_ALERT', payload: undefined })
@@ -259,7 +212,6 @@ const Pilots: React.FC<unknown> = () => {
       )}
       <div className='col-span-12'>
         {state.pilots.length > 0 && screenSize !== ScreenSize.SM &&
-          // <Table columns={columns} data={state.pilots} />
           <Table>
             <TableHeader columns={columns}>
               {(column) => (
@@ -285,7 +237,7 @@ const Pilots: React.FC<unknown> = () => {
           </Table>
         }
         {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
-          <PilotCard pilots={state.pilots} onDelete={onDeleteEntry} onOpenCloseForm={onOpenClosePilotForm} />
+          <PilotCard pilots={state.pilots} onDelete={onDeletePilot} onOpenCloseForm={onOpenClosePilotForm} />
         }
       </div>
     </div>
@@ -299,7 +251,7 @@ const Pilots: React.FC<unknown> = () => {
       )}
       {state.isConfirmDialogOpen && (
         <ConfirmationDialog
-          contentText="Are you sure you want to delete the pilot entry? Deleting a pilot will delete the pilot and delete all logbook entries for the pilot."
+          contentText="Are you sure you want to delete the pilot entry? Deleting a pilot will delete the pilot and delete all of the pilot's logbook entries."
           isLoading={state.isConfirmDialogLoading}
           isOpen={state.isConfirmDialogOpen}
           onCancel={onConfirmationDialogCancel}

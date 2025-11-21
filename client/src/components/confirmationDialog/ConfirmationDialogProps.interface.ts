@@ -1,4 +1,4 @@
-export interface IDialogConfirmationProps {
+export interface DialogConfirmationProps {
   contentText: string;
   isLoading: boolean;
   isOpen: boolean;

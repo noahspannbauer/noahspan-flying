@@ -6,19 +6,20 @@ import { LogDto } from './log.dto';
 import { PilotService } from 'src/pilot/pilot.service';
 import { PilotEntity } from 'src/pilot/pilot.entity';
 import { CustomError } from 'src/error/customError';
-import { TrackService } from 'src/track/track.service';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class LogService {
   constructor(
     @InjectRepository(LogEntity) private readonly logRepository: Repository<LogEntity>,
-    private readonly pilotService: PilotService
+    private readonly fileService: FileService,
+    private readonly pilotService: PilotService,
   ) {}
 
   async find(id: string): Promise<LogEntity> {
     const logEntity: LogEntity = await this.logRepository.findOne({
       where: { id: id },
-      // relations: ['pilot', 'tracks']
+      relations: ['pilot', 'tracks']
     });
 
     return logEntity;
@@ -55,6 +56,8 @@ export class LogService {
   }
 
   async delete(id: string): Promise<DeleteResult> {
+    await this.fileService.deleteFolder('tracks', id);
+
     return await this.logRepository.delete({ id });
   }
 }

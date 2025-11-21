@@ -1,12 +1,10 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   HttpException,
   Param,
   Post,
-  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -18,8 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../file/file.service';
 import { TrackService } from './track.service';
 import { TrackEntity } from './track.entity';
-import { TrackDto } from './track.dto';
-import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult } from 'typeorm';
 
 @Controller('tracks')
 export class TrackController {
@@ -28,22 +25,10 @@ export class TrackController {
     private readonly trackService: TrackService
   ) {}
 
-  // @Get('id')
-  // async find(@Param('id') id: string): Promise<TrackEntity> {
-  //   try {
-  //     return await this.trackService.find(id);
-  //   } catch (error) {
-  //     const customError = error as CustomError;
-
-  //     throw new HttpException(customError.message, customError.statusCode);
-  //   }
-  // }
-
   @UseGuards(AuthGuard)
   @Get(':logId')
   async findAll(@Param('logId') logId: string): Promise<TrackEntity[]> {
     try {
-      console.log('logId: ' + logId)
       return await this.trackService.findAll(logId);
     } catch (error) {
       const customError = error as CustomError;
@@ -66,11 +51,10 @@ export class TrackController {
   }
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
-  async delete(@Param('id') id: string, @Query('fileName') fileName: string, @Query('logId') logId: string): Promise<DeleteResult> {
+  @Delete(':id/:filename/:logId')
+  async delete(@Param('id') id: string, @Query('fileName') filename: string, @Query('logId') logId: string): Promise<DeleteResult> {
     try {
-
-      return await this.trackService.delete(id, logId, fileName);
+      return await this.trackService.delete(id, logId, filename);
     } catch (error) {
       const customError = error as CustomError;
 

@@ -12,7 +12,7 @@ export class MedicalEntity {
   @Column()
   expirationDate: Date;
 
-  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.medical)
+  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.medical, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'pilotId' })
   pilot: PilotEntity;
 }

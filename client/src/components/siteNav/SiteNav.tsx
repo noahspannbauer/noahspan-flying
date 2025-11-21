@@ -1,60 +1,36 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import { AxiosResponse } from 'axios';
 import { User } from '@microsoft/microsoft-graph-types';
-import { getOidc, useOidc } from '../../auth/oidcConfig';
-import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@heroui/react';
+import { useOidc } from '../../auth/oidcConfig';
+import { Avatar, Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, DropdownTrigger, DropdownMenu, DropdownItem, Dropdown } from '@heroui/react';
 import httpClient from '../../httpClient/httpClient'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlane } from '@fortawesome/free-solid-svg-icons'
+import { faPlane, faSignIn, faSignOut } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from 'react-router-dom';
 
 const SiteNav = () => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [userPhoto, setUserPhoto] = useState<string>();
-  const [pages, setPages] = useState<{ name: string; path: string; }[]>([]);
   const appContext = useAppContext();
-  const { isUserLoggedIn, login, logout } = useOidc()
-  const navigate = useNavigate();
+  const { isUserLoggedIn, logout, login } = useOidc()
   const { pathname } = useLocation()
-  const getPages = () => {
-    const pages = [
-      {
-        name: 'Flights',
-        path: '/'
-      },
-      {
-        name: 'Logbook',
-        path: '/logbook'
-      },
-      {
-        name: 'Pilots',
-        path: '/pilots'
-      }
-    ];
-
-    setPages(pages)
-  };
-  const handleSignIn = () => {
-    // auth.signinRedirect();
-    // auth.signinRedirect({
-    //   scope: `api://${import.meta.env.VITE_CLIENT_ID}/user_impersonation`
-    // })
-    login();
-    // console.log(auth.user?.access_token)
-  };
-  const handleSignOut = () => {
-    // auth.signoutRedirect();
-    logout()
-  };
+  const pages = [
+    {
+      name: 'Flights',
+      path: '/'
+    },
+    {
+      name: 'Logbook',
+      path: '/logbook'
+    },
+    {
+      name: 'Pilots',
+      path: '/pilots'
+    }
+  ];
   const getUserProfile = async (): Promise<User> => {
     try {
-      const response: AxiosResponse = await httpClient.get(`api/user/profile`, {
-        // headers: {
-        //   Authorization: `Bearer ${accessToken}`
-        // }
-      });
+      const response: AxiosResponse = await httpClient.get(`api/msgraph/profile`);
       const userProfile: User = response.data;
 
       return userProfile;
@@ -64,10 +40,7 @@ const SiteNav = () => {
   };
   const getUserPhoto = async (): Promise<string> => {
     try {
-      const response: AxiosResponse = await httpClient.get(`api/user/photo`, {
-        // headers: {
-        //   Authorization: accessToken
-        // },
+      const response: AxiosResponse = await httpClient.get(`api/msgraph/photo`, {
         responseType: 'arraybuffer'
       });
       const arrayBufferView = new Uint8Array(response.data);
@@ -79,82 +52,49 @@ const SiteNav = () => {
       throw new Error();
     }
   };
-  const handlePageClick = (url: string) => {
-    navigate(url);
-  };
-
-  // const Settings = () => {
-  //   return (
-  //     <div>
-  //       <Icon iconName={IconName.SIGN_OUT} />
-  //       <span>
-  //         Sign Out
-  //       </span>
-  //     </div>
-  //   );
-  // };
 
   useEffect(() => {
     const setUserProfile = async () => {
       try {
-        setLoading(true);
+        const userProfile = await getUserProfile();
+        const userPhoto = await getUserPhoto();
 
-        // const userProfile = await getUserProfile();
-        // const userPhoto = await getUserPhoto();
+        setUserPhoto(userPhoto);
 
-        // setUserPhoto(userPhoto);
-
-        // appContext.dispatch({
-        //   type: 'SET_USER_PROFILE',
-        //   payload: userProfile
-        // });
-        const oidc = await getOidc();
-
-        if (oidc.isUserLoggedIn) {
-          console.log((await oidc.getTokens()).accessToken)
-        }
-        
+        appContext.dispatch({
+          type: 'SET_USER_PROFILE',
+          payload: userProfile
+        });
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     if (
       isUserLoggedIn &&
       Object.keys(appContext.state.userProfile).length === 0
     ) {
-      console.log(isUserLoggedIn)
-      console.log()
       setUserProfile();
-      getPages();
     }
   }, [isUserLoggedIn]);
 
-  useEffect(() => {
-    getPages();
-  }, [])
-
-  useEffect(() => {
-    console.log(pathname)
-  }, [pathname])
-
   return (
     <Navbar isBordered maxWidth='full' position='static'>
-      <NavbarBrand>
-        <img
-          height={35}
-          width={35}
-          src='noahspan-logo.png'
-          style={{ marginRight: '5px' }}
-        />
-        <FontAwesomeIcon icon={faPlane} size='2x' />
-      </NavbarBrand>
+      <NavbarContent>
+        <NavbarBrand>
+          <img
+            height={35}
+            width={35}
+            src='noahspan-logo.png'
+            style={{ marginRight: '5px' }}
+          />
+          <FontAwesomeIcon icon={faPlane} size='2x' />
+        </NavbarBrand>
+      </NavbarContent>
       <NavbarContent justify='center'>
-        {pages.length > 0 && pages.map((page) => {
+        {pages.length > 0 && pages.map((page, index) => {
           return (
-            <NavbarItem isActive={pathname === page.path ? true : false}>
+            <NavbarItem isActive={pathname === page.path ? true : false} key={index}>
               <Link color={pathname === page.path ? 'primary' : 'foreground'} href={page.path}>
                 {page.name}
               </Link>
@@ -163,9 +103,27 @@ const SiteNav = () => {
         })}
       </NavbarContent>
       <NavbarContent justify='end'>
-        <Button color='default' onClick={handleSignIn} variant='flat'>
-          Sign In
-        </Button>
+        {!isUserLoggedIn &&
+          <Button
+            color='default'
+            onPress={() => login()}
+            startContent={<FontAwesomeIcon icon={faSignIn} />}
+          >
+            Sign In
+          </Button>
+        }
+        {isUserLoggedIn &&
+          <Dropdown>
+            <DropdownTrigger>
+              <Avatar name={appContext.state.userProfile.displayName?.toString()} src={userPhoto}></Avatar>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem key='signout' onPress={() => logout({redirectTo: 'specific url', url: '/'})} startContent={<FontAwesomeIcon icon={faSignOut} />}>
+                Sign Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        }
       </NavbarContent>
     </Navbar>
   );

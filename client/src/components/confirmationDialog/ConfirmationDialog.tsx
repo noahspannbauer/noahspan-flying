@@ -1,13 +1,16 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Icon,
-  IconName,
-  Loading
-} from '@noahspan/noahspan-components';
-import { IDialogConfirmationProps } from './IConfirmationDialogProps';
+// import {
+//   Button,
+//   Dialog,
+//   DialogActions,
+//   DialogContent,
+//   Icon,
+//   IconName,
+//   Loading
+// } from '@noahspan/noahspan-components';
+import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Spinner } from '@heroui/react'
+import { DialogConfirmationProps } from './ConfirmationDialogProps.interface';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 const ConfirmationDialog = ({
   contentText,
@@ -16,28 +19,33 @@ const ConfirmationDialog = ({
   onCancel,
   onConfirm,
   title
-}: IDialogConfirmationProps) => {
+}: DialogConfirmationProps) => {
   return (
-    <Dialog
-      open={isOpen}
+    <Modal
+      isDismissable={false}
+      isKeyboardDismissDisabled={true}
+      isOpen={isOpen}
     >
-      <h3>{title}</h3>
-      <DialogContent>
-        {!isLoading && <div>{contentText}</div>}
-        {isLoading && <Loading size='xl' />}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onCancel} startContent={<Icon iconName={IconName.XMARK} />}>
-          No
-        </Button>
-        <Button
-          onClick={onConfirm}
-          startContent={<Icon iconName={IconName.CIRCLE_CHECK} />}
-        >
-          Yes
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <ModalContent>
+        <ModalHeader>{title}</ModalHeader>
+        <ModalBody>
+          {!isLoading && <div>{contentText}</div>}
+          {isLoading && <Spinner size='lg' />}
+        </ModalBody>
+        <ModalFooter>
+          <Button onPress={onCancel} startContent={<FontAwesomeIcon icon={faXmark} />}>
+            No
+          </Button>
+          <Button
+            color='primary'
+            onPress={onConfirm}
+            startContent={<FontAwesomeIcon icon={faCircleCheck} />}
+          >
+            Yes
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

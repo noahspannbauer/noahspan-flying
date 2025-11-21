@@ -6,13 +6,7 @@ import { LogbookState } from './LogbookState.interface';
 
 type Action =
   | { type: 'SET_COLUMNS'; payload: ColumnDef<LogbookEntry>[] }
-  | {
-      type: 'SET_DELETE';
-      payload: {
-        isConfirmationDialogOpen: boolean;
-        selectedLogId: string | undefined;
-      };
-    }
+  | { type: 'SET_IS_CONFIRMATION_DIALOG_OPEN'; payload: boolean }
   | { type: 'SET_ENTRIES'; payload: LogbookEntry[] }
   | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
@@ -39,10 +33,10 @@ export const reducer = (
         columns: action.payload
       }
     }
-    case 'SET_DELETE': {
+    case 'SET_IS_CONFIRMATION_DIALOG_OPEN': {
       return {
         ...state,
-        isConfirmDialogOpen: action.payload.isConfirmationDialogOpen,
+        isConfirmDialogOpen: action.payload,
       };
     }
     case 'SET_ENTRIES': {

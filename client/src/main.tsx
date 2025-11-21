@@ -7,15 +7,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { OidcProvider } from './auth/oidcConfig.ts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <OidcProvider>
-      <AppContextProvider>
-        <LogbookContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </LogbookContextProvider>
-      </AppContextProvider>
-    </OidcProvider>
-  </React.StrictMode>
+  <OidcProvider>
+    <AppContextProvider>
+      <LogbookContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </LogbookContextProvider>
+    </AppContextProvider>
+  </OidcProvider>
 );

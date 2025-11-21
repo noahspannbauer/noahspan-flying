@@ -23,7 +23,7 @@ export const usePilots = () => {
         const response: AxiosResponse = await httpClient.get(
           `/api/pilots`
         );
-        console.log(response)
+
         setPilots(response.data);
       } catch (error) {
         return error;

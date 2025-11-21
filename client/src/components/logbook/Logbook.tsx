@@ -132,17 +132,11 @@ const Logbook: React.FC<unknown> = () => {
               >
                 View
               </DropdownItem>
-              <DropdownItem 
-                key='tracks'
-                onPress={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}
-                startContent={<FontAwesomeIcon icon={faMapLocationDot} />}  
-              >
-                Tracks
-              </DropdownItem>
             </DropdownSection>
               <DropdownSection>
                 <DropdownItem 
                   key='Delete'
+                  onPress={() => onDeleteLog(info.row.original.id)}
                   startContent={<FontAwesomeIcon icon={faTrash} />}
                 >
                   Delete
@@ -393,7 +387,6 @@ const Logbook: React.FC<unknown> = () => {
   };
 
   const onOpenCloseDrawer= (mode: FormMode, logId?: string) => {
-    console.log(logId)
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:
@@ -423,10 +416,8 @@ const Logbook: React.FC<unknown> = () => {
   };
 
   const onDeleteLog = (logId: string) => {
-    dispatch({
-      type: 'SET_DELETE',
-      payload: { isConfirmationDialogOpen: true, selectedLogId: logId }
-    });
+    dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_OPEN', payload: true });
+    logbookContext.dispatch({ type: 'SET_SELECTED_LOG_ID', payload: logId })
   };
 
   const onConfirmationDialogConfirm = async () => {
@@ -436,9 +427,10 @@ const Logbook: React.FC<unknown> = () => {
       await httpClient.delete(`api/logs/${logbookContext.state.selectedLogId}`);
 
       dispatch({
-        type: 'SET_DELETE',
-        payload: { isConfirmationDialogOpen: false, selectedLogId: undefined }
+        type: 'SET_IS_CONFIRMATION_DIALOG_OPEN',
+        payload: false
       });
+      logbookContext.dispatch({ type: 'SET_SELECTED_LOG_ID', payload: '' })
       await getLogbookEntries();
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -454,8 +446,8 @@ const Logbook: React.FC<unknown> = () => {
 
   const onConfirmationDialogCancel = () => {
     dispatch({
-      type: 'SET_DELETE',
-      payload: { isConfirmationDialogOpen: false, selectedLogId: undefined }
+      type: 'SET_IS_CONFIRMATION_DIALOG_OPEN',
+      payload: false
     });
   };
 
@@ -523,7 +515,7 @@ const Logbook: React.FC<unknown> = () => {
           }
         </div>
         {!state.isLoading && state.alert && (
-          <div>
+          <div className='col-span-12 mb-5'>
             <Alert
               onClose={() =>
                 dispatch({ type: 'SET_ALERT', payload: undefined })

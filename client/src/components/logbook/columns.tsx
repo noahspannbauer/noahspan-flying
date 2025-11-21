@@ -34,7 +34,6 @@ const date: ColumnDef<LogbookEntry> = {
   header: 'Date',
   cell: (info: CellContext<LogbookEntry, unknown>) => {
     const date = new Date(info.getValue() as string);
-    console.log(date)
     const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
 
     return formattedDate;

@@ -3,13 +3,15 @@ import { TracksFormState } from "./TracksFormState.interface";
 type Action = 
   | { type: 'SET_IS_CONFIRM_DIALOG_OPEN'; payload: boolean }
   | { type: 'SET_IS_CONFORM_DIALOG_LOADING'; payload: boolean }
+  | { type: 'SET_IS_DISABLED'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
-  | { type: 'SET_ON_DELETE_TRACK'; payload: { isConfirmDialogOpen: boolean, selectedTrack: { fileName: string, index: number } }}
+  | { type: 'SET_ON_DELETE_TRACK'; payload: { isConfirmDialogOpen: boolean, selectedTrack: { id: string, filename: string, index: number } }}
   | { type: 'SET_TRACKS'; payload: { id: string; order: number; url: string }[] };
 
 export const initialState: TracksFormState = {
   isConfirmDialogOpen: false,
   isConfirmDialogLoading: false,
+  isDisabled: false,
   isLoading: false,
   selectedTrack: undefined,
   tracks: []
@@ -27,6 +29,12 @@ export const reducer = (state: TracksFormState, action: Action): TracksFormState
       return {
         ...state,
         isConfirmDialogLoading: action.payload
+      }
+    }
+    case 'SET_IS_DISABLED': {
+      return {
+        ...state,
+        isDisabled: action.payload
       }
     }
     case 'SET_IS_LOADING': {

@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 
-/* body {
-  @apply bg-base-300;
-} */
+@theme inline {
+  --color-primary: #000000;
+}
+
+

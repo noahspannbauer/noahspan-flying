@@ -31,7 +31,6 @@ export class TrackService {
       const logEntity: LogEntity = await this.logService.find(logId);
 
       if (logEntity) {
-        console.log(logEntity)
         const tracks = await this.trackRepository.find({
           where: { log: 
             {
@@ -40,7 +39,6 @@ export class TrackService {
           },
         })
 
-        console.log(tracks)
         return tracks;
       }
     } catch (error) {
@@ -55,7 +53,6 @@ export class TrackService {
 
       if (logEntity) {
         const url = await this.fileService.uploadFile(file, this.containerName, logId);
-        console.log(url)
         const track = this.trackRepository.create({
           log: logEntity,
           order: order,
@@ -67,7 +64,6 @@ export class TrackService {
         throw new CustomError('Log not found', 'Not found', 404)
       }
     } catch (error) {
-      console.log(error)
       throw error;
     }
   }
@@ -80,21 +76,21 @@ export class TrackService {
     }
   }
 
-  async delete(id: string, logId: string, fileName: string): Promise<DeleteResult> {
-    try {
-      await this.fileService.deleteFile(this.containerName, logId, fileName);
-
-      return await this.trackRepository.delete({ id });
-    } catch (error) {
-      throw error
-    }
-  }
-
   async downloadTrackFile(logId: string, fileName: string): Promise<string> {
     try {
       const downloadedFile: string = await this.fileService.downloadFile(this.containerName, logId, fileName);
 
       return downloadedFile;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async delete(id: string, logId: string, fileName: string): Promise<DeleteResult> {
+    try {
+      await this.fileService.deleteFile(this.containerName, logId, fileName);
+
+      return await this.trackRepository.delete({ id });
     } catch (error) {
       throw error
     }

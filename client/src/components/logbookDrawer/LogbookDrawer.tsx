@@ -9,8 +9,10 @@ import { FormMode } from "../../enums/formMode";
 import httpClient from "../../httpClient/httpClient";
 import { AxiosError } from "axios";
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
+import { Key, useState } from "react";
 
 const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
+  const [activeTab, setActiveTab] = useState<Key>('time');
   const defaultValues = {
     pilotId: '',
     date: null,
@@ -34,8 +36,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
     instrumentApproaches: null,
     instrumentHolds: null,
     instrumentNavTrack: null,
-    notes: '',
-    tracks: []
+    notes: ''
   };
   const methods = useForm();
   const logbookContext = useLogbookContext()
@@ -69,9 +70,19 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
     }
   };
 
+  const onSelectedKeyChanged = (key: React.Key) => {
+    setActiveTab(key)
+  }
+
   return (
     <Drawer
+      closeButton={
+        <Button isIconOnly>
+          <FontAwesomeIcon icon={faXmark} />
+        </Button>
+      }
       isOpen={logbookContext.state.isDrawerOpen}
+      onClose={onCancel}
     >
       <DrawerContent>
         <FormProvider {...methods}>
@@ -91,7 +102,13 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                   />
                 </div>
               )}
-              <Tabs color='default' fullWidth={true} variant='solid'>
+              <Tabs 
+                color='default'
+                fullWidth={true}
+                onSelectionChange={onSelectedKeyChanged}
+                selectedKey={activeTab as string}
+                variant='solid'
+              >
                 <Tab
                   key='time'
                   title={
@@ -103,47 +120,51 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                 >
                   <LogForm />
                 </Tab>
-                <Tab
-                  key='tracks'
-                  title={
-                    <div className="flex items-center space-x-2">
-                      <FontAwesomeIcon icon={faMapLocationDot} />
-                      <span>Tracks</span>
-                    </div>
-                  }
-                >
-                  <TracksForm />
-                </Tab>
+                {logbookContext.state.formMode !== FormMode.ADD &&
+                  <Tab
+                    key='tracks'
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <FontAwesomeIcon icon={faMapLocationDot} />
+                        <span>Tracks</span>
+                      </div>
+                    }
+                  >
+                    <TracksForm />
+                  </Tab>
+                }
               </Tabs>
             </DrawerBody>
-            <DrawerFooter>
-              <div className='grid grid-cols-12 gap-3'>
-                <div className='col-span-12 justify-self-end self-center'>
-                  <Button
-                    disabled={
-                      logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
-                        ? logbookContext.state.isFormDisabled
-                        : false
-                    }
-                    startContent={<FontAwesomeIcon icon={faXmark} />}
-                    onPress={onCancel}
-                  >
-                    {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
-                  </Button>
-                  {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
+            {activeTab !== 'tracks' &&
+              <DrawerFooter>
+                <div className='grid grid-cols-12 gap-3'>
+                  <div className='col-span-12 justify-self-end self-center'>
                     <Button
-                      className='ml-[10px]'
-                      color='primary'
-                      disabled={logbookContext.state.isFormDisabled}
-                      startContent={<FontAwesomeIcon icon={faSave} />}
-                      type="submit"
+                      disabled={
+                        logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
+                          ? logbookContext.state.isFormDisabled
+                          : false
+                      }
+                      startContent={<FontAwesomeIcon icon={faXmark} />}
+                      onPress={onCancel}
                     >
-                      Save
+                      {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
                     </Button>
-                  )}
+                    {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
+                      <Button
+                        className='ml-[10px]'
+                        color='primary'
+                        disabled={logbookContext.state.isFormDisabled}
+                        startContent={<FontAwesomeIcon icon={faSave} />}
+                        type="submit"
+                      >
+                        Save
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </DrawerFooter>
+              </DrawerFooter>
+            }
           </form>
         </FormProvider>
       </DrawerContent>

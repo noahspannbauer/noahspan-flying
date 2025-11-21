@@ -12,7 +12,7 @@ export class TrackEntity {
   @Column()
   order: number;
 
-  @ManyToOne(() => LogEntity, (log: LogEntity) => log.tracks)
+  @ManyToOne(() => LogEntity, (log: LogEntity) => log.tracks, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'logId' })
   log: LogEntity;
 }

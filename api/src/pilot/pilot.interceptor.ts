@@ -1,31 +1,49 @@
-import { CallHandler, ExecutionContext, NestInterceptor, UnauthorizedException } from '@nestjs/common';
+import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, map } from 'rxjs';
 import { CustomJwtPayload } from 'src/interfaces/customJwtPayload.interface';
 import { PilotEntity } from './pilot.entity';
+import { IS_PUBLIC_KEY } from '@noahspan/noahspan-modules';
+import { Reflector } from '@nestjs/core';
 
 export class PilotInterceptor implements NestInterceptor {
+  constructor(private reflector: Reflector) {}
+  
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest();
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
-    const jwtPayload: CustomJwtPayload = jwtDecode(token);
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     return handler.handle().pipe(
       map((data: PilotEntity[]) => {
-        if (data.length && jwtPayload.roles.includes('Flying.Read')) {
-          const pilots = data.map((pilot) => {
+        const req = context.switchToHttp().getRequest();
+        const limitData = (data) => {
+          return data.map((pilot: PilotEntity) => {
             return {
               id: pilot.id,
               name: pilot.name
             };
-          });
+          })
+        }
 
-          return pilots;
-        } else if (data.length && jwtPayload.roles.includes('Flying.Write')) {
-          return data;
-        } else {
-          return UnauthorizedException;
+        if (req.headers.authorization) {
+          const authHeader = req.headers.authorization;
+          const token = authHeader && authHeader.split(' ')[1];
+          const jwtPayload: CustomJwtPayload = jwtDecode(token);
+
+          if (jwtPayload.roles.includes('Flying.Read')) {
+            const pilots = limitData(data)
+
+            return pilots;
+          } else {
+            return data;
+          }
+        } else if (!req.headers.authorization && isPublic) {
+          const publicData = limitData(data);
+          const logs = publicData.slice(0,5)
+
+          return logs;
         }
       })
     );

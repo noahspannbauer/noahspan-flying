@@ -14,14 +14,16 @@ import { LogDto } from './log.dto';
 import { LogEntity } from './log.entity';
 import { LogService } from './log.service';
 import { CustomError } from '../error/customError';
-import { AuthGuard } from '@noahspan/noahspan-modules';
+import { AuthGuard, Public } from '@noahspan/noahspan-modules';
 import { LogInterceptor } from './log.interceptor';
 import { FileService } from '../file/file.service';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import { Reflector } from '@nestjs/core';
+
+const reflector = new Reflector();
 
 @Controller('logs')
-@UseInterceptors(new LogInterceptor())
-// @UseGuards(AuthGuard)
+@UseInterceptors(new LogInterceptor(reflector))
 export class LogController {
   constructor(
     private readonly fileService: FileService,
@@ -30,6 +32,7 @@ export class LogController {
 
  
   @Get(':id')
+  @Public()
   async find(
     @Param('id') id: string,
   ): Promise<LogEntity> {
@@ -44,6 +47,7 @@ export class LogController {
   }
 
   @Get()
+  @Public()
   async findAll(): Promise<LogEntity[]> {
     try {
       return await this.logService.findAll();
@@ -56,6 +60,7 @@ export class LogController {
 
   
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() logDto: LogDto): Promise<InsertResult> {
     try {
       return await this.logService.create(logDto);
@@ -67,6 +72,7 @@ export class LogController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
     @Body() logDto: LogDto
@@ -83,12 +89,14 @@ export class LogController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(
     @Param('id') id: string,
   ): Promise<DeleteResult> {
     try {
       return await this.logService.delete(id);
     } catch (error) {
+      console.log(error)
       const customError = error as CustomError;
 
       throw new HttpException(customError.message, customError.statusCode);

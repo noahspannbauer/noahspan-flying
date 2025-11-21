@@ -64,10 +64,6 @@ const LogForm = () => {
     }
   }, [pilots]);
 
-  useEffect(() => {
-    console.log(state.isDisabled)
-  }, [state.isDisabled])
-
   return (
     <div className='grid grid-cols-12 gap-3'>
       <div className={`col-span-4 self-center text-small after:content-['*'] after:text-danger after:ms-0.5`}>

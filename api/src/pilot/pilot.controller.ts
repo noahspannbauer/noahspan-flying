@@ -11,19 +11,21 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PilotDto } from './pilot.dto';
-import { PilotEntity } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
 import { PilotInterceptor } from './pilot.interceptor';
-import { AuthGuard } from '@noahspan/noahspan-modules';
+import { AuthGuard, Public } from '@noahspan/noahspan-modules';
+import { Reflector } from '@nestjs/core';
+
+const reflector = new Reflector();
 
 @Controller('pilots')
-@UseInterceptors(new PilotInterceptor())
-@UseGuards(AuthGuard)
+@UseInterceptors(new PilotInterceptor(reflector))
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 
   @Get(':id')
+  @Public()
   async find(@Param('id') id: string) {
     try {
       return await this.pilotService.find(id);
@@ -35,28 +37,33 @@ export class PilotController {
   }
 
   @Get()
+  @Public()
   async findAll() {
     try {
       return await this.pilotService.findAll();
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() pilotDto: PilotDto) {
     try {
+      
       return await this.pilotService.create(pilotDto);
     } catch (error) {
-      const customError = error as CustomError;
+      console.log(error)
+      // const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode);
+      // throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
     @Body() pilotDto: PilotDto
@@ -71,6 +78,7 @@ export class PilotController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(
     @Param('id') id: string,
   ) {

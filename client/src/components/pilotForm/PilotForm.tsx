@@ -1,15 +1,5 @@
-import { useEffect, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import {
-  // Button,
-  // Drawer,
-  Icon,
-  IconButton,
-  IconName,
-  // Input,
-  PeoplePicker,
-  StateSelect
-} from '@noahspan/noahspan-components';
 import { IPilotFormProps } from './IPilotFormProps';
 import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
@@ -18,11 +8,11 @@ import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificate
 import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
 import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
 import { useOidc } from '../../auth/oidcConfig';
-import { getOidc } from '../../auth/oidcConfig';
 import httpClient from '../../httpClient/httpClient';
-import { Button, Drawer, DrawerHeader, DrawerContent, DrawerBody, DrawerFooter, Input } from '@heroui/react'
+import { Button, Drawer, DrawerHeader, DrawerContent, DrawerBody, DrawerFooter, Input, Autocomplete, AutocompleteItem, SelectItem, Select } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { states } from './states';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
   pilotId,
@@ -31,7 +21,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   onOpenClose
 }: IPilotFormProps) => {
   const [peoplePickerValue, setPeoplePickerValue] = useState<string>('');
-  const [peoplePickerResults, setPeoplePickerResults] = useState<any[]>([]);
+  const [peoplePickerResults, setPeoplePickerResults] = useState<Person[]>([]);
   const [isPeoplePickerLoading, setIsPeoplePickerLoading] =
     useState<boolean>(false);
   const [selectedPerson, setSelectedPerson] = useState<Person>({
@@ -47,6 +37,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     postalCode: '',
     email: '',
     phone: '',
+    userId: ''
   };
   const methods = useForm({
     defaultValues: defaultValues
@@ -63,15 +54,10 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     try {
       if (value !== '') {
         const searchString: string = value;
-        const oidc = await getOidc();
         const response: AxiosResponse = await httpClient.get(
-          `api/msgraph/search?search=${searchString}`, {
-            headers: {
-              Authorization: oidc.isUserLoggedIn ? `Bearer ${(await oidc.getTokens()).accessToken}` : ''
-            }
-          }
+          `api/msgraph/search?search=${searchString}`
         );
-        console.log(response)
+
         setPeoplePickerResults(response.data);
       } else {
         setPeoplePickerResults([]);
@@ -83,9 +69,12 @@ const PilotForm: React.FC<IPilotFormProps> = ({
     }
   };
 
-  const onPersonSelected = (person: Person) => {
-    methods.setValue('name', person.displayName!.toString());
-    setPeoplePickerValue(person.displayName!);
+  const onPersonSelected = (userPrincipalName: string) => {
+    const person: Person | undefined = peoplePickerResults.find((person) => person.userPrincipalName === userPrincipalName as string);
+
+    methods.setValue('name', person?.displayName!);
+    methods.setValue('userId', person?.userPrincipalName!);
+    setPeoplePickerValue(person?.displayName!);
     setPeoplePickerResults([])
   };
 
@@ -134,9 +123,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
         );
         const pilot = response.data;
 
-        setSelectedPerson({
-          displayName: pilot.name
-        });
+        setPeoplePickerValue(pilot.name);
         methods.reset(pilot);
       } catch (error) {
         console.log(error);
@@ -175,15 +162,19 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                 <h6>Name *</h6>
               </div>
               <div className='col-span-9'>
-                <PeoplePicker
-                  disabled={isDisabled}
-                  // loading={isPeoplePickerLoading}
-                  onInputChanged={onPeoplePickerSearch}
-                  onPersonSelected={onPersonSelected}
-                  people={peoplePickerResults}
-                  value={peoplePickerValue}
-                  width='w-full'
-                />
+                <Autocomplete
+                  inputValue={peoplePickerValue}
+                  isLoading={isPeoplePickerLoading}
+                  items={peoplePickerResults}
+                  onInputChange={onPeoplePickerSearch}
+                  onSelectionChange={(key: Key | null) => onPersonSelected(key as string)}
+                >
+                  {peoplePickerResults.map((person: Person) => (
+                    <AutocompleteItem key={person.userPrincipalName}>
+                      {person.displayName}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
               </div>
               {isUserLoggedIn &&
                 <>
@@ -244,19 +235,14 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       control={methods.control}
                       rules={{ required: 'A state must be selected' }}
                       render={({ field: { onChange, value } }) => (
-                        <StateSelect
-                          disabled={isDisabled}
-                          // error={methods.formState.errors.state ? true : false}
-                          // helperText={
-                          //   methods.formState.errors.state
-                          //     ? methods.formState.errors.state.message?.toString()
-                          //     : undefined
-                          // }
+                        <Select
                           onChange={onChange}
-                          value={value}
-                          width='w-full'
-                          data-testid="pilot-form-state-dropdown"
-                        />
+                          selectedKeys={[value]}
+                        >
+                          {states.map((state) => (
+                            <SelectItem key={state.value}>{state.label}</SelectItem>
+                          ))}
+                        </Select>
                       )}
                     />
                   </div>
@@ -369,7 +355,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                       ? isDisabled
                       : false
                   }
-                  startContent={<Icon iconName={IconName.XMARK} />}
+                  startContent={<FontAwesomeIcon icon={faXmark} />}
                   onPress={onCancel}
                   data-testid="pilot-cancel-button"
                 >
@@ -379,7 +365,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
                   <Button
                     color='primary'
                     disabled={isDisabled}
-                    startContent={<Icon iconName={IconName.SAVE} />}
+                    startContent={<FontAwesomeIcon icon={faSave} />}
                     type="submit"
                     data-testid="pilot-save-button"
                   >

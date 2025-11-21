@@ -33,15 +33,15 @@ export class PilotEntity {
   @Column()
   userId: string | null;
 
-  @OneToMany(() => LogEntity, (log: LogEntity) => log.pilot, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+  @OneToMany(() => LogEntity, (log: LogEntity) => log.pilot)
   logs: LogEntity[];
 
-  @OneToMany(() => CertificateEntity, (certificate: CertificateEntity) => certificate.pilot, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => CertificateEntity, (certificate: CertificateEntity) => certificate.pilot)
   certificates: CertificateEntity[];
 
-  @OneToMany(() => EndorsementEntity, (endorsement: EndorsementEntity) => endorsement.pilot, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => EndorsementEntity, (endorsement: EndorsementEntity) => endorsement.pilot)
   endorsements: EndorsementEntity[];
   
-  @OneToMany(() => MedicalEntity, (medical: MedicalEntity) => medical.pilot, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => MedicalEntity, (medical: MedicalEntity) => medical.pilot)
   medical: MedicalEntity[];
 }

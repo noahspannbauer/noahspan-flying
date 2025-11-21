@@ -5,7 +5,7 @@ export const { OidcProvider, useOidc, getOidc } = createReactOidc(async () => ({
   clientId: import.meta.env.VITE_CLIENT_APP_ID,
   homeUrl: import.meta.env.BASE_URL,
   scopes: ['email', 'openid', 'profile', `api://${import.meta.env.VITE_API_APP_ID}/user_impersonation`],
-  autoLogin: true,
+  autoLogin: false,
   postLoginRedirectUrl: '/',
   noIframe: true
 }));

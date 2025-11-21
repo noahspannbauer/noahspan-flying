@@ -12,7 +12,7 @@ export class EndorsementEntity {
   @Column()
   issueDate: Date;
 
-  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.endorsements)
+  @ManyToOne(() => PilotEntity, (pilot: PilotEntity) => pilot.endorsements, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'pilotId' })
   pilot: PilotEntity
 }
