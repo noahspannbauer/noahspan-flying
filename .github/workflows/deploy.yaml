@@ -23,7 +23,7 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ vars.VITE_CLIENT_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ vars.VITE_TENANT_ID }}
 
@@ -32,4 +32,4 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --resource-group noahspan-flying --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
+            az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --resource-group noahspan --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
