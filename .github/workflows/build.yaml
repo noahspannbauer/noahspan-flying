@@ -60,4 +60,3 @@ jobs:
           push: true
           tags: noahspan/flying:${{ inputs.version_number }}
           context: .
-          target: api
