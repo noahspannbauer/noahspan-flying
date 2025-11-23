@@ -16,23 +16,22 @@ services:
     container_name: restore
     image: litestream/litestream:0.3.13
     volumes:
-      - ./api/src/database/flying.db:/var/lib/data/flying.db
-      - ./api/src/database/litestream.yml:/mnt/litestream/litestream.yml
+      - ./database/flying.db:/var/lib/data/flying.db
+      - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
       - backup:/mnt/data/backup
       - data:/var/lib/data
     command: restore -config /mnt/litestream/litestream.yml -if-db-not-exists -if-replica-exists /var/lib/data/flying.db
 
-  api:
-    container_name: flying-api
+  app:
+    container_name: flying
     build:
       context: .
-      target: api
     ports:
       - '3000:3000'
     env_file:
       - ./api/.env
     environment:
-      - DB_PATH=/var/lib/data/flying.db
+      - DB_PATH=../../var/lib/data/flying.db
     volumes:
       - data:/var/lib/data
     depends_on:
@@ -43,21 +42,13 @@ services:
     container_name: replicate
     image: litestream/litestream:0.3.13
     volumes:
-      - ./api/src/database/litestream.yml:/mnt/litestream/litestream.yml
+      - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
       - backup:/mnt
       - data:/var/lib/data
     command: replicate -config /mnt/litestream/litestream.yml
     depends_on:
-      api:
+      app:
         condition: service_started
-
-  # app:
-  #   container_name: flying-app
-  #   build:
-  #     context: .
-  #     target: app
-  #   ports: 
-  #     - '8080:8080'
 
 volumes:
   # azurite-data:

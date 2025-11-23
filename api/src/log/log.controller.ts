@@ -41,7 +41,7 @@ export class LogController {
       return await this.logService.find(id);
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -50,10 +50,11 @@ export class LogController {
   @Public()
   async findAll(): Promise<LogEntity[]> {
     try {
+      console.log('blah')
       return await this.logService.findAll();
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }

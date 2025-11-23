@@ -26,7 +26,7 @@ export class PilotInterceptor implements NestInterceptor {
             };
           })
         }
-
+        console.log(req.headers.authorization)
         if (req.headers.authorization) {
           const authHeader = req.headers.authorization;
           const token = authHeader && authHeader.split(' ')[1];

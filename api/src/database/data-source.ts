@@ -9,8 +9,8 @@ const configService = new ConfigService();
 export const dataSourceOptions: DataSourceOptions = {
   type: 'better-sqlite3',
   database: configService.get<string>('DB_PATH'),
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/database/migrations/*.js'],
+  entities: ['../**/*.entity.js'],
+  migrations: ['./migrations/*.js'],
   synchronize: configService.get<boolean>('DB_SYNC')
 }
 

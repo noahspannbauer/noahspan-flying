@@ -1,12 +1,12 @@
 resource "azurerm_container_app" "container_app" {
-  name = module.environment.app.app_name
+  name = module.environment.app_name
   container_app_environment_id = data.azurerm_container_app_environment.container_app_environment.id
   resource_group_name = data.azurerm_resource_group.resource_group.name
   revision_mode = "Single"
 
   template {
-    min_replicas = module.environment.app.template_min_replicas
-    max_replicas = module.environment.app.template_max_replicas
+    min_replicas = 0
+    max_replicas = 2
 
     init_container {
       args = ["restore", "-if-db-not-exists", "-if-replica-exists", "/var/lib/data/flying.db"]
@@ -60,9 +60,9 @@ resource "azurerm_container_app" "container_app" {
 
     container {
       cpu = 0.25
-      image = module.environment.app.container_image
+      image = "noahspan/flying-app:v2.0.0-alpha"
       memory = "0.5Gi"
-      name = module.environment.app.container_name
+      name = "flying"
 
       env {
         name = "AZURE_STORAGE_CONNECTION_STRING"
@@ -111,7 +111,7 @@ resource "azurerm_container_app" "container_app" {
 
     volume {
       name = "backup"
-      storage_name = azurerm_container_app_environment_storage.container_app_environment_storage_backup.name
+      storage_name = azurerm_container_app_environment_storage.container_app_environment_storage_database.name
       storage_type = "AzureFile"
     }
 
@@ -123,13 +123,13 @@ resource "azurerm_container_app" "container_app" {
 
   ingress {
     allow_insecure_connections = false
-    external_enabled = module.environment.app.ingress_external_enabled
-    target_port = module.environment.app.ingress_target_port
-    transport = module.environment.app.ingress_transport
+    external_enabled = true
+    target_port = 3000
+    transport = "auto"
 
     traffic_weight {
       latest_revision = true
-      percentage = module.environment.app.traffic_weight_percentage
+      percentage = 100
     }
   }
 
