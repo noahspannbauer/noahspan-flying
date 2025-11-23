@@ -20,7 +20,6 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
-          initial-fetch-depth: 2
           filters: |
             api:
               - 'api/**'

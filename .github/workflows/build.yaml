@@ -19,6 +19,7 @@ jobs:
         with:
           sparse-checkout: |
             api
+            client
 
       - name: Install Nest CLI
         run: |
