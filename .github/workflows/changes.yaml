@@ -4,8 +4,8 @@ on:
     outputs:
       api:
         value: ${{ jobs.changes.outputs.api }}
-      app:
-        value: ${{ jobs.changes.outputs.app }}
+      client:
+        value: ${{ jobs.changes.outputs.client }}
 
 jobs:
   changes:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       api: ${{ steps.filter.outputs.api }}
-      app: ${{ steps.filter.outputs.app }}
+      client: ${{ steps.filter.outputs.client }}
     steps:
       - uses: actions/checkout@v3
       
@@ -24,5 +24,5 @@ jobs:
           filters: |
             api:
               - 'api/**'
-            app:
-              - 'app/**'
+            client:
+              - 'client/**'
