@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/changes.yaml
 
   build:
-    if: ${{ needs.changes.outputs.app == 'true' }}
+    if: ${{ needs.changes.outputs.app == 'true' || needs.changes.outputs.client == 'true' }}
     name: build
     needs:
       - changes
