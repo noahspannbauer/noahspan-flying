@@ -10,25 +10,47 @@ services:
       - '10002:10002'
     command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
     volumes: 
-      - ./azurite-flying:/data
+      - ./azurite-data:/data
 
-  api:
-    container_name: flying-api
+  restore:
+    container_name: restore
+    image: litestream/litestream:0.3.13
+    volumes:
+      - ./database/flying.db:/var/lib/data/flying.db
+      - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
+      - backup:/mnt/data/backup
+      - data:/var/lib/data
+    command: restore -config /mnt/litestream/litestream.yml -if-db-not-exists -if-replica-exists /var/lib/data/flying.db
+
+  app:
+    container_name: flying
     build:
       context: .
-      target: api
     ports:
       - '3000:3000'
     env_file:
-      - ./api/.env.compose
+      - ./api/.env
+    environment:
+      - DB_PATH=../../var/lib/data/flying.db
+    volumes:
+      - data:/var/lib/data
+    depends_on:
+      restore:
+        condition: service_completed_successfully
 
-  app:
-    container_name: flying-app
-    build:
-      context: .
-      target: app
-    ports: 
-      - '8080:8080'
+  replicate:
+    container_name: replicate
+    image: litestream/litestream:0.3.13
+    volumes:
+      - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
+      - backup:/mnt
+      - data:/var/lib/data
+    command: replicate -config /mnt/litestream/litestream.yml
+    depends_on:
+      app:
+        condition: service_started
 
 volumes:
-  azurite-flying:
+  # azurite-data:
+  backup:
+  data:

@@ -11,24 +11,24 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PilotDto } from './pilot.dto';
-import { Pilot } from './pilot.entity';
 import { PilotService } from './pilot.service';
 import { CustomError } from '../error/customError';
-import { AuthGuard } from '@noahspan/noahspan-modules'
-import { PilotInterceptor } from './interceptors/pilot.interceptor';
+import { PilotInterceptor } from './pilot.interceptor';
+import { AuthGuard, Public } from '@noahspan/noahspan-modules';
+import { Reflector } from '@nestjs/core';
+
+const reflector = new Reflector();
 
 @Controller('pilots')
-@UseInterceptors(new PilotInterceptor())
+@UseInterceptors(new PilotInterceptor(reflector))
 export class PilotController {
   constructor(private readonly pilotService: PilotService) {}
 
-  @Get(':partitionKey/:rowKey')
-  async find(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string
-  ) {
+  @Get(':id')
+  @Public()
+  async find(@Param('id') id: string) {
     try {
-      return await this.pilotService.find(partitionKey, rowKey);
+      return await this.pilotService.find(id);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -37,75 +37,39 @@ export class PilotController {
   }
 
   @Get()
+  @Public()
   async findAll() {
     try {
       return await this.pilotService.findAll();
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
-  @UseGuards(AuthGuard)
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() pilotDto: PilotDto) {
     try {
-      let pilot = new Pilot();
       
-      pilot = {
-        partitionKey: pilotDto.partitionKey,
-        rowKey: pilotDto.rowKey,
-        id: pilotDto.id,
-        name: pilotDto.name,
-        address: pilotDto.address,
-        city: pilotDto.city,
-        state: pilotDto.state,
-        postalCode: pilotDto.postalCode,
-        email: pilotDto.email,
-        phone: pilotDto.phone,
-        medicalClass: pilotDto.medicalClass,
-        medicalExpiration: pilotDto.medicalExpiration,
-        certificates: JSON.stringify(pilotDto.certificates),
-        endorsements: JSON.stringify(pilotDto.endorsements)
-      }
-
-      return await this.pilotService.create(pilot);
+      return await this.pilotService.create(pilotDto);
     } catch (error) {
-      const customError = error as CustomError;
+      console.log(error)
+      // const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode);
+      // throw new HttpException(customError.message, customError.statusCode);
     }
   }
 
+  @Put(':id')
   @UseGuards(AuthGuard)
-  @Put(':partitionKey/:rowKey')
   async update(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string,
+    @Param('id') id: string,
     @Body() pilotDto: PilotDto
   ) {
     try {
-      let pilot = new Pilot();
-
-      pilot = {
-        partitionKey: pilotDto.partitionKey,
-        rowKey: pilotDto.rowKey,
-        id: pilotDto.id,
-        name: pilotDto.name,
-        address: pilotDto.address,
-        city: pilotDto.city,
-        state: pilotDto.state,
-        postalCode: pilotDto.postalCode,
-        email: pilotDto.email,
-        phone: pilotDto.phone,
-        medicalClass: pilotDto.medicalClass,
-        medicalExpiration: pilotDto.medicalExpiration,
-        certificates: JSON.stringify(pilotDto.certificates),
-        endorsements: JSON.stringify(pilotDto.endorsements)
-      }
-
-      return await this.pilotService.update(partitionKey, rowKey, pilot);
+      return await this.pilotService.update(id, pilotDto);
     } catch (error) {
       const customError = error as CustomError;
 
@@ -113,14 +77,13 @@ export class PilotController {
     }
   }
 
+  @Delete(':id')
   @UseGuards(AuthGuard)
-  @Delete(':partitionKey/:rowKey')
   async delete(
-    @Param('partitionKey') partitionKey: string,
-    @Param('rowKey') rowKey: string
+    @Param('id') id: string,
   ) {
     try {
-      return await this.pilotService.delete(partitionKey, rowKey);
+      return await this.pilotService.delete(id);
     } catch (error) {
       const customError = error as CustomError;
 

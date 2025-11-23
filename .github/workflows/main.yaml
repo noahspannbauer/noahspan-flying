@@ -8,48 +8,25 @@ jobs:
   changes:
     uses: ./.github/workflows/changes.yaml
 
-  build-api:
-    if: ${{ needs.changes.outputs.api == 'true' }}
-    name: build-api
-    needs:
-      - changes
-    uses: ./.github/workflows/api_build.yaml
-    with:
-      environment_name: test
-      version_number: ${{ github.run_id }}
-    secrets: inherit
-
-  deploy-api:
-    name: deploy-api
-    needs: 
-      - changes
-      - build-api
-    uses: ./.github/workflows/deploy.yaml
-    with:
-      app_name: flying-api
-      environment_name: test
-      version_number: ${{ github.run_id }}
-    secrets: inherit
-
-  build-app:
+  build:
     if: ${{ needs.changes.outputs.app == 'true' }}
-    name: build-app
+    name: build
     needs:
       - changes
-    uses: ./.github/workflows/app_build.yaml
+    uses: ./.github/workflows/build.yaml
     with:
       environment_name: test
       version_number: ${{ github.run_id }}
     secrets: inherit
 
-  deploy-app:
-    name: deploy-app
+  deploy:
+    name: deploy
     needs: 
       - changes
-      - build-app
+      - build
     uses: ./.github/workflows/deploy.yaml
     with:
-      app_name: flying-app
+      app_name: flying
       environment_name: test
       version_number: ${{ github.run_id }}
     secrets: inherit

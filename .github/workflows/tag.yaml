@@ -5,40 +5,21 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  build-api:
-    name: build-api
-    uses: ./.github/workflows/api_build.yaml
+  build:
+    name: build
+    uses: ./.github/workflows/build.yaml
     with:
       environment_name: prod
       version_number: ${{ github.ref_name }}
     secrets: inherit
 
-  deploy-api:
-    name: deploy-api
+  deploy:
+    name: deploy
     needs: 
-      - build-api
+      - build
     uses: ./.github/workflows/deploy.yaml
     with:
-      app_name: flying-api
-      environment_name: prod
-      version_number: ${{ github.ref_name }}
-    secrets: inherit
-
-  build-app:
-    name: build-app
-    uses: ./.github/workflows/app_build.yaml
-    with:
-      environment_name: prod
-      version_number: ${{ github.ref_name }}
-    secrets: inherit
-
-  deploy-app:
-    name: deploy-app
-    needs: 
-      - build-app
-    uses: ./.github/workflows/deploy.yaml
-    with:
-      app_name: flying-app
+      app_name: flying
       environment_name: prod
       version_number: ${{ github.ref_name }}
     secrets: inherit

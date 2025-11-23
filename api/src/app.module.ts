@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
-import { FeatureFlagModule } from './featureFlag/feature-flag.module'
+import { HealthModule } from './health/health.module';
 import { LogModule } from './log/log.module';
 import { PilotModule } from './pilot/pilot.module';
 import { APP_FILTER, APP_GUARD, Reflector } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthGuard, AuthModule, UserModule } from '@noahspan/noahspan-modules';
+import { AuthModule, MsGraphModule } from '@noahspan/noahspan-modules';
 import configuration from './config/configuration';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from './database/data-source';
+import { TrackModule } from './track/track.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -15,19 +20,25 @@ import configuration from './config/configuration';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         return {
-          clientId: configService.get<string>('clientId'),
-          clientSecret: configService.get<string>('clientSecret'),
-          tenantId: configService.get<string>('tenantId')
+          audience: configService.get<string>('audience'),
+          issuerUrl: configService.get<string>('issuer'),
+          jwksUri: configService.get<string>('jwksUri')
         };
       },
     }),
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [configuration]
     }),
-    FeatureFlagModule,
+    // HealthModule,
     LogModule,
     PilotModule,
-    UserModule.registerAsync({
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'client', 'dist')
+    }),
+    TrackModule,
+    TypeOrmModule.forRoot(dataSourceOptions),
+    MsGraphModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -43,7 +54,7 @@ import configuration from './config/configuration';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter
-    },
+    }
   ]
 })
 export class AppModule {}
