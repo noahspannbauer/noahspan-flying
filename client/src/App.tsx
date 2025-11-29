@@ -5,7 +5,6 @@ import Pilots from './components/pilots/Pilots';
 import SiteNav from './components/siteNav/SiteNav';
 import { HeroUIProvider } from '@heroui/react';
 import { useHref, useNavigate } from 'react-router-dom';
-import './styles.css';
 
 const App = () => {
   const navigate = useNavigate();

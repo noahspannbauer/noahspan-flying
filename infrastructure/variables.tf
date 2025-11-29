@@ -21,6 +21,10 @@ variable "RESOURCE_GROUP_NAME" {
   type = string
 }
 
+variable "EXTERNAL_TENANT_ID" {
+  type = string
+}
+
 variable "TENANT_ID" {
   type = string
 }

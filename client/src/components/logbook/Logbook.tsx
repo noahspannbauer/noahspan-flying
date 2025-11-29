@@ -508,7 +508,6 @@ const Logbook: React.FC<unknown> = () => {
               onPress={() => onOpenCloseDrawer(FormMode.ADD)}
               startContent={<FontAwesomeIcon icon={faAdd} />}
               data-testid="pilot-add-button"
-              data-theme="lofi"
             >
               Add Entry
             </Button>

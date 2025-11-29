@@ -30,14 +30,8 @@ import { join } from 'path';
       isGlobal: true,
       load: [configuration]
     }),
-    // HealthModule,
+    HealthModule,
     LogModule,
-    PilotModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..', 'client', 'dist')
-    }),
-    TrackModule,
-    TypeOrmModule.forRoot(dataSourceOptions),
     MsGraphModule.registerAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
@@ -48,7 +42,13 @@ import { join } from 'path';
           tenantId: configService.get<string>('tenantId')
         }
       }
-    })
+    }),
+    PilotModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'client', 'dist')
+    }),
+    TrackModule,
+    TypeOrmModule.forRoot(dataSourceOptions)
   ],
   providers: [
     {

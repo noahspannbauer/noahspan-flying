@@ -1,3 +1,8 @@
+# data "azuread_application" "app_registration" {
+#   provider = azuread.external_tenant
+#   display_name = module.environment.app_reg_name
+# }
+
 resource "azurerm_container_app" "container_app" {
   name = module.environment.app_name
   container_app_environment_id = data.azurerm_container_app_environment.container_app_environment.id
@@ -60,7 +65,7 @@ resource "azurerm_container_app" "container_app" {
 
     container {
       cpu = 0.25
-      image = "noahspan/flying-app:v2.0.0-alpha"
+      image = "noahspan/flying:19615036250"
       memory = "0.5Gi"
       name = "flying"
 
@@ -71,7 +76,7 @@ resource "azurerm_container_app" "container_app" {
 
       env {
         name = "CLIENT_ID"
-        secret_name = "client-id"
+        value = var.CLIENT_ID
       }
 
       env {
@@ -81,7 +86,7 @@ resource "azurerm_container_app" "container_app" {
 
       env {
         name = "TENANT_ID"
-        value = var.TENANT_ID
+        value = var.EXTERNAL_TENANT_ID
       }
 
       env {
@@ -142,11 +147,6 @@ resource "azurerm_container_app" "container_app" {
   secret {
     name = "azure-storage-connection-string"
     value = azurerm_storage_account.storage_account.primary_connection_string
-  }
-
-  secret {
-    name = "client-id"
-    value = var.CLIENT_ID
   }
 
   secret {

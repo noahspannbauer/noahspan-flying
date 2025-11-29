@@ -48,7 +48,6 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   };
 
   const onSubmit = async (data: unknown) => {
-    console.log(data)
     try {
       logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: true });
 

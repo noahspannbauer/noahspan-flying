@@ -37,11 +37,10 @@ export class LogController {
     @Param('id') id: string,
   ): Promise<LogEntity> {
     try {
-      console.log(id)
       return await this.logService.find(id);
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error)
+
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -50,11 +49,10 @@ export class LogController {
   @Public()
   async findAll(): Promise<LogEntity[]> {
     try {
-      console.log('blah')
       return await this.logService.findAll();
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error)
+
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -67,7 +65,7 @@ export class LogController {
       return await this.logService.create(logDto);
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error)
+
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -79,12 +77,10 @@ export class LogController {
     @Body() logDto: LogDto
   ): Promise<UpdateResult> {
     try {
-      console.log(id)
-      console.log(logDto)
       return await this.logService.update(id, logDto);
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error)
+
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -97,7 +93,6 @@ export class LogController {
     try {
       return await this.logService.delete(id);
     } catch (error) {
-      console.log(error)
       const customError = error as CustomError;
 
       throw new HttpException(customError.message, customError.statusCode);

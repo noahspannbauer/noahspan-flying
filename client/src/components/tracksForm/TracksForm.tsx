@@ -101,15 +101,10 @@ const TracksForm = () => {
   }, [logbookContext.state.selectedLogId])
 
   useEffect(() => {
-    console.log(logbookContext.state.formMode)
     if (logbookContext.state.formMode === FormMode.VIEW) {
       dispatch({ type: 'SET_IS_DISABLED', payload: true });
     }
   }, [logbookContext.state.formMode]);
-
-  useEffect(() => {
-    console.log(state.isDisabled)
-  }, [state.isDisabled])
 
   return (
     <div className='grid grid-cols-12 gap-3'>

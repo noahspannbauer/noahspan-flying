@@ -12,6 +12,7 @@ const Flights = () => {
   const { logs, logsLoading } = useLogs();
 
   useEffect(() => {
+
     const flights: LogbookEntry[] | undefined = logs?.filter((log: LogbookEntry) => {
       if (log.tracks && log.tracks.length > 0) {
         return log;
@@ -25,10 +26,6 @@ const Flights = () => {
       dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No flights found' }})
     }
   }, [logs])
-
-  useEffect(() => {
-    console.log(logsLoading)
-  }, [logsLoading])
   
   return (
     <div className='max-w-screen-lg mx-auto'>

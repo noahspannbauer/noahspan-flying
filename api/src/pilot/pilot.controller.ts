@@ -43,7 +43,7 @@ export class PilotController {
       return await this.pilotService.findAll();
     } catch (error) {
       const customError = error as CustomError;
-      console.log(error)
+
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
@@ -55,10 +55,9 @@ export class PilotController {
       
       return await this.pilotService.create(pilotDto);
     } catch (error) {
-      console.log(error)
-      // const customError = error as CustomError;
+      const customError = error as CustomError;
 
-      // throw new HttpException(customError.message, customError.statusCode);
+      throw new HttpException(customError.message, customError.statusCode);
     }
   }
 

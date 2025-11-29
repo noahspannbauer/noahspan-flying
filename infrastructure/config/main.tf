@@ -4,6 +4,16 @@ locals {
     prod = "flying-prod"
   }
 
+  app_reg_name = {
+    test = "noahspan-flying-test"
+    prod = "noahspan-flying-prod"
+  }
+
+  app_reg_federated_identity_credential_subject = {
+    test = "repo:noahspannbauer/noahspan-flying:environment:test"
+    prod = "repo:noahspannbauer/noahspan-flying:environment:prod"
+  }
+
   container_image = {
     test = "noahspan/flying-app:v2.0.0-alpha"
     prod = "noahspan/flying-app:v2.0.0-alpha"

@@ -6,7 +6,6 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
   return (
     <div>
       {logs.map((log) => {
-        console.log(log)
         const date = new Date(log.date);
         const formattedDate: string = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
 

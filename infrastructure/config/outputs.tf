@@ -2,6 +2,14 @@ output "app_name" {
   value = local.app_name[var.environment]
 }
 
+output "app_reg_name" {
+  value = local.app_reg_name[var.environment]
+}
+
+output "app_reg_federated_identity_credential_subject" {
+  value = local.app_reg_federated_identity_credential_subject[var.environment]
+}
+
 output "container_image" {
   value = local.container_image[var.environment]
 }

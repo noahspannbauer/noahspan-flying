@@ -50,7 +50,6 @@ const Pilots: React.FC<unknown> = () => {
   };
 
   const onOpenClosePilotForm = async (mode: FormMode, pilotId?: string) => {
-    console.log(pilotId)
     switch (mode) {
       case FormMode.ADD:
       case FormMode.EDIT:

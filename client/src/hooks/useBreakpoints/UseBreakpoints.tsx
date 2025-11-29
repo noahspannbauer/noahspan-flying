@@ -11,7 +11,7 @@ export const useBreakpoints = () => {
     switch (true) {
       case width < 640: {
         size = ScreenSize.SM;
-        console.log('small')
+
         break;
       }
       case width >= 640: {
@@ -42,13 +42,9 @@ export const useBreakpoints = () => {
   const onWindowResize = () => {
     const width: number = window.innerWidth;
     const newScreenSize: ScreenSize = getWindowSize(width);
-    console.log(newScreenSize)
+
     setScreenSize(newScreenSize);
   }
-
-  useEffect(() => {
-    console.log(windowWidth)
-  }, [])
 
   useEffect(() => {
     onWindowResize()
