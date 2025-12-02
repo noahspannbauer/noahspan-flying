@@ -8,7 +8,8 @@ export const useUserRole = () => {
 
   useEffect(() => {
     if (isUserLoggedIn && decodedIdToken) {
-      const idTokenRoles: string[] = decodedIdToken!.roles as string[];
+      const rolesKeyName: string | undefined = Object.keys(decodedIdToken).find((key) => key.includes('roles'));
+      const idTokenRoles: string[] = decodedIdToken[rolesKeyName!] as string[];
 
       let newUserRole: string | undefined;
 

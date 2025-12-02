@@ -2,7 +2,6 @@ import { CallHandler, ExecutionContext, NestInterceptor, UnauthorizedException }
 import { Observable, map } from 'rxjs';
 import { LogEntity } from './log.entity';
 import { jwtDecode } from 'jwt-decode';
-import { CustomJwtPayload } from 'src/interfaces/customJwtPayload.interface';
 import { IS_PUBLIC_KEY } from '@noahspan/noahspan-modules';
 import { Reflector } from '@nestjs/core';
 
@@ -38,9 +37,10 @@ export class LogInterceptor implements NestInterceptor {
         if (req.headers.authorization) {
           const authHeader = req.headers.authorization;
           const token = authHeader && authHeader.split(' ')[1];
-          const jwtPayload: CustomJwtPayload = jwtDecode(token);
+          const jwtPayload = jwtDecode(token);
+          const rolesKeyName = Object.keys(jwtPayload).find((key) => key.includes('roles'));
 
-          if (jwtPayload.roles.includes('Flying.Read')) {
+          if (jwtPayload[rolesKeyName].includes('Flying.Read')) {
             const logs = limitData(data);
 
             return logs;
