@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Card, CardBody, CardHeader } from '@heroui/react'
+import { Accordion, AccordionItem, Card, CardContent, CardHeader } from '@heroui/react'
 import { LogbookCardProps } from "./LogbookCardProps.interface";
 import TrackMap from "../trackMap/TrackMap";
 
@@ -15,7 +15,7 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
               <CardHeader>
                 <h2 className='font-bold text-2xl'>{formattedDate}</h2>
               </CardHeader>
-              <CardBody>    
+              <CardContent>    
                 {mode === 'flights' && log.tracks && log.tracks.length > 0 &&
                   <div className='mb-5'>
                     <TrackMap
@@ -25,8 +25,8 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
                     />
                   </div>
                 }
-                <Accordion variant='bordered'>
-                  <AccordionItem key='1' title='Details'>
+                <Accordion variant='surface'>
+                  <AccordionItem key='1'>
                     <div className='grid grid-cols-12 gap-3 mr-[30%] ml-[30%] mt-4 mb-4'>
                       <div className='col-span-6 font-bold'>
                         <span>Aircraft Make and Model</span>
@@ -66,7 +66,7 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
                   </AccordionItem>
                 </Accordion>
 
-              </CardBody>
+              </CardContent>
             </Card>
           </div>
         )

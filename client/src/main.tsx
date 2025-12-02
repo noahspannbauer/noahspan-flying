@@ -5,7 +5,7 @@ import AppContextProvider from './context/appContext/AppContextProvider.tsx';
 import LogbookContextProvider from './context/logbookContext/LogbookContextProvider.tsx'
 import { BrowserRouter } from 'react-router-dom';
 import { OidcProvider } from './auth/oidcConfig.ts';
-import './styles.css';
+import './globals.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <OidcProvider>

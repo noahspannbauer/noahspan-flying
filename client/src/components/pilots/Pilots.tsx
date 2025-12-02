@@ -10,7 +10,7 @@ import { UserRole } from '../../enums/userRole';
 import httpClient from '../../httpClient/httpClient'
 import { ScreenSize } from '../../enums/screenSize';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
-import { Alert, Button, Dropdown, DropdownItem, DropdownSection, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, DropdownTrigger, DropdownMenu } from '@heroui/react'
+import { Alert, Button, Dropdown, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -133,38 +133,40 @@ const Pilots: React.FC<unknown> = () => {
       case 'actions': {
         return (
           <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly variant='light' size='lg'>
+            <Dropdown.Trigger>
+              <Button isIconOnly size='lg'>
                 <FontAwesomeIcon icon={faEllipsisVertical} />
               </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownSection showDivider>
-                <DropdownItem 
-                  key='edit'
-                  onPress={() => onOpenClosePilotForm(FormMode.EDIT, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faPen} />}
-                >
-                  Edit
-                </DropdownItem>
-                <DropdownItem 
-                  key='view'
-                  onPress={() => onOpenClosePilotForm(FormMode.VIEW, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faEye} />}  
-                >
-                  View
-                </DropdownItem>
-              </DropdownSection>
-                <DropdownSection>
-                  <DropdownItem 
-                    key='Delete'
-                    onPress={() => onDeletePilot(pilot.id)}
-                    startContent={<FontAwesomeIcon icon={faTrash} />}
+            </Dropdown.Trigger>
+            <Dropdown.Popover>
+              <Dropdown.Menu>
+                <Dropdown.Section>
+                  <Dropdown.Item 
+                    key='edit'
+                    onPress={() => onOpenClosePilotForm(FormMode.EDIT, pilot.id)}
                   >
-                    Delete
-                  </DropdownItem>
-                </DropdownSection>
-            </DropdownMenu>
+                    <FontAwesomeIcon icon={faPen} />
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    key='view'
+                    onPress={() => onOpenClosePilotForm(FormMode.VIEW, pilot.id)}
+                  >
+                    <FontAwesomeIcon icon={faEye} />
+                    View
+                  </Dropdown.Item>
+                </Dropdown.Section>
+                  <Dropdown.Section>
+                    <Dropdown.Item 
+                      key='Delete'
+                      onPress={() => onDeletePilot(pilot.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                      Delete
+                    </Dropdown.Item>
+                  </Dropdown.Section>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
           </Dropdown>
         )
       }

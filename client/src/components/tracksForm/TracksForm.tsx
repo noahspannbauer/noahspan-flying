@@ -120,7 +120,7 @@ const TracksForm = () => {
           return (
             <>
               <div className='col-span-10'>
-                <Input isDisabled={state.isDisabled} key={index} type='text' value={filename}/>
+                <Input disabled={state.isDisabled} key={index} type='text' value={filename}/>
               </div>
               <div className='col-span-2'>
                 <Button isDisabled={state.isDisabled} key={index} isIconOnly onPress={() => onDeleteTrack(track.id, filename, index)}><FontAwesomeIcon icon={faTrash} /></Button>

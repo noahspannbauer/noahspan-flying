@@ -102,36 +102,35 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                 </div>
               )}
               <Tabs 
-                color='default'
-                fullWidth={true}
                 onSelectionChange={onSelectedKeyChanged}
                 selectedKey={activeTab as string}
-                variant='solid'
               >
-                <Tab
-                  key='time'
-                  title={
-                    <div className="flex items-center space-x-2">
+                <Tabs.ListContainer>
+                  <Tabs.List>
+                    <Tabs.Tab
+                      id='time'
+                    >
                       <FontAwesomeIcon icon={faClock} />
-                      <span>Time</span>
-                    </div>
-                  }
-                >
-                  <LogForm />
-                </Tab>
-                {logbookContext.state.formMode !== FormMode.ADD &&
-                  <Tab
-                    key='tracks'
-                    title={
-                      <div className="flex items-center space-x-2">
+                      Time
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                    {logbookContext.state.formMode !== FormMode.ADD &&
+                      <Tabs.Tab
+                        id='tracks'
+                      >
                         <FontAwesomeIcon icon={faMapLocationDot} />
-                        <span>Tracks</span>
-                      </div>
+                        Tracks
+                        <Tabs.Indicator />
+                      </Tabs.Tab>
                     }
-                  >
-                    <TracksForm />
-                  </Tab>
-                }
+                  </Tabs.List>
+                </Tabs.ListContainer>
+                <Tabs.Panel id='time'>
+                  <LogForm />
+                </Tabs.Panel>
+                <Tabs.Panel id='tracks'>
+                  <TracksForm />
+                </Tabs.Panel>
               </Tabs>
             </DrawerBody>
             {activeTab !== 'tracks' &&
@@ -139,24 +138,24 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                 <div className='grid grid-cols-12 gap-3'>
                   <div className='col-span-12 justify-self-end self-center'>
                     <Button
-                      disabled={
+                      isDisabled={
                         logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
                           ? logbookContext.state.isFormDisabled
                           : false
                       }
-                      startContent={<FontAwesomeIcon icon={faXmark} />}
                       onPress={onCancel}
                     >
+                      <FontAwesomeIcon icon={faXmark} />
                       {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
                     </Button>
                     {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
                       <Button
                         className='ml-[10px]'
-                        color='primary'
-                        disabled={logbookContext.state.isFormDisabled}
-                        startContent={<FontAwesomeIcon icon={faSave} />}
+                        isDisabled={logbookContext.state.isFormDisabled}
                         type="submit"
+                        variant='primary'
                       >
+                        <FontAwesomeIcon icon={faSave} />
                         Save
                       </Button>
                     )}
