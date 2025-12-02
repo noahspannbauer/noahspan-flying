@@ -32,17 +32,17 @@ import { join } from 'path';
     }),
     HealthModule,
     LogModule,
-    MsGraphModule.registerAsync({
-      inject: [ConfigService],
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          clientId: configService.get<string>('clientId'),
-          clientSecret: configService.get<string>('clientSecret'),
-          tenantId: configService.get<string>('tenantId')
-        }
-      }
-    }),
+    // MsGraphModule.registerAsync({
+    //   inject: [ConfigService],
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => {
+    //     return {
+    //       clientId: configService.get<string>('clientId'),
+    //       clientSecret: configService.get<string>('clientSecret'),
+    //       tenantId: configService.get<string>('tenantId')
+    //     }
+    //   }
+    // }),
     PilotModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist')

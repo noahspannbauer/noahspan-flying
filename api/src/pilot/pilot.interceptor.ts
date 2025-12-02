@@ -1,7 +1,6 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { jwtDecode } from 'jwt-decode';
 import { Observable, map } from 'rxjs';
-import { CustomJwtPayload } from 'src/interfaces/customJwtPayload.interface';
 import { PilotEntity } from './pilot.entity';
 import { IS_PUBLIC_KEY } from '@noahspan/noahspan-modules';
 import { Reflector } from '@nestjs/core';
@@ -30,9 +29,10 @@ export class PilotInterceptor implements NestInterceptor {
         if (req.headers.authorization) {
           const authHeader = req.headers.authorization;
           const token = authHeader && authHeader.split(' ')[1];
-          const jwtPayload: CustomJwtPayload = jwtDecode(token);
+          const jwtPayload = jwtDecode(token);
+          const rolesKeyName = Object.keys(jwtPayload).find((key) => key.includes('roles'));
 
-          if (jwtPayload.roles.includes('Flying.Read')) {
+          if (jwtPayload[rolesKeyName].includes('Flying.Read')) {
             const pilots = limitData(data)
 
             return pilots;
