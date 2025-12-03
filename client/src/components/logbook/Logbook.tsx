@@ -503,14 +503,20 @@ const Logbook: React.FC<unknown> = () => {
         </div>
         <div className='col-span-2 justify-self-end self-center'>
           {userRole === UserRole.WRITE &&
-            <Button
-              color='primary'
-              onPress={() => onOpenCloseDrawer(FormMode.ADD)}
-              startContent={<FontAwesomeIcon icon={faAdd} />}
-              data-testid="pilot-add-button"
+            // <Button
+            //   color='primary'
+            //   onPress={() => onOpenCloseDrawer(FormMode.ADD)}
+            //   startContent={<FontAwesomeIcon icon={faAdd} />}
+            //   data-testid="pilot-add-button"
+            // >
+            //   Add Entry
+            // </Button>
+            <button className='btn btn-primary'
+              onClick={() => onOpenCloseDrawer(FormMode.ADD)}
             >
+              <FontAwesomeIcon icon={faAdd} />
               Add Entry
-            </Button>
+            </button>
           }
         </div>
         {!state.isLoading && state.alert && (

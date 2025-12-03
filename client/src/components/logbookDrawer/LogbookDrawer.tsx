@@ -74,7 +74,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   }
 
   return (
-    <Drawer
+    <div className='drawer drawer-end'
       closeButton={
         <Button isIconOnly>
           <FontAwesomeIcon icon={faXmark} />
@@ -83,13 +83,13 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
       isOpen={logbookContext.state.isDrawerOpen}
       onClose={onCancel}
     >
-      <DrawerContent>
+      <div>
         <FormProvider {...methods}>
           <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
             <DrawerHeader>
               {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
             </DrawerHeader>
-            <DrawerBody>
+            <div className='drawer-side'>
               {logbookContext.state.formAlert && (
                 <div className='col-span-12'>
                   <Alert

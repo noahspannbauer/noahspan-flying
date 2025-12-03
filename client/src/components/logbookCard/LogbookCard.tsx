@@ -1,4 +1,3 @@
-import { Accordion, AccordionItem, Card, CardBody, CardHeader } from '@heroui/react'
 import { LogbookCardProps } from "./LogbookCardProps.interface";
 import TrackMap from "../trackMap/TrackMap";
 
@@ -11,11 +10,9 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
 
         return (
           <div>
-            <Card className='p-4' key={log.id}>
-              <CardHeader>
-                <h2 className='font-bold text-2xl'>{formattedDate}</h2>
-              </CardHeader>
-              <CardBody>    
+            <div className='card bg-base-100 card-border border-base-300 p-5 z-10' key={log.id}>
+              <h2 className='card-title font-bold text-2xl'>{formattedDate}</h2>
+              <div className='card-body'>    
                 {mode === 'flights' && log.tracks && log.tracks.length > 0 &&
                   <div className='mb-5'>
                     <TrackMap
@@ -25,8 +22,9 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
                     />
                   </div>
                 }
-                <Accordion variant='bordered'>
-                  <AccordionItem key='1' title='Details'>
+                <div tabIndex={0} className='collapse collapse-arrow bg-base-100 border-base-300 border z-50'>
+                  <div className='collapse-title font-semibold'>Details</div>
+                  <div className='collapse-content'>
                     <div className='grid grid-cols-12 gap-3 mr-[30%] ml-[30%] mt-4 mb-4'>
                       <div className='col-span-6 font-bold'>
                         <span>Aircraft Make and Model</span>
@@ -63,11 +61,10 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
                         </>
                       }
                     </div>
-                  </AccordionItem>
-                </Accordion>
-
-              </CardBody>
-            </Card>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )
       })}
