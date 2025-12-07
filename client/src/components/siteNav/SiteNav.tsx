@@ -7,7 +7,7 @@ import { Avatar, Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, D
 import httpClient from '../../httpClient/httpClient'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane, faSignIn, faSignOut } from '@fortawesome/free-solid-svg-icons'
-import { useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const SiteNav = () => {
   const [userPhoto, setUserPhoto] = useState<string>();
@@ -58,8 +58,8 @@ const SiteNav = () => {
       try {
         const userProfile = await getUserProfile();
         const userPhoto = await getUserPhoto();
-
-        setUserPhoto(userPhoto);
+        console.log(userPhoto)
+        // setUserPhoto(userPhoto);
 
         appContext.dispatch({
           type: 'SET_USER_PROFILE',
@@ -80,7 +80,7 @@ const SiteNav = () => {
 
   return (
     <div className="navbar bg-base-100 shadow-sm w-full">
-      <div className="navbar-start">
+      <div className="navbar-start ml-8">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
@@ -99,11 +99,17 @@ const SiteNav = () => {
             <li><a>Item 3</a></li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <img
+          height={35}
+          width={35}
+          src='noahspan-logo.png'
+          style={{ marginRight: '5px' }}
+        />
+       <FontAwesomeIcon icon={faPlane} size='2x' />
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li><a>Item 1</a></li>
+          {/* <li><a>Item 1</a></li>
           <li>
             <details>
               <summary>Parent</summary>
@@ -113,11 +119,42 @@ const SiteNav = () => {
               </ul>
             </details>
           </li>
-          <li><a>Item 3</a></li>
+          <li><a>Item 3</a></li> */}
+          {pages.length > 0 && pages.map((page, index) => {
+            return (
+              <li><NavLink to={page.path}>{page.name}</NavLink></li>
+            )
+          })}
         </ul>
       </div>
-      <div className="navbar-end">
-        <a className="btn">Button</a>
+      <div className="navbar-end mr-8">
+        {!isUserLoggedIn &&
+          <button className='btn btn-ghost' onClick={() => login()}><FontAwesomeIcon icon={faSignIn} />Sign In</button>
+        }
+        {isUserLoggedIn &&
+          <div className='dropdown dropdown-end'>
+            <div tabIndex={0} role='button'>
+              <div className={`avatar ${userPhoto ? userPhoto : 'avatar-placeholder'}`}>
+                {userPhoto &&
+                  <div className='w-12 rounded-full'>
+                    <img src={userPhoto} />
+                  </div>
+                }
+                {!userPhoto &&
+                  <div className='bg-neutral text-neutral-content w-10 rounded-full'>
+                    <span>NS</span>
+                  </div>
+                }
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300'
+            >
+              <li><a onClick={() => logout({redirectTo: 'specific url', url: '/'})}><FontAwesomeIcon icon={faSignOut} />Sign Out</a></li>
+            </ul>
+          </div>
+        }
       </div>
     </div>
     // <Navbar isBordered maxWidth='full' position='static'>

@@ -48,7 +48,8 @@ const route: ColumnDef<LogbookEntry> = {
   id: 'route',
   header: 'Route of Flight',
   meta: {
-    headerAlign: 'center'
+    headerAlign: 'center',
+    className: 'border-l border-base-400'
   },
   columns: [
     {

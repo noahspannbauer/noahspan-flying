@@ -75,99 +75,117 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
 
   return (
     <div className='drawer drawer-end'
-      closeButton={
-        <Button isIconOnly>
-          <FontAwesomeIcon icon={faXmark} />
-        </Button>
-      }
-      isOpen={logbookContext.state.isDrawerOpen}
-      onClose={onCancel}
+      // closeButton={
+      //   <Button isIconOnly>
+      //     <FontAwesomeIcon icon={faXmark} />
+      //   </Button>
+      // }
+      // isOpen={logbookContext.state.isDrawerOpen}
+      // onClose={onCancel}
     >
-      <div>
-        <FormProvider {...methods}>
-          <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
-            <DrawerHeader>
-              {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
-            </DrawerHeader>
-            <div className='drawer-side'>
-              {logbookContext.state.formAlert && (
-                <div className='col-span-12'>
-                  <Alert
-                    onClose={() =>
-                      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
-                    }
-                    color={logbookContext.state.formAlert.severity}
-                    title={logbookContext.state.formAlert.message}
-                  />
-                </div>
-              )}
-              <Tabs 
-                color='default'
-                fullWidth={true}
-                onSelectionChange={onSelectedKeyChanged}
-                selectedKey={activeTab as string}
-                variant='solid'
-              >
-                <Tab
-                  key='time'
-                  title={
-                    <div className="flex items-center space-x-2">
-                      <FontAwesomeIcon icon={faClock} />
-                      <span>Time</span>
-                    </div>
-                  }
-                >
-                  <LogForm />
-                </Tab>
-                {logbookContext.state.formMode !== FormMode.ADD &&
-                  <Tab
-                    key='tracks'
+      <input type='checkbox' className='drawer-toggle' onChange={() => {}} checked={logbookContext.state.isDrawerOpen} />
+      <div className="drawer-side">
+        <label
+          htmlFor='my-drawer-1'
+          aria-label='close-sidebar'
+          className='drawer-overlay'
+        ></label>
+        <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '50%' }}>
+          <FormProvider {...methods}>
+            <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
+              <h2>
+                {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
+              </h2>
+                {/* {logbookContext.state.formAlert && (
+                  <div className='col-span-12'>
+                    <Alert
+                      onClose={() =>
+                        logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
+                      }
+                      color={logbookContext.state.formAlert.severity}
+                      title={logbookContext.state.formAlert.message}
+                    />
+                  </div>
+                )} */}
+                <LogForm />
+                {/* <div className='tabs tabs-lift'>
+                  <label className='tab'>
+                    <input type='radio' name='my_tabs_1' />
+                    <FontAwesomeIcon icon={faClock} />
+                    Time
+                  </label>
+                  <div className="tab-content bg-base-100 border-base-300 p-6">
+                    <LogForm />
+                  </div>
+                  <label className='tab'>
+                    <input type='radio' name='my_tabs_1' />
+                    <FontAwesomeIcon icon={faMapLocationDot} />
+                    Tracks
+                  </label>
+                  <div className="tab-content bg-base-100 border-base-300 p-6">
+                    <TracksForm />
+                  </div> */}
+                  {/* <input type='radio' name='my_tabs_1' className='tab' aria-label='Tracks' /> */}
+                  {/* <input
+                    key='time'
                     title={
                       <div className="flex items-center space-x-2">
-                        <FontAwesomeIcon icon={faMapLocationDot} />
-                        <span>Tracks</span>
+                        <FontAwesomeIcon icon={faClock} />
+                        <span>Time</span>
                       </div>
                     }
                   >
-                    <TracksForm />
+                    
                   </Tab>
-                }
-              </Tabs>
-            </DrawerBody>
-            {activeTab !== 'tracks' &&
-              <DrawerFooter>
-                <div className='grid grid-cols-12 gap-3'>
-                  <div className='col-span-12 justify-self-end self-center'>
-                    <Button
-                      disabled={
-                        logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
-                          ? logbookContext.state.isFormDisabled
-                          : false
+                  {logbookContext.state.formMode !== FormMode.ADD &&
+                    <Tab
+                      key='tracks'
+                      title={
+                        <div className="flex items-center space-x-2">
+                          <FontAwesomeIcon icon={faMapLocationDot} />
+                          <span>Tracks</span>
+                        </div>
                       }
-                      startContent={<FontAwesomeIcon icon={faXmark} />}
-                      onPress={onCancel}
                     >
-                      {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
-                    </Button>
-                    {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
-                      <Button
-                        className='ml-[10px]'
-                        color='primary'
-                        disabled={logbookContext.state.isFormDisabled}
-                        startContent={<FontAwesomeIcon icon={faSave} />}
-                        type="submit"
-                      >
-                        Save
-                      </Button>
-                    )}
-                  </div>
+                      <TracksForm />
+                    </Tab>
+                  } */}
                 </div>
-              </DrawerFooter>
-            }
-          </form>
-        </FormProvider>
-      </DrawerContent>
-    </Drawer>
+                {activeTab !== 'tracks' &&
+                  <div>
+                    <div className='grid grid-cols-12 gap-3'>
+                      <div className='col-span-12 justify-self-end self-center'>
+                        <button
+                          className='btn'
+                          disabled={
+                            logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
+                              ? logbookContext.state.isFormDisabled
+                              : false
+                          }
+                          onClick={onCancel}
+                        >
+                          <FontAwesomeIcon icon={faXmark} />
+                          {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
+                        </button>
+                        {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
+                          <button
+                            className='btn btn-primary ml-[10px]'
+                            disabled={logbookContext.state.isFormDisabled}
+                            type="submit"
+                          >
+                            <FontAwesomeIcon icon={faSave} />
+                            Save
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                }
+            </form>
+          </FormProvider>
+        </div>
+        </div>
+    </div>
   )
 }
 
