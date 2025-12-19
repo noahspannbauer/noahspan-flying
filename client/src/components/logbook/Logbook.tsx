@@ -1,10 +1,8 @@
-import { Key, useEffect, useReducer } from 'react';
-import LogForm from '../logForm/LogForm';
+import { useEffect, useReducer } from 'react';
 import { initialState, reducer } from './reducer';
 import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { authColumns, unauthColumns } from './columns';
-import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 import { LogbookEntry } from './LogbookEntry.interface';
 import LogbookCard from '../logbookCard/LogbookCard';
@@ -14,12 +12,12 @@ import { useUserRole } from '../../hooks/userRole/UseUserRole';
 import { UserRole } from '../../enums/userRole';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
 import { ScreenSize } from '../../enums/screenSize';
-import { Table, TableHeader, TableBody, TableColumn, Dropdown, DropdownTrigger, Button, DropdownSection, DropdownMenu, DropdownItem, Alert, TableRow, TableCell } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faEllipsisVertical, faPen, faEye, faTrash, faMapLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, HeaderContext, useReactTable } from '@tanstack/react-table';
 import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 import LogbookDrawer from '../logbookDrawer/LogbookDrawer';
+import Alert from '../alert/Alert';
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -28,7 +26,6 @@ const Logbook: React.FC<unknown> = () => {
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints();
   const columnTotal = (info: HeaderContext<LogbookEntry, unknown>): number => {
-    const blah = info.table
     const values: number[] = info.table.getPaginationRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
     let total: number = 0;
     
@@ -124,43 +121,9 @@ const Logbook: React.FC<unknown> = () => {
           <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
             <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
             <li><a onClick={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
-            <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />View</a></li>
+            <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
           </ul>
         </div>
-        // <Dropdown>
-        //   <DropdownTrigger>
-        //     <Button isIconOnly variant='light' size='lg'>
-        //       <FontAwesomeIcon icon={faEllipsisVertical} />
-        //     </Button>
-        //   </DropdownTrigger>
-        //   <DropdownMenu>
-        //     <DropdownSection showDivider>
-        //       <DropdownItem 
-        //         key='edit'
-        //         onPress={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}
-        //         startContent={<FontAwesomeIcon icon={faPen} />}
-        //       >
-        //         Edit
-        //       </DropdownItem>
-        //       <DropdownItem 
-        //         key='view'
-        //         onPress={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}
-        //         startContent={<FontAwesomeIcon icon={faEye} />}  
-        //       >
-        //         View
-        //       </DropdownItem>
-        //     </DropdownSection>
-        //       <DropdownSection>
-        //         <DropdownItem 
-        //           key='Delete'
-        //           onPress={() => onDeleteLog(info.row.original.id)}
-        //           startContent={<FontAwesomeIcon icon={faTrash} />}
-        //         >
-        //           Delete
-        //         </DropdownItem>
-        //       </DropdownSection>
-        //   </DropdownMenu>
-        // </Dropdown>
       )
     }
   }
@@ -395,14 +358,14 @@ const Logbook: React.FC<unknown> = () => {
           dispatch({ type: 'SET_ALERT', payload: undefined})
         }
       } else {
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No logbook entries found.'}})
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No logbook entries found.'}})
       }
     } catch (error) {
       const axiosError = error as AxiosError;
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false });
@@ -460,7 +423,7 @@ const Logbook: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -545,12 +508,14 @@ const Logbook: React.FC<unknown> = () => {
         {!state.isLoading && state.alert && (
           <div className='col-span-12 mb-5'>
             <Alert
+              className='mb-5'
               onClose={() =>
                 dispatch({ type: 'SET_ALERT', payload: undefined })
               }
-              color={'default'}
-              title={state.alert.message}
-            />
+              severity={'info'}
+            >
+              {state.alert.message}
+            </Alert>
           </div>
         )}
         {!state.isLoading && (
@@ -674,14 +639,6 @@ const Logbook: React.FC<unknown> = () => {
           title="Confirm Delete"
         />
       )}
-      {/* {state.isTracksOpen && 
-        <LogTracks
-          isDrawerOpen={state.isTracksOpen}
-          mode={state.tracksMode}
-          onOpenClose={(mode) => onOpenCloseTracks(mode)}
-          selectedLogId={logbookContext.state.selectedLogId}
-        />
-      } */}
     </>
   );
 };

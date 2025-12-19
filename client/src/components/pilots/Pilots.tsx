@@ -10,11 +10,11 @@ import { UserRole } from '../../enums/userRole';
 import httpClient from '../../httpClient/httpClient'
 import { ScreenSize } from '../../enums/screenSize';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
-import { Alert, Button, Dropdown, DropdownItem, DropdownSection, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, DropdownTrigger, DropdownMenu } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, HeaderContext, useReactTable } from '@tanstack/react-table';
+import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Pilot } from './Pilot.interface';
+import Alert from '../alert/Alert';
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -38,7 +38,7 @@ const Pilots: React.FC<unknown> = () => {
           dispatch({ type: 'SET_ALERT', payload: undefined })
         }
       } else {
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No pilots found.' }})
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No pilots found.' }})
         dispatch({ type: 'SET_PILOTS', payload: [] });
       }
     } catch (error) {
@@ -46,7 +46,7 @@ const Pilots: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
       })
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false })
@@ -105,7 +105,7 @@ const Pilots: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -131,57 +131,21 @@ const Pilots: React.FC<unknown> = () => {
       meta: {
         align: 'text-center',
         headerAlign: 'text-center'
+      },
+      cell: (info: CellContext<Pilot, unknown>) => {
+        return (
+          <div className='dropdown dropdown-end'>
+            <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+            <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
+              <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+              <li><a onClick={() => onOpenClosePilotForm(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
+              <li><a onClick={() => onDeletePilot(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+            </ul>
+          </div>
+        )
       }
     }
   ]
-
-  const renderCell = (pilot: any, columnKey: any) => {
-    const cellValue = pilot[columnKey]
-
-    switch (columnKey) {
-      case 'actions': {
-        return (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly variant='light' size='lg'>
-                <FontAwesomeIcon icon={faEllipsisVertical} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownSection showDivider>
-                <DropdownItem 
-                  key='edit'
-                  onPress={() => onOpenClosePilotForm(FormMode.EDIT, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faPen} />}
-                >
-                  Edit
-                </DropdownItem>
-                <DropdownItem 
-                  key='view'
-                  onPress={() => onOpenClosePilotForm(FormMode.VIEW, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faEye} />}  
-                >
-                  View
-                </DropdownItem>
-              </DropdownSection>
-                <DropdownSection>
-                  <DropdownItem 
-                    key='Delete'
-                    onPress={() => onDeletePilot(pilot.id)}
-                    startContent={<FontAwesomeIcon icon={faTrash} />}
-                  >
-                    Delete
-                  </DropdownItem>
-                </DropdownSection>
-            </DropdownMenu>
-          </Dropdown>
-        )
-      }
-      default: {
-        return cellValue
-      }
-    }
-  }
 
   const textAlignment = {
     center: 'text-center',
@@ -223,12 +187,14 @@ const Pilots: React.FC<unknown> = () => {
       {!state.isLoading && state.alert && (
         <div className='col-span-12'>
           <Alert
+            className='mb-5'
             onClose={() =>
-              dispatch({ type: 'SET_ALERT', payload: undefined })
+              dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
             }
-            color={state.alert.severity}
-            title={state.alert.message}
-          />
+            severity={state.alert.severity}
+          >
+            {state.alert.message}
+          </Alert>
         </div>
       )}
       <div className='col-span-12 bg-base-100 p-5 border border-base-100 rounded-lg'>

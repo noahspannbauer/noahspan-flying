@@ -7,7 +7,6 @@ import ConfirmationDialog from "../confirmationDialog/ConfirmationDialog";
 import { initialState, reducer } from "./reducer";
 import TrackMap from "../trackMap/TrackMap";
 import httpClient from "../../httpClient/httpClient";
-import { Button, Input, Spinner } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
@@ -28,7 +27,7 @@ const TracksForm = () => {
     } catch (error) {
       const axiosError = error as AxiosError;
 
-      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'danger', message: axiosError.message }})
+      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'error', message: axiosError.message }})
     }
   }
 
@@ -120,25 +119,22 @@ const TracksForm = () => {
           return (
             <>
               <div className='col-span-10'>
-                <Input isDisabled={state.isDisabled} key={index} type='text' value={filename}/>
+                <input className='input w-full' disabled={state.isDisabled} key={index} readOnly type='text' value={filename} />
               </div>
               <div className='col-span-2'>
-                <Button isDisabled={state.isDisabled} key={index} isIconOnly onPress={() => onDeleteTrack(track.id, filename, index)}><FontAwesomeIcon icon={faTrash} /></Button>
+                <button className='btn w-full' disabled={state.isDisabled} key={index} onClick={() => onDeleteTrack(track.id, filename, index)}><FontAwesomeIcon icon={faTrash} /></button>
               </div>
             </>
           )
         })}
         <div className='col-span-12'>
-          <Button
-            as='label'
-            color='primary'
-            isDisabled={state.isDisabled}
-            fullWidth={true}
-            startContent={<FontAwesomeIcon icon={faUpload} />}
+          <label
+            className='btn cursor-pointer w-full'
           >
+            <FontAwesomeIcon icon={faUpload} />
             Upload Track
-            <input hidden onChange={handleFileUpload} type='file' />
-          </Button>
+            <input className='hidden' id='track-upload' onChange={handleFileUpload} type='file' />
+          </label>
         </div>
         {state.isConfirmDialogOpen && (
           <ConfirmationDialog

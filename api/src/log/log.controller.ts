@@ -65,7 +65,7 @@ export class LogController {
       return await this.logService.create(logDto);
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(error)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }

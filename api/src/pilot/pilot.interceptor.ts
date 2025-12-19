@@ -29,7 +29,9 @@ export class PilotInterceptor implements NestInterceptor {
         if (req.headers.authorization) {
           const authHeader = req.headers.authorization;
           const token = authHeader && authHeader.split(' ')[1];
+
           const jwtPayload = jwtDecode(token);
+          console.log(jwtPayload)
           const rolesKeyName = Object.keys(jwtPayload).find((key) => key.includes('roles'));
 
           if (jwtPayload[rolesKeyName].includes('Flying.Read')) {

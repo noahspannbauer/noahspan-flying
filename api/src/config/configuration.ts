@@ -1,6 +1,7 @@
 export default () => ({
   azureStorageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
   audience: process.env.AUDIENCE,
+  authority: process.env.AUTHORITY,
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   issuer: process.env.ISSUER_URL,

@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react';
-import { Alert, Button, DatePicker, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Input, NumberInput, Select, Selection, SelectItem, SharedSelection, Textarea } from '@heroui/react'
 import { useForm, Controller, FormProvider, useFormContext } from 'react-hook-form';
 import { LogFormProps } from './LogFormProps.interface';
 import { initialState, reducer } from './reducer';
@@ -10,7 +9,6 @@ import { useOidc } from '../../auth/oidcConfig';
 import httpClient from '../../httpClient/httpClient';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { parseAbsolute, parseDate, getLocalTimeZone, CalendarDate, ZonedDateTime } from '@internationalized/date';
 import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 
 const LogForm = () => {
@@ -40,7 +38,7 @@ const LogForm = () => {
       } catch (error) {
         const axiosError = error as AxiosError;
 
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'danger', message: axiosError.message }});
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'error', message: axiosError.message }});
       } finally {
         dispatch({ type: 'SET_IS_LOADING', payload: false });
       }
@@ -59,7 +57,7 @@ const LogForm = () => {
           label: pilot.name,
         };
       });
-      console.log(newPilotsOptions)
+
       dispatch({ type: 'SET_PILOT_OPTIONS', payload: newPilotsOptions });
     }
   }, [pilots]);
@@ -75,23 +73,21 @@ const LogForm = () => {
           control={control}
           render={({ field: { value } }) => {
             return (
-              <Select
+              <select
+                className='select w-full'
                 aria-labelledby='pilot'
-                isDisabled={state.isDisabled}
-                fullWidth={true}
-                isRequired={true}
-                onSelectionChange={(keys: SharedSelection) => {
-                  setValue('pilotId', keys.currentKey);
-                }}
-                selectedKeys={[value]}
-                size='lg'
+                disabled={state.isDisabled}
+                // onChange={(keys: SharedSelection) => {
+                //   setValue('pilotId', keys.currentKey);
+                // }}=
+                value={[value]}
               >
                 {state.pilotOptions?.map((pilotOption: { key: string; label: string, }) => {
                 return (
-                  <SelectItem key={pilotOption.key}>{pilotOption.label}</SelectItem>
+                  <option key={pilotOption.key}>{pilotOption.label}</option>
                 ) 
                 })}
-              </Select>
+              </select>
             );
           }}
         />
@@ -104,21 +100,26 @@ const LogForm = () => {
           name="date"
           control={control}
           render={({ field: { onChange, value } }) => {
-            const parsedAbsoluteDate = value ? parseAbsolute(value, getLocalTimeZone()) : value
-
             return(
-            <DatePicker
-              aria-labelledby='date'
-              isDisabled={state.isDisabled}
-              isRequired={true}
-              onChange={(selectedDate) => {
-                let date = selectedDate as CalendarDate;
+              <input
+                type='date'
+                className='input w-full'
+                disabled={state.isDisabled}
+                onChange={onChange}
+                value={value}
+              />
+              // <DatePicker
+              //   aria-labelledby='date'
+              //   isDisabled={state.isDisabled}
+              //   isRequired={true}
+              //   onChange={(selectedDate) => {
+              //     let date = selectedDate as CalendarDate;
 
-                setValue('date', date.toDate(getLocalTimeZone()).toISOString())
-              }}
-              size='lg'
-              value={parsedAbsoluteDate ? new CalendarDate(parsedAbsoluteDate.year, parsedAbsoluteDate.month, parsedAbsoluteDate.day) : value}
-            />
+              //     setValue('date', date.toDate(getLocalTimeZone()).toISOString())
+              //   }}
+              //   size='lg'
+              //   value={parsedAbsoluteDate ? new CalendarDate(parsedAbsoluteDate.year, parsedAbsoluteDate.month, parsedAbsoluteDate.day) : value}
+              // />
             )
           }}
         />
@@ -131,18 +132,11 @@ const LogForm = () => {
           name="aircraftMakeModel"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
-              aria-labelledby='aircraftMakeModel'
-              isDisabled={state.isDisabled}
-              color={formState.errors.address ? 'danger' : undefined}
-              errorMessage={
-                formState.errors.address
-                  ? formState.errors.address.message?.toString()
-                  : undefined
-              }
-              isRequired={true}
+            <input
+              type='text'
+              className='input w-full'
+              disabled={state.isDisabled}
               onChange={onChange}
-              size='lg'
               value={value}
             />
           )}
@@ -158,18 +152,11 @@ const LogForm = () => {
               name="aircraftIdentity"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <Input
-                  aria-labelledby='aircraftIdentity'
-                  isDisabled={state.isDisabled}
-                  color={formState.errors.address ? 'danger' : undefined}
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isRequired={true}
+                <input
+                  type='text'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  size='lg'
                   value={value}
                 />
               )}
@@ -185,18 +172,11 @@ const LogForm = () => {
           name="routeFrom"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
-              aria-labelledby='routeFrom'
-              isDisabled={state.isDisabled}
-              color={formState.errors.address ? 'danger' : undefined}
-              errorMessage={
-                formState.errors.address
-                  ? formState.errors.address.message?.toString()
-                  : undefined
-              }
-              isRequired={true}
+            <input
+              type='text'
+              className='input w-full'
+              disabled={state.isDisabled}
               onChange={onChange}
-              size='lg'
               value={value}
             />
           )}
@@ -210,18 +190,11 @@ const LogForm = () => {
           name="routeTo"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
-              aria-labelledby='routeTo'
-              isDisabled={state.isDisabled}
-              color={formState.errors.address ? 'danger' : undefined}
-              errorMessage={
-                formState.errors.address
-                  ? formState.errors.address.message?.toString()
-                  : undefined
-              }
-              isRequired={true}
+            <input
+              type='text'
+              className='input w-full'
+              disabled={state.isDisabled}
               onChange={onChange}
-              size='lg'
               value={value}
             />
           )}
@@ -235,21 +208,11 @@ const LogForm = () => {
           name="durationOfFlight"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <NumberInput
-              aria-labelledby='durationOfFlight'
-              isDisabled={state.isDisabled}
-              color={formState.errors.address ? 'danger' : undefined}
-              errorMessage={
-                formState.errors.address
-                  ? formState.errors.address.message?.toString()
-                  : undefined
-              }
-              isRequired={true}
-              isWheelDisabled={state.isDisabled}
+            <input
+              type='number'
+              className='input w-full'
+              disabled={state.isDisabled}
               onChange={onChange}
-              radius='lg'
-              size='sm'
-              type="number"
               value={value}
             />
           )}
@@ -265,21 +228,11 @@ const LogForm = () => {
               name="singleEngineLand"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='singleEngineLand'
-                  isDisabled={state.isDisabled}
-                  color={formState.errors.address ? 'danger' : undefined}
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isRequired={true}
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -293,20 +246,11 @@ const LogForm = () => {
               name="simulatorAtd"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='simulaterAtd'
-                  isDisabled={state.isDisabled}
-                  color={formState.errors.address ? 'danger' : undefined}
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -323,22 +267,11 @@ const LogForm = () => {
               name="landingsDay"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='landingsDay'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -352,22 +285,11 @@ const LogForm = () => {
               name="landingsNight"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='landingsNight'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -386,24 +308,12 @@ const LogForm = () => {
               name="groundTrainingReceived"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='groundTrainingReceived'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
-                  width='w-full'
                 />
               )}
             />
@@ -418,22 +328,11 @@ const LogForm = () => {
               name="flightTrainingReceived"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='flightTrainingReceived'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -447,22 +346,11 @@ const LogForm = () => {
               name="crossCountry"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='crossCountry'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -476,22 +364,11 @@ const LogForm = () => {
               name="night"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='night'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -505,22 +382,11 @@ const LogForm = () => {
               name="solo"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='solo'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -534,22 +400,11 @@ const LogForm = () => {
               name="pilotInCommand"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='pilotInCommand'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -566,22 +421,11 @@ const LogForm = () => {
               name="instrumentActual"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='instrumentActual'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -595,22 +439,11 @@ const LogForm = () => {
               name="instrumentSimulated"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='instrumentSimulated'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -626,22 +459,11 @@ const LogForm = () => {
               name="instrumentApproaches"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='instrumentApproaches'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -655,22 +477,11 @@ const LogForm = () => {
               name="instrumentHolds"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='instrumentHolds'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -684,23 +495,11 @@ const LogForm = () => {
               name="instrumentNavTrack"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <NumberInput
-                  aria-labelledby='instrumentNavTrack'
-                  isDisabled={state.isDisabled}
-                  color={
-                    formState.errors.address ? 'danger' : undefined
-                  }
-                  errorMessage={
-                    formState.errors.address
-                      ? formState.errors.address.message?.toString()
-                      : undefined
-                  }
-                  fullWidth={true}
-                  isWheelDisabled={state.isDisabled}
+                <input
+                  type='number'
+                  className='input w-full'
+                  disabled={state.isDisabled}
                   onChange={onChange}
-                  radius='lg'
-                  size='sm'
-                  type="number"
                   value={value}
                 />
               )}
@@ -716,19 +515,11 @@ const LogForm = () => {
           name="notes"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Textarea
-              aria-labelledby='notes'
-              isDisabled={state.isDisabled}
-              color={formState.errors.address ? 'danger' : undefined}
-              errorMessage={
-                formState.errors.address
-                  ? formState.errors.address.message?.toString()
-                  : undefined
-              }
-              fullWidth={true}
+            <textarea
+              className='textarea w-full'
+              disabled={state.isDisabled}
               onChange={onChange}
-              value={value}
-            />
+            ></textarea>
           )}
         />
       </div>

@@ -3,7 +3,6 @@ import { useAppContext } from '../../hooks/appContext/UseAppContext';
 import { AxiosResponse } from 'axios';
 import { User } from '@microsoft/microsoft-graph-types';
 import { useOidc } from '../../auth/oidcConfig';
-import { Avatar, Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, DropdownTrigger, DropdownMenu, DropdownItem, Dropdown } from '@heroui/react';
 import httpClient from '../../httpClient/httpClient'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlane, faSignIn, faSignOut } from '@fortawesome/free-solid-svg-icons'
@@ -13,7 +12,6 @@ const SiteNav = () => {
   const [userPhoto, setUserPhoto] = useState<string>();
   const appContext = useAppContext();
   const { isUserLoggedIn, logout, login } = useOidc()
-  const { pathname } = useLocation()
   const pages = [
     {
       name: 'Flights',
@@ -57,8 +55,8 @@ const SiteNav = () => {
     const setUserProfile = async () => {
       try {
         const userProfile = await getUserProfile();
-        const userPhoto = await getUserPhoto();
-        console.log(userPhoto)
+        // const userPhoto = await getUserPhoto();
+
         // setUserPhoto(userPhoto);
 
         appContext.dispatch({
@@ -81,7 +79,7 @@ const SiteNav = () => {
   return (
     <div className="navbar bg-base-100 shadow-sm w-full">
       <div className="navbar-start ml-8">
-        <div className="dropdown">
+        {/* <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
           </div>
@@ -98,7 +96,7 @@ const SiteNav = () => {
             </li>
             <li><a>Item 3</a></li>
           </ul>
-        </div>
+        </div> */}
         <img
           height={35}
           width={35}
@@ -107,7 +105,7 @@ const SiteNav = () => {
         />
        <FontAwesomeIcon icon={faPlane} size='2x' />
       </div>
-      <div className="navbar-center hidden lg:flex">
+      <div className="navbar-center lg:flex">
         <ul className="menu menu-horizontal px-1">
           {/* <li><a>Item 1</a></li>
           <li>

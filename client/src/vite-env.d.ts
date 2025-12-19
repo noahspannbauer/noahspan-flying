@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_CLIENT_ID: string;
   readonly VITE_ISSUER_URI: string;
   readonly VITE_TENANT_ID: string;
+  readonly VITE_USERINFO_ENDPOINT: string;
 }
 
 interface ImportMeta {
