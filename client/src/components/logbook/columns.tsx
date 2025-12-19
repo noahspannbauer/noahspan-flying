@@ -48,7 +48,7 @@ const route: ColumnDef<LogbookEntry> = {
   id: 'route',
   header: 'Route of Flight',
   meta: {
-    headerAlign: 'center',
+    headerAlign: 'text-center',
     className: 'border-l border-base-400'
   },
   columns: [
@@ -69,8 +69,8 @@ const durationOfFlight: ColumnDef<LogbookEntry> = {
   accessorKey: 'durationOfFlight',
   header: 'Duration Of Flight',
   meta: {
-    align: 'right',
-    headerAlign: 'right'
+    align: 'text-right',
+    headerAlign: 'text-right'
   },
   cell: (info: CellContext<LogbookEntry, unknown>) =>
     info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -107,8 +107,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
     accessorKey: 'singleEngineLand',
     header: 'Single Engine Land',
     meta: {
-      align: 'right',
-      headerAlign: 'right'
+      align: 'text-right',
+      headerAlign: 'text-right'
     },
     cell: (info: CellContext<LogbookEntry, unknown>) =>
       info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -118,7 +118,7 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
     id: 'landings',
     header: 'Landings',
     meta: {
-      headerAlign: 'center'
+      headerAlign: 'text-center'
     },
     columns: [
       {
@@ -127,8 +127,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Day',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         }
       },
       {
@@ -137,8 +137,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Night',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         }
       }
     ]
@@ -147,7 +147,7 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
     id: 'instrument',
     header: 'Instrument',
     meta: {
-      headerAlign: 'center'
+      headerAlign: 'text-center'
     },
     columns: [
       {
@@ -156,8 +156,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Actual',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -168,8 +168,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Simulated',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -180,8 +180,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Approaches',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         }
       },
       {
@@ -190,8 +190,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Holds',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         }
       },
       {
@@ -200,8 +200,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Nav/Track',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         }
       }
     ]
@@ -210,7 +210,7 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
     id: 'experienceTraining',
     header: 'Type of pilot experience or training',
     meta: {
-      headerAlign: 'center'
+      headerAlign: 'text-center'
     },
     columns: [
       {
@@ -219,8 +219,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Ground Training Received',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -231,8 +231,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Flight Training Received',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -243,8 +243,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Cross Country',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -255,8 +255,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Night',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -267,8 +267,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Solo',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -279,8 +279,8 @@ export const authColumns: ColumnDef<LogbookEntry>[] = [
         header: 'Pilot In Command',
         footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
         meta: {
-          align: 'right',
-          headerAlign: 'right'
+          align: 'text-right',
+          headerAlign: 'text-right'
         },
         cell: (info: CellContext<LogbookEntry, unknown>) =>
           info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''

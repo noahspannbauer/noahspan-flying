@@ -1,6 +1,5 @@
 import { Alert } from '../../interfaces/Alert.interface';
 import { LogFormState } from './LogFormState.interface';
-import { Selection } from '@heroui/react';
 
 type Action =
   | { type: 'SET_ALERT'; payload: Alert | undefined }
