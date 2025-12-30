@@ -9,10 +9,8 @@ WORKDIR api
 RUN npm ci
 
 WORKDIR /
-COPY ./api/entrypoint.sh ./app/entrypoint.sh
-RUN chmod +x ./app/entrypoint.sh
 
 EXPOSE 3000
 
-# CMD ["./app/entrypoint.sh"]
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+CMD ["node", "./app/api/dist/main.js"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
