@@ -119,9 +119,13 @@ const Logbook: React.FC<unknown> = () => {
         <div className='dropdown dropdown-end'>
           <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
           <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
-            <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+            {isUserLoggedIn && userRole === UserRole.WRITE &&
+              <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+            }
             <li><a onClick={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
-            <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+            {isUserLoggedIn && userRole === UserRole.WRITE &&
+              <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+            }
           </ul>
         </div>
       )

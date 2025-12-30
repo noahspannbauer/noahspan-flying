@@ -15,11 +15,13 @@ import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/
 import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import { Pilot } from './Pilot.interface';
 import Alert from '../alert/Alert';
+import { useOidc } from '../../auth/oidcConfig';
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { userRole } = useUserRole();
-  const { screenSize } = useBreakpoints()
+  const { screenSize } = useBreakpoints();
+  const { isUserLoggedIn } = useOidc();
 
   const getPilots = async () => {
     try {
@@ -137,9 +139,13 @@ const Pilots: React.FC<unknown> = () => {
           <div className='dropdown dropdown-end'>
             <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
             <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
-              <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+              {isUserLoggedIn && userRole === UserRole.WRITE &&
+                <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+              }
               <li><a onClick={() => onOpenClosePilotForm(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
-              <li><a onClick={() => onDeletePilot(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+              {isUserLoggedIn && userRole === UserRole.WRITE &&
+                <li><a onClick={() => onDeletePilot(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+              }
             </ul>
           </div>
         )

@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer } from 'react';
-import { useForm, Controller, FormProvider, useFormContext } from 'react-hook-form';
+import { useEffect, useReducer } from 'react';
+import { useForm, Controller, useFormContext } from 'react-hook-form';
 import { LogFormProps } from './LogFormProps.interface';
 import { initialState, reducer } from './reducer';
 import { AxiosError, AxiosResponse } from 'axios';
@@ -71,15 +71,13 @@ const LogForm = () => {
         <Controller
           name="pilotId"
           control={control}
-          render={({ field: { value } }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <select
                 className='select w-full'
                 aria-labelledby='pilot'
                 disabled={state.isDisabled}
-                // onChange={(keys: SharedSelection) => {
-                //   setValue('pilotId', keys.currentKey);
-                // }}=
+                onChange={onChange}
                 value={[value]}
               >
                 {state.pilotOptions?.map((pilotOption: { key: string; label: string, }) => {
@@ -106,20 +104,8 @@ const LogForm = () => {
                 className='input w-full'
                 disabled={state.isDisabled}
                 onChange={onChange}
-                value={value}
+                value={value ? value.split('T')[0] : ''}
               />
-              // <DatePicker
-              //   aria-labelledby='date'
-              //   isDisabled={state.isDisabled}
-              //   isRequired={true}
-              //   onChange={(selectedDate) => {
-              //     let date = selectedDate as CalendarDate;
-
-              //     setValue('date', date.toDate(getLocalTimeZone()).toISOString())
-              //   }}
-              //   size='lg'
-              //   value={parsedAbsoluteDate ? new CalendarDate(parsedAbsoluteDate.year, parsedAbsoluteDate.month, parsedAbsoluteDate.day) : value}
-              // />
             )
           }}
         />

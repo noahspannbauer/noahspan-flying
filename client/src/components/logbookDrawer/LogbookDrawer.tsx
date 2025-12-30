@@ -9,7 +9,7 @@ import { FormMode } from "../../enums/formMode";
 import httpClient from "../../httpClient/httpClient";
 import { AxiosError } from "axios";
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
-import { Key, useState } from "react";
+import { useState } from "react";
 
 const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   const [activeTab, setActiveTab] = useState<string>('time');

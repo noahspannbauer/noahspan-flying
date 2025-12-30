@@ -37,7 +37,7 @@ const TrackMap = ({ height, logId, tracks }: TrackMapProps) => {
       center={[45.14489, -93.21019]} 
       scrollWheelZoom={false}
       style={{ height: height, width: '100%' }}
-      zoom={8}
+      zoom={7}
     >
       <Suspense>
         <TileLayer

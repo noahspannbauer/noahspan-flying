@@ -107,11 +107,6 @@ const TracksForm = () => {
 
   return (
     <div className='grid grid-cols-12 gap-3'>
-      {state.tracks.length > 0 && 
-        <div className="col-span-12">
-          <TrackMap height='400px' logId={logbookContext.state.selectedLogId!} tracks={state.tracks} />
-        </div>
-      }
       <>
         {state.tracks.length > 0 && state.tracks.map((track, index) => {
           const filename: string = track.url.substring(track.url.lastIndexOf('/') + 1);
@@ -127,15 +122,17 @@ const TracksForm = () => {
             </>
           )
         })}
-        <div className='col-span-12'>
-          <label
-            className='btn cursor-pointer w-full'
-          >
-            <FontAwesomeIcon icon={faUpload} />
-            Upload Track
-            <input className='hidden' id='track-upload' onChange={handleFileUpload} type='file' />
-          </label>
-        </div>
+        {logbookContext.state.formMode === FormMode.ADD &&
+          <div className='col-span-12'>
+            <label
+              className='btn cursor-pointer w-full'
+            >
+              <FontAwesomeIcon icon={faUpload} />
+              Upload Track
+              <input className='hidden' id='track-upload' onChange={handleFileUpload} type='file' />
+            </label>
+          </div>
+        }
         {state.isConfirmDialogOpen && (
           <ConfirmationDialog
             contentText="Are you sure you want to delete this track?"
