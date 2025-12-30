@@ -1,4 +1,4 @@
 dbs:
-  - path: /var/lib/data/flying.db
+  - path: /mnt/data/flying.db
     replicas:
-      - path: /mnt/backup/flying.db
+      - path: /mnt/data/backup/flying.db

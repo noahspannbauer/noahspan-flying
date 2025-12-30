@@ -1,3 +1,4 @@
 #!/bin/bash
-npx typeorm migration:run -d ./app/api/dist/database/data-source.js
-node ./app/api/dist/main.js
+cd ./app
+npx typeorm migration:run -d ./api/dist/database/data-source.js
+node ./api/dist/main.js

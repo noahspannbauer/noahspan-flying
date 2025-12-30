@@ -36,6 +36,11 @@ variable "EXTERNAL_TENANT_ID" {
   type = string
 }
 
+variable "SESSION_SECRET" {
+  sensitive = true
+  type = string
+}
+
 variable "TENANT_ID" {
   type = string
 }
