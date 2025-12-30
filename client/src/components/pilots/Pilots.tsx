@@ -10,14 +10,18 @@ import { UserRole } from '../../enums/userRole';
 import httpClient from '../../httpClient/httpClient'
 import { ScreenSize } from '../../enums/screenSize';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
-import { Alert, Button, Dropdown, DropdownItem, DropdownSection, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, DropdownTrigger, DropdownMenu } from '@heroui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical, faPen, faEye, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import { Pilot } from './Pilot.interface';
+import Alert from '../alert/Alert';
+import { useOidc } from '../../auth/oidcConfig';
 
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { userRole } = useUserRole();
-  const { screenSize } = useBreakpoints()
+  const { screenSize } = useBreakpoints();
+  const { isUserLoggedIn } = useOidc();
 
   const getPilots = async () => {
     try {
@@ -27,6 +31,8 @@ const Pilots: React.FC<unknown> = () => {
         `api/pilots`
       );
 
+      console.log(response)
+
       if (response.data.length > 0) {
         dispatch({ type: 'SET_PILOTS', payload: response.data });
 
@@ -34,7 +40,7 @@ const Pilots: React.FC<unknown> = () => {
           dispatch({ type: 'SET_ALERT', payload: undefined })
         }
       } else {
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No pilots found.' }})
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No pilots found.' }})
         dispatch({ type: 'SET_PILOTS', payload: [] });
       }
     } catch (error) {
@@ -42,7 +48,7 @@ const Pilots: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of pilots failed with the following message: ${axiosError.message}`}
       })
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false })
@@ -101,7 +107,7 @@ const Pilots: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -115,64 +121,50 @@ const Pilots: React.FC<unknown> = () => {
     });
   };
 
-  const columns = [
+  const columns: ColumnDef<Pilot>[]= [
     {
       id: 'name',
-      name: 'Name'
+      accessorKey: 'name',
+      header: 'Name'
     },
     {
       id: 'actions',
-      name: 'Actions'
+      header: 'Actions',
+      meta: {
+        align: 'text-center',
+        headerAlign: 'text-center'
+      },
+      cell: (info: CellContext<Pilot, unknown>) => {
+        return (
+          <div className='dropdown dropdown-end'>
+            <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+            <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
+              {isUserLoggedIn && userRole === UserRole.WRITE &&
+                <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+              }
+              <li><a onClick={() => onOpenClosePilotForm(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
+              {isUserLoggedIn && userRole === UserRole.WRITE &&
+                <li><a onClick={() => onDeletePilot(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+              }
+            </ul>
+          </div>
+        )
+      }
     }
   ]
 
-  const renderCell = (pilot: any, columnKey: any) => {
-    const cellValue = pilot[columnKey]
+  const textAlignment = {
+    center: 'text-center',
+    left: 'text-start',
+    right: 'text-end'
+  };
 
-    switch (columnKey) {
-      case 'actions': {
-        return (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly variant='light' size='lg'>
-                <FontAwesomeIcon icon={faEllipsisVertical} />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownSection showDivider>
-                <DropdownItem 
-                  key='edit'
-                  onPress={() => onOpenClosePilotForm(FormMode.EDIT, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faPen} />}
-                >
-                  Edit
-                </DropdownItem>
-                <DropdownItem 
-                  key='view'
-                  onPress={() => onOpenClosePilotForm(FormMode.VIEW, pilot.id)}
-                  startContent={<FontAwesomeIcon icon={faEye} />}  
-                >
-                  View
-                </DropdownItem>
-              </DropdownSection>
-                <DropdownSection>
-                  <DropdownItem 
-                    key='Delete'
-                    onPress={() => onDeletePilot(pilot.id)}
-                    startContent={<FontAwesomeIcon icon={faTrash} />}
-                  >
-                    Delete
-                  </DropdownItem>
-                </DropdownSection>
-            </DropdownMenu>
-          </Dropdown>
-        )
-      }
-      default: {
-        return cellValue
-      }
-    }
-  }
+  const table = useReactTable({
+    data: state.pilots,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
+  });
 
   useEffect(() => {
     if (!state.isFormOpen) {
@@ -188,52 +180,85 @@ const Pilots: React.FC<unknown> = () => {
       </div>
       <div className='col-span-2 justify-self-end self-center'>
         {userRole === UserRole.WRITE &&
-          <Button
-            color='primary'
-            onPress={() => onOpenClosePilotForm(FormMode.ADD)}
-            startContent={<FontAwesomeIcon icon={faPlus} />}
+          <button
+            className='btn btn-primary'
+            onClick={() => onOpenClosePilotForm(FormMode.ADD)}
             data-testid="pilot-add-button"
           >
+            <FontAwesomeIcon icon={faPlus} />
             Add Pilot
-          </Button>
+          </button>
         }
       </div>
       {!state.isLoading && state.alert && (
         <div className='col-span-12'>
           <Alert
+            className='mb-5'
             onClose={() =>
               dispatch({ type: 'SET_ALERT', payload: undefined })
             }
-            color={state.alert.severity}
-            title={state.alert.message}
-          />
+            severity={state.alert.severity}
+          >
+            {state.alert.message}
+          </Alert>
         </div>
       )}
-      <div className='col-span-12'>
+      <div className='col-span-12 bg-base-100 p-5 border border-base-100 rounded-lg'>
         {state.pilots.length > 0 && screenSize !== ScreenSize.SM &&
-          <Table>
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn
-                  key={column.id}
-                  align={column.id === "actions" ? "center" : "start"}
-                >
-                  {column.name}
-                </TableColumn>
-              )}
-            </TableHeader>
-            <TableBody items={state.pilots}>
-              {(item) => (
-                <TableRow key={item.id}>
-                  {(columnKey => (
-                    <TableCell>
-                      {renderCell(item, columnKey)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <table className='table min-w-full h-auto table-auto w-full'>
+            <thead className='[&>tr]:first:rounded-lg bg-base-200'>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr  className='group/tr outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2' key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <th
+                        className={`${header.column.columnDef.meta?.headerAlign ? header.column.columnDef.meta?.headerAlign : ''} group/th px-3 h-10 align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold rounded data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-start`}
+                        colSpan={header.colSpan}
+                        key={header.id}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <div>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {/* {header.column.getCanFilter() ? (
+                              <div>
+                                <Filter column={header.column} table={table} />
+                              </div>
+                            ) : null} */}
+                          </div>
+                        )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              <>
+                {table.getRowModel().rows.map((row) => {
+                  return (
+                    <tr className='group/tr outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2' key={row.id}>
+                      {row.getVisibleCells().map((cell) => {
+                        return (
+                          <td
+                            className={`${cell.column.columnDef.meta?.align ? cell.column.columnDef.meta?.align  : ''} py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:pointer-events-none before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]/tr:text-foreground-300 group-data-[disabled=true]/tr:cursor-not-allowed before:bg-default/60 data-[selected=true]:text-default-foreground first:before:rounded-s-lg last:before:rounded-e-lg text-start`}
+                            key={cell.id}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </>
+            </tbody>
+          </table>
         }
         {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
           <PilotCard pilots={state.pilots} onDelete={onDeletePilot} onOpenCloseForm={onOpenClosePilotForm} />

@@ -14,17 +14,17 @@ export const useBreakpoints = () => {
 
         break;
       }
-      case width >= 640: {
+      case width >= 640 && width < 1024: {
         size = ScreenSize.MD;
 
         break;
       }
-      case width >= 1024: {
+      case width >= 1024 && width < 1280: {
         size = ScreenSize.LG
 
         break;
       }
-      case width >= 1280: {
+      case width >= 1280 && width < 1536: {
         size = ScreenSize.XL;
 
         break;

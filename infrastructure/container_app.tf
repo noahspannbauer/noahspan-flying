@@ -75,6 +75,16 @@ resource "azurerm_container_app" "container_app" {
       }
 
       env {
+        name = "AUTHORITY"
+        value = var.AUTHORITY
+      }
+
+      env {
+        name = "AUDIENCE"
+        value = var.CLIENT_ID
+      }
+
+      env {
         name = "CLIENT_ID"
         value = var.CLIENT_ID
       }
@@ -82,6 +92,16 @@ resource "azurerm_container_app" "container_app" {
       env {
         name = "CLIENT_SECRET"
         secret_name = "client-secret"
+      }
+
+      env {
+        name = "ISSUER_URL"
+        value = var.ISSUER_URL
+      }
+
+      env {
+        name = "JWKS_URI"
+        value = var.JWKS_URI
       }
 
       env {

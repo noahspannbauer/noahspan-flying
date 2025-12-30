@@ -1,10 +1,8 @@
-import { Key, useEffect, useReducer } from 'react';
-import LogForm from '../logForm/LogForm';
+import { useEffect, useReducer } from 'react';
 import { initialState, reducer } from './reducer';
 import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { authColumns, unauthColumns } from './columns';
-import ActionMenu from '../actionMenu/ActionMenu';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
 import { LogbookEntry } from './LogbookEntry.interface';
 import LogbookCard from '../logbookCard/LogbookCard';
@@ -14,12 +12,12 @@ import { useUserRole } from '../../hooks/userRole/UseUserRole';
 import { UserRole } from '../../enums/userRole';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
 import { ScreenSize } from '../../enums/screenSize';
-import { Table, TableHeader, TableBody, TableColumn, Dropdown, DropdownTrigger, Button, DropdownSection, DropdownMenu, DropdownItem, Alert, TableRow, TableCell } from '@heroui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAdd, faEllipsisVertical, faPen, faEye, faTrash, faMapLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, HeaderContext, useReactTable } from '@tanstack/react-table';
 import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 import LogbookDrawer from '../logbookDrawer/LogbookDrawer';
+import Alert from '../alert/Alert';
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -28,7 +26,6 @@ const Logbook: React.FC<unknown> = () => {
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints();
   const columnTotal = (info: HeaderContext<LogbookEntry, unknown>): number => {
-    const blah = info.table
     const values: number[] = info.table.getPaginationRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
     let total: number = 0;
     
@@ -69,13 +66,17 @@ const Logbook: React.FC<unknown> = () => {
     id: 'route',
     header: 'Route of Flight',
     meta: {
-      headerAlign: 'center'
+      className: 'border-l border-base-300',
+      headerAlign: 'text-center'
     },
     columns: [
       {
         id: 'routeFrom',
         accessorKey: 'routeFrom',
-        header: 'From'
+        header: 'From',
+        meta: {
+          className: 'border-l border-base-300',
+        }
       },
       {
         id: 'routeTo',
@@ -89,8 +90,9 @@ const Logbook: React.FC<unknown> = () => {
     accessorKey: 'durationOfFlight',
     header: 'Duration Of Flight',
     meta: {
-      align: 'right',
-      headerAlign: 'right'
+      align: 'text-right',
+      className: 'border-l border-base-300',
+      headerAlign: 'text-right'
     },
     cell: (info: CellContext<LogbookEntry, unknown>) =>
       info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -99,51 +101,33 @@ const Logbook: React.FC<unknown> = () => {
   const notes: ColumnDef<LogbookEntry> = {
     id: 'notes',
     accessorKey: 'notes',
-    header: 'Notes'
+    header: 'Notes',
+    meta: {
+      className: 'border-l border-base-300',
+    }
   }
   const actions: ColumnDef<LogbookEntry> = {
     id: 'actions',
     header: 'Actions',
     meta: {
-      align: 'center',
-      headerAlign: 'center'
+      align: 'text-center',
+      className: 'border-l border-base-300',
+      headerAlign: 'text-center'
     },
     cell: (info: CellContext<LogbookEntry, unknown>) => {
       return (
-        <Dropdown>
-          <DropdownTrigger>
-            <Button isIconOnly variant='light' size='lg'>
-              <FontAwesomeIcon icon={faEllipsisVertical} />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu>
-            <DropdownSection showDivider>
-              <DropdownItem 
-                key='edit'
-                onPress={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}
-                startContent={<FontAwesomeIcon icon={faPen} />}
-              >
-                Edit
-              </DropdownItem>
-              <DropdownItem 
-                key='view'
-                onPress={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}
-                startContent={<FontAwesomeIcon icon={faEye} />}  
-              >
-                View
-              </DropdownItem>
-            </DropdownSection>
-              <DropdownSection>
-                <DropdownItem 
-                  key='Delete'
-                  onPress={() => onDeleteLog(info.row.original.id)}
-                  startContent={<FontAwesomeIcon icon={faTrash} />}
-                >
-                  Delete
-                </DropdownItem>
-              </DropdownSection>
-          </DropdownMenu>
-        </Dropdown>
+        <div className='dropdown dropdown-end'>
+          <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+          <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
+            {isUserLoggedIn && userRole === UserRole.WRITE &&
+              <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+            }
+            <li><a onClick={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
+            {isUserLoggedIn && userRole === UserRole.WRITE &&
+              <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+            }
+          </ul>
+        </div>
       )
     }
   }
@@ -173,8 +157,8 @@ const Logbook: React.FC<unknown> = () => {
       accessorKey: 'singleEngineLand',
       header: 'Single Engine Land',
       meta: {
-        align: 'right',
-        headerAlign: 'right'
+        align: 'text-right',
+        headerAlign: 'text-right'
       },
       cell: (info: CellContext<LogbookEntry, unknown>) =>
         info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -184,7 +168,8 @@ const Logbook: React.FC<unknown> = () => {
       id: 'landings',
       header: 'Landings',
       meta: {
-        headerAlign: 'center'
+        className: 'border-l border-base-300',
+        headerAlign: 'text-center'
       },
       columns: [
         {
@@ -193,8 +178,9 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Day',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            className: 'border-l border-base-300',
+            headerAlign: 'text-right'
           }
         },
         {
@@ -203,8 +189,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Night',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           }
         }
       ]
@@ -213,7 +199,8 @@ const Logbook: React.FC<unknown> = () => {
       id: 'instrument',
       header: 'Instrument',
       meta: {
-        headerAlign: 'center'
+        className: 'border-l border-base-300',
+        headerAlign: 'text-center'
       },
       columns: [
         {
@@ -222,8 +209,9 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Actual',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            className: 'border-l border-base-300',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : '',
@@ -234,8 +222,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Simulated',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -246,8 +234,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Approaches',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           }
         },
         {
@@ -256,8 +244,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Holds',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           }
         },
         {
@@ -266,8 +254,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Nav/Track',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           }
         }
       ]
@@ -276,7 +264,8 @@ const Logbook: React.FC<unknown> = () => {
       id: 'experienceTraining',
       header: 'Type of pilot experience or training',
       meta: {
-        headerAlign: 'center'
+        className: 'border-l border-base-300',
+        headerAlign: 'text-center'
       },
       columns: [
         {
@@ -285,8 +274,9 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Ground Training Received',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            className: 'border-l border-base-300',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -297,8 +287,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Flight Training Received',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -309,8 +299,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Cross Country',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -321,8 +311,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Night',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -333,8 +323,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Solo',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -345,8 +335,8 @@ const Logbook: React.FC<unknown> = () => {
           header: 'Pilot In Command',
           footer: (info: HeaderContext<LogbookEntry, unknown>) => columnTotal(info) > 0 ? columnTotal(info).toFixed(1) : '',
           meta: {
-            align: 'right',
-            headerAlign: 'right'
+            align: 'text-right',
+            headerAlign: 'text-right'
           },
           cell: (info: CellContext<LogbookEntry, unknown>) =>
             info.getValue() ? parseFloat(info.getValue() as string).toFixed(1) : ''
@@ -372,14 +362,14 @@ const Logbook: React.FC<unknown> = () => {
           dispatch({ type: 'SET_ALERT', payload: undefined})
         }
       } else {
-        dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No logbook entries found.'}})
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No logbook entries found.'}})
       }
     } catch (error) {
       const axiosError = error as AxiosError;
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_LOADING', payload: false });
@@ -437,7 +427,7 @@ const Logbook: React.FC<unknown> = () => {
 
       dispatch({
         type: 'SET_ALERT',
-        payload: { severity: 'danger', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
+        payload: { severity: 'error', message: `Loading of logbook entries failed with the following message: ${axiosError.message}`}
       });
     } finally {
       dispatch({ type: 'SET_IS_CONFIRMATION_DIALOG_LOADING', payload: false });
@@ -503,44 +493,52 @@ const Logbook: React.FC<unknown> = () => {
         </div>
         <div className='col-span-2 justify-self-end self-center'>
           {userRole === UserRole.WRITE &&
-            <Button
-              color='primary'
-              onPress={() => onOpenCloseDrawer(FormMode.ADD)}
-              startContent={<FontAwesomeIcon icon={faAdd} />}
-              data-testid="pilot-add-button"
+            // <Button
+            //   color='primary'
+            //   onPress={() => onOpenCloseDrawer(FormMode.ADD)}
+            //   startContent={<FontAwesomeIcon icon={faAdd} />}
+            //   data-testid="pilot-add-button"
+            // >
+            //   Add Entry
+            // </Button>
+            <button className='btn btn-primary'
+              onClick={() => onOpenCloseDrawer(FormMode.ADD)}
             >
+              <FontAwesomeIcon icon={faAdd} />
               Add Entry
-            </Button>
+            </button>
           }
         </div>
         {!state.isLoading && state.alert && (
           <div className='col-span-12 mb-5'>
             <Alert
+              className='mb-5'
               onClose={() =>
                 dispatch({ type: 'SET_ALERT', payload: undefined })
               }
-              color={'default'}
-              title={state.alert.message}
-            />
+              severity={'info'}
+            >
+              {state.alert.message}
+            </Alert>
           </div>
         )}
         {!state.isLoading && (
-          <div className='col-span-12'>
+          <div className='col-span-12 p-5 bg-base-100 border border-base-100 rounded-lg'>
             {state.entries.length > 0 && screenSize !== ScreenSize.SM && (
-              <div className='p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto shadow-small rounded-large w-full'>
-                <table className='min-w-full h-auto table-auto w-full'>
-                  <thead className='[&>tr]:first:rounded-lg'>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <tr  className='group/tr outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2' key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => {
+              <div className='overflow-x-auto'>
+                <table className='table min-w-full h-auto table-auto w-full'>
+                  <thead className='bg-base-200'>
+                    {table.getHeaderGroups().map((headerGroup, headerGroupIndex) => (
+                      <tr className='group/tr outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2' key={headerGroup.id}>
+                        {headerGroup.headers.map((header, headerIndex) => {
                           return (
                             <th
-                              className={`${header.column.columnDef.meta?.align ? textAlignment[header.column.columnDef.meta?.align] : ''} group/th px-3 h-10 align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-s-lg last:rounded-e-lg data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-start`}
+                              className={`${header.column.columnDef.meta?.className ? header.column.columnDef.meta?.className : ''} group/th px-3 h-10 align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold ${headerGroupIndex === 0 ? 'first:rounded-tl-lg last:rounded-tr-lg' : ''} ${headerGroupIndex === table.getHeaderGroups().length - 1 ? 'first:rounded-bl-lg last:rounded-br-lg' : ''} data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-start`}
                               colSpan={header.colSpan}
                               key={header.id}
                             >
                               {header.isPlaceholder ? null : (
-                                <div>
+                                <div className={`${header.column.columnDef.meta?.headerAlign ? header.column.columnDef.meta?.headerAlign : ''}`}>
                                   {flexRender(
                                     header.column.columnDef.header,
                                     header.getContext()
@@ -566,13 +564,15 @@ const Logbook: React.FC<unknown> = () => {
                             {row.getVisibleCells().map((cell) => {
                               return (
                                 <td
-                                  className={`${cell.column.columnDef.meta?.align ? textAlignment[cell.column.columnDef.meta?.align] : ''} py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:pointer-events-none before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]/tr:text-foreground-300 group-data-[disabled=true]/tr:cursor-not-allowed before:bg-default/60 data-[selected=true]:text-default-foreground first:before:rounded-s-lg last:before:rounded-e-lg text-start`}
+                                  className={`py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:pointer-events-none before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]/tr:text-foreground-300 group-data-[disabled=true]/tr:cursor-not-allowed before:bg-default/60 data-[selected=true]:text-default-foreground first:before:rounded-s-lg last:before:rounded-e-lg text-start`}
                                   key={cell.id}
                                 >
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                  )}
+                                  <div className={`${cell.column.columnDef.meta?.align ? cell.column.columnDef.meta?.align : ''}`}>
+                                    {flexRender(
+                                      cell.column.columnDef.cell,
+                                      cell.getContext()
+                                    )}
+                                  </div>
                                 </td>
                               );
                             })}
@@ -581,7 +581,7 @@ const Logbook: React.FC<unknown> = () => {
                       })}
                     </>
                   </tbody>
-                  <thead className='[&>tr]:first:rounded-lg'>
+                  <thead className='[&>tr]:first:rounded-lg bg-base-200'>
                     {table.getFooterGroups().map((footerGroup, index) => {
                       if (index === 0) {
                         return (
@@ -591,14 +591,16 @@ const Logbook: React.FC<unknown> = () => {
                                 <td
                                   className='group/th px-3 h-10 align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-s-lg last:rounded-e-lg data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-solid outline-transparent data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 text-start'
                                   key={header.id}
-                                  align={header.column.columnDef.meta?.align}
                                 >
-                                  {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                        header.column.columnDef.footer,
-                                        header.getContext()
-                                      )}
+                                  <div className={`${header.column.columnDef.meta?.headerAlign ? header.column.columnDef.meta?.headerAlign : ''}`}>
+                                    {header.isPlaceholder
+                                      ? null
+                                      : flexRender(
+                                          header.column.columnDef.footer,
+                                          header.getContext()
+                                        )
+                                      }
+                                  </div>
                                 </td>
                               );
                             })}
@@ -641,14 +643,6 @@ const Logbook: React.FC<unknown> = () => {
           title="Confirm Delete"
         />
       )}
-      {/* {state.isTracksOpen && 
-        <LogTracks
-          isDrawerOpen={state.isTracksOpen}
-          mode={state.tracksMode}
-          onOpenClose={(mode) => onOpenCloseTracks(mode)}
-          selectedLogId={logbookContext.state.selectedLogId}
-        />
-      } */}
     </>
   );
 };

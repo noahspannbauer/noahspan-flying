@@ -1,11 +1,9 @@
-import { Icon, IconName, Skeleton } from "@noahspan/noahspan-components";
-import { Card } from '@heroui/react';
 import LogbookCard from "../logbookCard/LogbookCard";
 import { useEffect, useReducer } from "react";
 import { useLogs } from "../../hooks/logs/UseLogs";
 import { LogbookEntry } from "../logbook/LogbookEntry.interface";
 import { initialState, reducer } from "./reducer";
-import { Alert } from '@heroui/react'
+import Alert from "../alert/Alert";
 
 const Flights = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -23,7 +21,7 @@ const Flights = () => {
       dispatch({ type: 'SET_FLIGHTS', payload: flights})
       dispatch({ type: 'SET_ALERT', payload: undefined })
     } else {
-      dispatch({ type: 'SET_ALERT', payload: { severity: 'default', message: 'No flights found' }})
+      dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No flights found' }})
     }
   }, [logs])
   
@@ -35,12 +33,14 @@ const Flights = () => {
       {!logsLoading && state.alert && (
         <div>
           <Alert
+            className='mb-5'
             onClose={() =>
               dispatch({ type: 'SET_ALERT', payload: undefined })
             }
-            color={state.alert.severity}
-            title={state.alert.message}
-          />
+            severity={state.alert.severity}
+          >
+            {state.alert.message}
+          </Alert>
         </div>
       )}
       {!logsLoading &&
@@ -48,7 +48,7 @@ const Flights = () => {
           <LogbookCard logs={state.flights} mode='flights' />
         </div>
       }
-      {logsLoading && [...Array(6)].map((_element, index) => {
+      {/* {logsLoading && [...Array(6)].map((_element, index) => {
         return (
           <div className='mb-5'>
             <Card
@@ -70,7 +70,7 @@ const Flights = () => {
             </Card>
           </div>
         )
-      })}
+      })} */}
     </div>
   )
 }

@@ -1,3 +1,6 @@
+variable "AUTHORITY" {
+  type = string
+}
 
 variable "CLIENT_ID" {
   type = string
@@ -14,6 +17,14 @@ variable "DOCKER_IO_PASSWORD" {
 }
 
 variable "DOCKER_IO_USERNAME" {
+  type = string
+}
+
+variable "ISSUER_URL" {
+  type = string
+}
+
+variable "JWKS_URI" {
   type = string
 }
 

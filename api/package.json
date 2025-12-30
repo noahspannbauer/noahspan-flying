@@ -35,7 +35,7 @@
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/typeorm": "^11.0.0",
     "@noahspan/azure-database": "^3.1.2",
-    "@noahspan/noahspan-modules": "^1.2.9",
+    "@noahspan/noahspan-modules": "^1.2.11",
     "@schematics/angular": "^17.3.7",
     "@types/multer": "^1.4.12",
     "better-sqlite3": "^12.2.0",

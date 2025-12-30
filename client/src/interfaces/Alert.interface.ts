@@ -1,4 +1,4 @@
 export interface Alert {
-  severity: 'danger' | 'default' | 'success' | 'warning';
+  severity: 'info' | 'error' | 'success' | 'warning';
   message: string;
 }

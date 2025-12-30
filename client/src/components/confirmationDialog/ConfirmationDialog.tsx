@@ -7,7 +7,6 @@
 //   IconName,
 //   Loading
 // } from '@noahspan/noahspan-components';
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Spinner } from '@heroui/react'
 import { DialogConfirmationProps } from './ConfirmationDialogProps.interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -21,31 +20,25 @@ const ConfirmationDialog = ({
   title
 }: DialogConfirmationProps) => {
   return (
-    <Modal
-      isDismissable={false}
-      isKeyboardDismissDisabled={true}
-      isOpen={isOpen}
-    >
-      <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalBody>
-          {!isLoading && <div>{contentText}</div>}
-          {isLoading && <Spinner size='lg' />}
-        </ModalBody>
-        <ModalFooter>
-          <Button onPress={onCancel} startContent={<FontAwesomeIcon icon={faXmark} />}>
-            No
-          </Button>
-          <Button
-            color='primary'
-            onPress={onConfirm}
-            startContent={<FontAwesomeIcon icon={faCircleCheck} />}
-          >
-            Yes
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <>
+      <input type='checkbox' id='dialog' className='modal-toggle' onChange={() => {}} checked={isOpen} />
+      <div className='modal' role='dialog'>
+        <div className='modal-box'>
+          <h3 className="text-lg font-bold">{title}</h3>
+          <p className="py-4">{contentText}</p>
+          <div className='modal-action'>
+            <button className='btn' onClick={onCancel}>
+              <FontAwesomeIcon icon={faXmark} />
+              No
+            </button>
+            <button className='btn btn-primary' onClick={onConfirm}>
+              <FontAwesomeIcon icon={faCircleCheck} />
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

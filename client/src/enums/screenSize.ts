@@ -1,7 +1,7 @@
 export enum ScreenSize {
-  SM,
-  MD,
-  LG,
-  XL,
-  XXL
+  SM = 'SM',
+  MD = 'MD',
+  LG = 'LG',
+  XL = 'XL',
+  XXL = 'XXL'
 }

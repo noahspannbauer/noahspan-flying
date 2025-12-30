@@ -1,7 +1,7 @@
-import { Alert, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Tab, Tabs } from "@heroui/react";
 import { LogbookDrawerProps } from "./LogbookDrawerProps.interface";
 import LogForm from "../logForm/LogForm";
 import TracksForm from "../tracksForm/TracksForm";
+import Alert from '../alert/Alert';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faMapLocationDot, faSave, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FormProvider, useForm } from "react-hook-form";
@@ -9,10 +9,10 @@ import { FormMode } from "../../enums/formMode";
 import httpClient from "../../httpClient/httpClient";
 import { AxiosError } from "axios";
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
-import { Key, useState } from "react";
+import { useState } from "react";
 
 const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
-  const [activeTab, setActiveTab] = useState<Key>('time');
+  const [activeTab, setActiveTab] = useState<string>('time');
   const defaultValues = {
     pilotId: '',
     date: null,
@@ -63,111 +63,107 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
     } catch (error) {
       const axiosError = error as AxiosError;
 
-      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'danger', message: axiosError.message }});
+      logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'error', message: axiosError.message }});
     } finally {
       logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: false });
     }
   };
 
-  const onSelectedKeyChanged = (key: React.Key) => {
-    setActiveTab(key)
+  const onSelectedKeyChanged = (tab: string) => {
+    setActiveTab(tab)
   }
 
   return (
-    <Drawer
-      closeButton={
-        <Button isIconOnly>
-          <FontAwesomeIcon icon={faXmark} />
-        </Button>
-      }
-      isOpen={logbookContext.state.isDrawerOpen}
-      onClose={onCancel}
+    <div className='drawer drawer-end'
+      // closeButton={
+      //   <Button isIconOnly>
+      //     <FontAwesomeIcon icon={faXmark} />
+      //   </Button>
+      // }
+      // isOpen={logbookContext.state.isDrawerOpen}
+      // onClose={onCancel}
     >
-      <DrawerContent>
-        <FormProvider {...methods}>
-          <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
-            <DrawerHeader>
-              {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
-            </DrawerHeader>
-            <DrawerBody>
-              {logbookContext.state.formAlert && (
-                <div className='col-span-12'>
+      <input type='checkbox' className='drawer-toggle' onChange={() => {}} checked={logbookContext.state.isDrawerOpen} />
+      <div className="drawer-side">
+        <label
+          htmlFor='my-drawer-1'
+          aria-label='close-sidebar'
+          className='drawer-overlay'
+        ></label>
+        <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '25%' }}>
+          <FormProvider {...methods}>
+            <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
+              <h2>
+                {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
+              </h2>
+                {logbookContext.state.formAlert && (
                   <Alert
+                    className='mb-5'
                     onClose={() =>
                       logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
                     }
-                    color={logbookContext.state.formAlert.severity}
-                    title={logbookContext.state.formAlert.message}
-                  />
-                </div>
-              )}
-              <Tabs 
-                color='default'
-                fullWidth={true}
-                onSelectionChange={onSelectedKeyChanged}
-                selectedKey={activeTab as string}
-                variant='solid'
-              >
-                <Tab
-                  key='time'
-                  title={
-                    <div className="flex items-center space-x-2">
-                      <FontAwesomeIcon icon={faClock} />
-                      <span>Time</span>
-                    </div>
-                  }
-                >
-                  <LogForm />
-                </Tab>
-                {logbookContext.state.formMode !== FormMode.ADD &&
-                  <Tab
-                    key='tracks'
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <FontAwesomeIcon icon={faMapLocationDot} />
-                        <span>Tracks</span>
-                      </div>
-                    }
+                    severity={logbookContext.state.formAlert.severity}
                   >
-                    <TracksForm />
-                  </Tab>
-                }
-              </Tabs>
-            </DrawerBody>
-            {activeTab !== 'tracks' &&
-              <DrawerFooter>
-                <div className='grid grid-cols-12 gap-3'>
-                  <div className='col-span-12 justify-self-end self-center'>
-                    <Button
-                      disabled={
-                        logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
-                          ? logbookContext.state.isFormDisabled
-                          : false
-                      }
-                      startContent={<FontAwesomeIcon icon={faXmark} />}
-                      onPress={onCancel}
-                    >
-                      {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
-                    </Button>
-                    {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
-                      <Button
-                        className='ml-[10px]'
-                        color='primary'
-                        disabled={logbookContext.state.isFormDisabled}
-                        startContent={<FontAwesomeIcon icon={faSave} />}
-                        type="submit"
-                      >
-                        Save
-                      </Button>
-                    )}
+                    {logbookContext.state.formAlert.message}
+                  </Alert>
+                )}
+                <div className='tabs tabs-lift mb-5'>
+                  <label className='tab'>
+                    <input type='radio' name='my_tabs' defaultChecked={true} />
+                    <FontAwesomeIcon className='mr-1'icon={faClock} />
+                    Time
+                  </label>
+                  <div className='tab-content border-base-300 p-6'>
+                    <LogForm />
                   </div>
+                  {logbookContext.state.formMode !== FormMode.ADD &&
+                    <>
+                      <label className='tab'>
+                        <input type='radio' name='my_tabs'/>
+                        <FontAwesomeIcon className='mr-1' icon={faMapLocationDot} />
+                        Tracks
+                      </label>
+                      <div className='tab-content border-base-300 p-6'>
+                        <TracksForm />
+                      </div>
+                    </>
+                  }
                 </div>
-              </DrawerFooter>
-            }
-          </form>
-        </FormProvider>
-      </DrawerContent>
-    </Drawer>
+                {activeTab !== 'tracks' &&
+                  <div>
+                    <div className='grid grid-cols-12 gap-3'>
+                      <div className='col-span-12 justify-self-end self-center'>
+                        <button
+                          className='btn'
+                          disabled={
+                            logbookContext.state.isFormDisabled && logbookContext.state.formMode.toString() !== FormMode.VIEW
+                              ? logbookContext.state.isFormDisabled
+                              : false
+                          }
+                          onClick={onCancel}
+                        >
+                          <FontAwesomeIcon icon={faXmark} />
+                          {logbookContext.state.formMode.toString() !== FormMode.VIEW ? 'Cancel' : 'Close'}
+                        </button>
+                        {logbookContext.state.formMode.toString() !== FormMode.VIEW && (
+                          <button
+                            className='btn btn-primary ml-2.5'
+                            disabled={logbookContext.state.isFormDisabled}
+                            type="submit"
+                          >
+                            <FontAwesomeIcon icon={faSave} />
+                            Save
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                }
+            </form>
+          </FormProvider>
+        </div>
+        </div>
+    </div>
   )
 }
 

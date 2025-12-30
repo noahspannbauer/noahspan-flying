@@ -4,10 +4,6 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 import { useAuth } from 'react-oidc-context'
 import { MapContainer, TileLayer } from 'react-leaflet';
 import ReactLeafletKml from 'react-leaflet-kml';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css';
-import './TrackMap.css';
 import 'leaflet/dist/leaflet.css';
 import httpClient from '../../httpClient/httpClient'
 
@@ -41,7 +37,7 @@ const TrackMap = ({ height, logId, tracks }: TrackMapProps) => {
       center={[45.14489, -93.21019]} 
       scrollWheelZoom={false}
       style={{ height: height, width: '100%' }}
-      zoom={8}
+      zoom={7}
     >
       <Suspense>
         <TileLayer
