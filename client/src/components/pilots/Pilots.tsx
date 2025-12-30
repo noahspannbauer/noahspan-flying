@@ -195,7 +195,7 @@ const Pilots: React.FC<unknown> = () => {
           <Alert
             className='mb-5'
             onClose={() =>
-              dispatch({ type: 'SET_FORM_ALERT', payload: undefined })
+              dispatch({ type: 'SET_ALERT', payload: undefined })
             }
             severity={state.alert.severity}
           >
