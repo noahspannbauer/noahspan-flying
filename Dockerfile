@@ -14,5 +14,5 @@ RUN chmod +x ./app/entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["./app/entrypoint.sh"]
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
+# CMD ["./app/entrypoint.sh"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]

@@ -18,12 +18,12 @@ resource "azurerm_container_app" "container_app" {
       volume_mounts {
         name = "data"
         path = "/mnt/data"
-        sub_path = "data"
       }
 
       volume_mounts {
         name = "backup"
         path = "/mnt/data/backup"
+        sub_path = "data"
       }
 
       volume_mounts {
@@ -43,12 +43,12 @@ resource "azurerm_container_app" "container_app" {
       volume_mounts {
         name = "data"
         path = "/mnt/data"
-        sub_path = "data"
       }
 
       volume_mounts {
         name = "backup"
         path = "/mnt/data/backup"
+        sub_path = "data"
       }
 
       volume_mounts {
@@ -60,7 +60,7 @@ resource "azurerm_container_app" "container_app" {
 
     container {
       cpu = 0.25
-      image = "noahspan/flying:20586783321"
+      image = "noahspan/flying:20588458616"
       memory = "0.5Gi"
       name = "flying"
 
@@ -131,7 +131,6 @@ resource "azurerm_container_app" "container_app" {
       volume_mounts {
         name = "data"
         path = "/mnt/data"
-        sub_path = "data"
       }
     }
 
