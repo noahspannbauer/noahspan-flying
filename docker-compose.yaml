@@ -16,11 +16,11 @@ services:
     container_name: restore
     image: litestream/litestream:0.3.13
     volumes:
-      - ./database/flying.db:/var/lib/data/flying.db
+      - ./database/flying.db:/mnt/data/flying.db
       - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
       - backup:/mnt/data/backup
-      - data:/var/lib/data
-    command: restore -config /mnt/litestream/litestream.yml -if-db-not-exists -if-replica-exists /var/lib/data/flying.db
+      - data:/mnt/data
+    command: restore -config /mnt/litestream/litestream.yml -if-db-not-exists -if-replica-exists /mnt/data/flying.db
 
   app:
     container_name: flying
@@ -31,9 +31,9 @@ services:
     env_file:
       - ./api/.env
     environment:
-      - DB_PATH=../../var/lib/data/flying.db
+      - DB_PATH=../../mnt/data/flying.db
     volumes:
-      - data:/var/lib/data
+      - data:/mnt/data
     depends_on:
       restore:
         condition: service_completed_successfully
@@ -44,7 +44,7 @@ services:
     volumes:
       - ./database/litestream/litestream.yml:/mnt/litestream/litestream.yml
       - backup:/mnt
-      - data:/var/lib/data
+      - data:/mnt/data
     command: replicate -config /mnt/litestream/litestream.yml
     depends_on:
       app:

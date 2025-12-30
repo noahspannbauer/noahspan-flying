@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:22-slim
+FROM node:22
 
 WORKDIR app
 COPY ./api/dist ./api/dist
@@ -9,10 +9,10 @@ WORKDIR api
 RUN npm ci
 
 WORKDIR /
-COPY ./api/entrypoint.sh ./entrypoint.sh
-RUN chmod +x entrypoint.sh
+COPY ./api/entrypoint.sh ./app/entrypoint.sh
+RUN chmod +x ./app/entrypoint.sh
 
 EXPOSE 3000
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["./app/entrypoint.sh"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

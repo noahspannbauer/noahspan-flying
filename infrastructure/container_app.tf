@@ -1,8 +1,3 @@
-# data "azuread_application" "app_registration" {
-#   provider = azuread.external_tenant
-#   display_name = module.environment.app_reg_name
-# }
-
 resource "azurerm_container_app" "container_app" {
   name = module.environment.app_name
   container_app_environment_id = data.azurerm_container_app_environment.container_app_environment.id
@@ -14,7 +9,7 @@ resource "azurerm_container_app" "container_app" {
     max_replicas = 2
 
     init_container {
-      args = ["restore", "-if-db-not-exists", "-if-replica-exists", "/var/lib/data/flying.db"]
+      args = ["restore", "-if-db-not-exists", "-if-replica-exists", "/mnt/data/flying.db"]
       cpu = 0.25
       image = "litestream/litestream:0.5.2"
       memory = "0.5Gi"
@@ -22,13 +17,13 @@ resource "azurerm_container_app" "container_app" {
 
       volume_mounts {
         name = "data"
-        path = "/var/lib/data"
+        path = "/mnt/data"
+        sub_path = "data"
       }
 
       volume_mounts {
         name = "backup"
-        path = "/mnt/data"
-        sub_path = "data"
+        path = "/mnt/data/backup"
       }
 
       volume_mounts {
@@ -47,13 +42,13 @@ resource "azurerm_container_app" "container_app" {
 
       volume_mounts {
         name = "data"
-        path = "/var/lib/data"
+        path = "/mnt/data"
+        sub_path = "data"
       }
 
       volume_mounts {
         name = "backup"
-        path = "/mnt/data"
-        sub_path = "data"
+        path = "/mnt/data/backup"
       }
 
       volume_mounts {
@@ -65,7 +60,7 @@ resource "azurerm_container_app" "container_app" {
 
     container {
       cpu = 0.25
-      image = "noahspan/flying:19615036250"
+      image = "noahspan/flying:20586783321"
       memory = "0.5Gi"
       name = "flying"
 
@@ -105,13 +100,18 @@ resource "azurerm_container_app" "container_app" {
       }
 
       env {
+        name = "SESSION_SECRET"
+        secret_name = "session-secret"
+      }
+
+      env {
         name = "TENANT_ID"
         value = var.EXTERNAL_TENANT_ID
       }
 
       env {
         name = "DB_PATH"
-        value = "/var/lib/data/flying.db"
+        value = "/mnt/data/flying.db"
       }
 
       env {
@@ -130,7 +130,8 @@ resource "azurerm_container_app" "container_app" {
 
       volume_mounts {
         name = "data"
-        path = "/var/lib/data"
+        path = "/mnt/data"
+        sub_path = "data"
       }
     }
 
@@ -177,6 +178,11 @@ resource "azurerm_container_app" "container_app" {
   secret {
     name = "docker-io-password"
     value = var.DOCKER_IO_PASSWORD
+  }
+
+  secret {
+    name = "session-secret"
+    value = var.SESSION_SECRET
   }
 
   lifecycle {
