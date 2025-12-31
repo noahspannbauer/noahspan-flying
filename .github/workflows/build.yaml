@@ -46,6 +46,7 @@ jobs:
           VITE_ISSUER_URL: ${{ vars.VITE_ISSUER_URL }}
           VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
         run: |
+          printenv
           npm run build -w client
 
       - name: Log into Docker Hub
