@@ -9,11 +9,11 @@ async function bootstrap() {
   const httpService = new HttpService();
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : `https://${process.env.CONTAINER_APP_NAME}.${process.env.CONTAINER_APP_ENV_DNS_SUFFIX}`,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+  // app.enableCors({
+  //   origin: process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : `https://${process.env.CONTAINER_APP_NAME}.${process.env.CONTAINER_APP_ENV_DNS_SUFFIX}`,
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   credentials: true,
+  // });
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(
