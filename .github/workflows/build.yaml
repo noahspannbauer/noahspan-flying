@@ -39,6 +39,12 @@ jobs:
           npm run build -w api
 
       - name: Build Client
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_BASE_URL: ${{ vars.VITE_BASE_URL }}
+          VITE_CLIENT_ID: ${{ vars.VITE_CLIENT_ID }}
+          VITE_ISSUER_URL: ${{ vars.VITE_ISSUER_URL }}
+          VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
         run: |
           npm run build -w client
 
