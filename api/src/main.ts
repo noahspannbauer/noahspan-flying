@@ -9,7 +9,12 @@ async function bootstrap() {
   const httpService = new HttpService();
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://flying-test.salmonpond-4268003a.centralus.azurecontainerapps.io', // Or use a regex/array for dynamic origins
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    allowedHeaders: 'Content-Type,Authorization',
+  });
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(
