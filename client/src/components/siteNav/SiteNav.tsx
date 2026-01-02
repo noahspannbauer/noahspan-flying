@@ -105,10 +105,6 @@ const SiteNav = () => {
     }
   }, [isUserLoggedIn]);
 
-  useEffect(() => {
-    console.log(screenSize)
-  }, [screenSize])
-
   return (
     <div className="navbar bg-base-100 shadow-sm w-full">
       <div className={`navbar-start ${screenSize !== ScreenSize.SM && screenSize !== ScreenSize.MD ? 'ml-8' : ''}`}>
@@ -136,7 +132,7 @@ const SiteNav = () => {
           )}
         </ul>
       </div>
-      <div className={`navbar-end ${screenSize !== ScreenSize.SM && screenSize !== ScreenSize.MD ? 'ml-8' : ''}`}>
+      <div className={`navbar-end ${screenSize !== ScreenSize.SM && screenSize !== ScreenSize.MD ? 'mr-8' : ''}`}>
         {!isUserLoggedIn &&
           <button className='btn btn-ghost' onClick={() => login()}><FontAwesomeIcon icon={faSignIn} />Sign In</button>
         }

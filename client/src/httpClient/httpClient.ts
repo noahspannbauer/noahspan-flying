@@ -15,7 +15,7 @@ httpClient.interceptors.request.use(async (config) => {
 
   if (oidc.isUserLoggedIn) {
     const { accessToken } = await oidc.getTokens();
-    console.log(accessToken)
+
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
