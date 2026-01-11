@@ -122,7 +122,7 @@ const TracksForm = () => {
             </>
           )
         })}
-        {logbookContext.state.formMode === FormMode.ADD &&
+        {logbookContext.state.formMode === FormMode.EDIT &&
           <div className='col-span-12'>
             <label
               className='btn cursor-pointer w-full'

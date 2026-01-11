@@ -9,7 +9,7 @@ import { FormMode } from "../../enums/formMode";
 import httpClient from "../../httpClient/httpClient";
 import { AxiosError } from "axios";
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
-import { useState } from "react";
+import { ChangeEventHandler, MouseEventHandler, useState } from "react";
 
 const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   const [activeTab, setActiveTab] = useState<string>('time');
@@ -73,16 +73,12 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
     setActiveTab(tab)
   }
 
+  const onTabClicked = (event: any) => {
+    setActiveTab(event.target.ariaLabel)
+  }
+
   return (
-    <div className='drawer drawer-end'
-      // closeButton={
-      //   <Button isIconOnly>
-      //     <FontAwesomeIcon icon={faXmark} />
-      //   </Button>
-      // }
-      // isOpen={logbookContext.state.isDrawerOpen}
-      // onClose={onCancel}
-    >
+    <div className='drawer drawer-end'>
       <input type='checkbox' className='drawer-toggle' onChange={() => {}} checked={logbookContext.state.isDrawerOpen} />
       <div className="drawer-side">
         <label
@@ -93,9 +89,18 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
         <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '25%' }}>
           <FormProvider {...methods}>
             <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
-              <h2>
-                {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
-              </h2>
+              <div className='grid grid-cols-12 mb-6'>
+                <div className="col-span-10">
+                  <h2 className="mt-0 mb-0 self-center">
+                    {`${logbookContext.state.formMode.toString().toLowerCase().charAt(0).toUpperCase() + logbookContext.state.formMode.toString().slice(1).toLowerCase()} Entry`}
+                  </h2>
+                </div>
+                <div className="col-span-2 justify-self-end self-center">
+                  <button className="btn btn-ghost" onClick={onCancel}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
+              </div>
                 {logbookContext.state.formAlert && (
                   <Alert
                     className='mb-5'
@@ -109,7 +114,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                 )}
                 <div className='tabs tabs-lift mb-5'>
                   <label className='tab'>
-                    <input type='radio' name='my_tabs' defaultChecked={true} />
+                    <input aria-label='time' type='radio' name='logbook_drawer_tabs' onChange={onTabClicked} checked={activeTab === 'time' ? true : false} />
                     <FontAwesomeIcon className='mr-1'icon={faClock} />
                     Time
                   </label>
@@ -119,7 +124,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
                   {logbookContext.state.formMode !== FormMode.ADD &&
                     <>
                       <label className='tab'>
-                        <input type='radio' name='my_tabs'/>
+                        <input aria-label='tracks' type='radio' name='logbook_drawer_tabs' onChange={onTabClicked} checked={activeTab === 'tracks' ? true : false} />
                         <FontAwesomeIcon className='mr-1' icon={faMapLocationDot} />
                         Tracks
                       </label>

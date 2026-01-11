@@ -4,7 +4,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { initialState, reducer } from './reducer';
 import ConfirmationDialog from '../confirmationDialog/ConfirmationDialog';
-import PilotCard from '../pilotCard/PilotCard';
+// import PilotCard from '../pilotCard/PilotCard';
 import { useUserRole } from '../../hooks/userRole/UseUserRole';
 import { UserRole } from '../../enums/userRole';
 import httpClient from '../../httpClient/httpClient'
@@ -177,7 +177,7 @@ const Pilots: React.FC<unknown> = () => {
         <h1>Pilots</h1>
       </div>
       <div className='col-span-2 justify-self-end self-center'>
-        {userRole === UserRole.WRITE &&
+        {!state.isLoading && userRole === UserRole.WRITE &&
           <button
             className='btn btn-primary'
             onClick={() => onOpenClosePilotForm(FormMode.ADD)}
@@ -201,8 +201,8 @@ const Pilots: React.FC<unknown> = () => {
           </Alert>
         </div>
       )}
-      <div className='col-span-12 bg-base-100 p-5 border border-base-100 rounded-lg'>
-        {state.pilots.length > 0 && screenSize !== ScreenSize.SM &&
+      {state.pilots.length > 0 && screenSize !== ScreenSize.SM &&
+        <div className='col-span-12 bg-base-100 p-5 border border-base-100 rounded-lg'>
           <table className='table min-w-full h-auto table-auto w-full'>
             <thead className='[&>tr]:first:rounded-lg bg-base-200'>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -257,11 +257,11 @@ const Pilots: React.FC<unknown> = () => {
               </>
             </tbody>
           </table>
-        }
-        {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
-          <PilotCard pilots={state.pilots} onDelete={onDeletePilot} onOpenCloseForm={onOpenClosePilotForm} />
-        }
-      </div>
+        </div>
+      }
+      {/* {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
+        <PilotCard pilots={state.pilots} onDelete={onDeletePilot} onOpenCloseForm={onOpenClosePilotForm} />
+      } */}
     </div>
       {state.isFormOpen && (
         <PilotForm

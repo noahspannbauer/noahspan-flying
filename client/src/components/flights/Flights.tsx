@@ -48,29 +48,17 @@ const Flights = () => {
           <LogbookCard logs={state.flights} mode='flights' />
         </div>
       }
-      {/* {logsLoading && [...Array(6)].map((_element, index) => {
+      {logsLoading && [...Array(5)].map((_element, index) => {
         return (
-          <div className='mb-5'>
-            <Card
-              key={index}
-            >
-              <div className='p-5'>
-                  <div className='mb-2'><Skeleton height='h-[60px]' width='w-[200px]' /></div>
-                  <div className='mb-2'><Skeleton height='h-[30px]' width='w-[200px]' /></div>
-                  <div className='mb-2'><Skeleton height='h-[300px]' width='w-[300px]' /></div>
-                    {[...Array(4)].map((_element, index) => {
-                      return (
-                        <>
-                          <div className='mb-2'><Skeleton height='h-[20px]' width='w-[300px]' /></div>
-                          <div className='mb-2'><Skeleton height='h-[20px]' width='w-[300px]' /></div>
-                        </>
-                      )
-                    })}
-              </div>
-            </Card>
+          <div className='card bg-base-100 border border-base-300 p-2 mb-7'>
+            <div className='card-body' key={index}>
+              <div className='skeleton h-10 w-[150px]' />
+              <div className='skeleton h-[350px]' />
+              <div className='skeleton h-[65px]' />
+            </div>
           </div>
         )
-      })} */}
+      })}
     </div>
   )
 }

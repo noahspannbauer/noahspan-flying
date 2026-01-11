@@ -4,9 +4,9 @@ import { IPilotFormProps } from './IPilotFormProps';
 import { AxiosError, AxiosResponse } from 'axios';
 import { FormMode } from '../../enums/formMode';
 import { Person } from '@microsoft/microsoft-graph-types';
-import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
-import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
-import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
+// import PilotFormCertificates from '../pilotFormCertificates/PilotFormCertificates';
+// import PilotFormEndorsements from '../pilotFormEndorsements/PilotFormEndorsements';
+// import PilotFormMedical from '../pilotFormMedical/PilotFormMedical';
 import { useOidc } from '../../auth/oidcConfig';
 import httpClient from '../../httpClient/httpClient';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -104,18 +104,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   }, [pilotId]);
 
   return (
-    <div className='drawer drawer-end'
-      // closeButton={
-      //   <Button isIconOnly>
-      //     <FontAwesomeIcon icon={faXmark} />
-      //   </Button>
-      // }
-      // isOpen={isDrawerOpen}
-      // placement='right'
-      // data-testid="pilot-drawer"
-      // onClose={onCancel}
-      // size='xl'
-    >
+    <div className='drawer drawer-end'>
       <input type='checkbox' className='drawer-toggle' onChange={() => {}} checked={isDrawerOpen} />
       <div className='drawer-side'>
         <label
@@ -126,10 +115,17 @@ const PilotForm: React.FC<IPilotFormProps> = ({
         <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '25%' }}>
           <FormProvider {...methods}>
             <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
-              <h2>
-                {`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Pilot`}
-              </h2>
               <div className='grid grid-cols-12 gap-3'>
+                <div className="col-span-10">
+                  <h2 className="mt-0 mb-0 self-center">
+                    {`${mode.toString().toLowerCase().charAt(0).toUpperCase() + mode.toString().slice(1).toLowerCase()} Pilot`}
+                  </h2>
+                </div>
+                <div className="col-span-2 justify-self-end self-center">
+                  <button className="btn btn-ghost" onClick={onCancel}>
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
                 <div className='col-span-3 self-center'>
                   <span>Name *</span>
                 </div>

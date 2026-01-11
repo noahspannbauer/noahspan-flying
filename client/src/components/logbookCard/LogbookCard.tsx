@@ -5,8 +5,8 @@ const LogbookCard = ({ logs, mode, onDelete, onOpenCloseForm }: LogbookCardProps
   return (
     <div>
       {logs.map((log) => {
-        const date = new Date(log.date);
-        const formattedDate: string = `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+        const date = new Date(log.date.replace('Z', ''));
+        const formattedDate: string = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 
         return (
           <div className='card bg-base-100 border border-base-300 p-2'>
