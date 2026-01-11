@@ -1,12 +1,3 @@
-// import {
-//   Button,
-//   Dialog,
-//   DialogActions,
-//   DialogContent,
-//   Icon,
-//   IconName,
-//   Loading
-// } from '@noahspan/noahspan-components';
 import { DialogConfirmationProps } from './ConfirmationDialogProps.interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
