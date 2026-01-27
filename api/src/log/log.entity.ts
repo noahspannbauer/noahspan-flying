@@ -1,5 +1,6 @@
 import { PilotEntity } from 'src/pilot/pilot.entity';
 import { TrackEntity } from 'src/track/track.entity';
+import { ColumnNumericTransformer } from 'src/transformers/columnNumeric.transformer';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity({ name: 'logs' })
@@ -25,52 +26,131 @@ export class LogEntity {
   @Column()
   routeTo: string;
 
-  @Column()
+  @Column('numeric', {
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer()
+  })
   durationOfFlight: number;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   singleEngineLand: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   simulatorAtd: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   landingsDay: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   landingsNight: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   groundTrainingReceived: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   flightTrainingReceived: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   crossCountry: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   night: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   solo: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   pilotInCommand: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   instrumentActual: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   instrumentSimulated: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   instrumentApproaches: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   instrumentHolds: number | null;
 
-  @Column({ nullable: true })
+  @Column('numeric', {
+    nullable: true,
+    precision: 10,
+    scale: 1,
+    transformer: new ColumnNumericTransformer(),
+  })
   instrumentNavTrack: number | null;
 
   @Column({ nullable: true })
