@@ -33,7 +33,7 @@ const LogForm = () => {
           `api/logs/${logbookContext.state.selectedLogId}`
         );
         const log = response.data;
-
+        console.log(log)
         reset(log);
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -485,7 +485,9 @@ const LogForm = () => {
                   type='number'
                   className='input w-full'
                   disabled={state.isDisabled}
-                  onChange={onChange}
+                  min={0}
+                  onChange={(event) => onChange(Number(event.target.value))}
+                  step={0.1}
                   value={value}
                 />
               )}
@@ -505,6 +507,7 @@ const LogForm = () => {
               className='textarea w-full'
               disabled={state.isDisabled}
               onChange={onChange}
+              value={value}
             ></textarea>
           )}
         />

@@ -12,6 +12,8 @@ import httpClient from '../../httpClient/httpClient';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { states } from './states';
+import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
+import { ScreenSize } from '../../enums/screenSize';
 
 const PilotForm: React.FC<IPilotFormProps> = ({
   pilotId,
@@ -43,6 +45,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
   });
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const { screenSize } = useBreakpoints();
 
   const onCancel = () => {
     methods.reset(defaultValues);
@@ -112,7 +115,7 @@ const PilotForm: React.FC<IPilotFormProps> = ({
           aria-label='close-sidebar'
           className='drawer-overlay'
         ></label>
-        <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '25%' }}>
+        <div className={`menu bg-base-100 text-base-content min-h-full p-4 ${screenSize === ScreenSize.SM ? 'w-full' : screenSize === ScreenSize.MD ? 'w-[66%]' : 'w-[25%]'}`}>
           <FormProvider {...methods}>
             <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
               <div className='grid grid-cols-12 gap-3'>

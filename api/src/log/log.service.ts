@@ -51,7 +51,11 @@ export class LogService {
     }
   }
 
-  async update(id: string, log: LogDto): Promise<UpdateResult> {
+  async update(id: string, logDto: LogDto): Promise<UpdateResult> {
+    const log = logDto
+
+    delete log.tracks;
+
     return await this.logRepository.update(id, log);
   }
 

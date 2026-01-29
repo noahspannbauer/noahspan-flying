@@ -77,10 +77,11 @@ export class LogController {
     @Body() logDto: LogDto
   ): Promise<UpdateResult> {
     try {
+      console.log(logDto);
       return await this.logService.update(id, logDto);
     } catch (error) {
       const customError = error as CustomError;
-
+      console.log(customError)
       throw new HttpException(customError.message, customError.statusCode);
     }
   }

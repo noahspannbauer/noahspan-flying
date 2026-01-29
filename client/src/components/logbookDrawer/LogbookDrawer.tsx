@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LogbookDrawerProps } from "./LogbookDrawerProps.interface";
 import LogForm from "../logForm/LogForm";
 import TracksForm from "../tracksForm/TracksForm";
@@ -9,7 +10,8 @@ import { FormMode } from "../../enums/formMode";
 import httpClient from "../../httpClient/httpClient";
 import { AxiosError } from "axios";
 import { useLogbookContext } from "../../hooks/logbookContext/UseLogbookContext";
-import { ChangeEventHandler, MouseEventHandler, useState } from "react";
+import { useBreakpoints } from "../../hooks/useBreakpoints/UseBreakpoints";
+import { ScreenSize } from "../../enums/screenSize";
 
 const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   const [activeTab, setActiveTab] = useState<string>('time');
@@ -40,6 +42,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
   };
   const methods = useForm();
   const logbookContext = useLogbookContext()
+  const { screenSize } = useBreakpoints();
 
   const onCancel = () => {
     methods.reset(defaultValues);
@@ -49,6 +52,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
 
   const onSubmit = async (data: unknown) => {
     try {
+      logbookContext.dispatch({ type: 'SET_IS_FORM_DISABLED', payload: true });
       logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: true });
 
       if (!logbookContext.state.selectedLogId) {
@@ -58,20 +62,19 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
       }
 
       methods.reset(defaultValues);
-      logbookContext.dispatch({ type: 'SET_IS_FORM_DISABLED', payload: false });
-      logbookContext.dispatch({ type: 'SET_FORM_MODE', payload: FormMode.CANCEL });
+      
+      
     } catch (error) {
       const axiosError = error as AxiosError;
 
       logbookContext.dispatch({ type: 'SET_FORM_ALERT', payload: { severity: 'error', message: axiosError.message }});
     } finally {
       logbookContext.dispatch({ type: 'SET_IS_FORM_LOADING', payload: false });
+      logbookContext.dispatch({ type: 'SET_IS_FORM_DISABLED', payload: false });
+      logbookContext.dispatch({ type: 'SET_FORM_MODE', payload: FormMode.CANCEL });
+      onOpenClose(FormMode.CANCEL);
     }
   };
-
-  const onSelectedKeyChanged = (tab: string) => {
-    setActiveTab(tab)
-  }
 
   const onTabClicked = (event: any) => {
     setActiveTab(event.target.ariaLabel)
@@ -86,7 +89,7 @@ const LogbookDrawer = ({ onOpenClose }: LogbookDrawerProps) => {
           aria-label='close-sidebar'
           className='drawer-overlay'
         ></label>
-        <div className='menu bg-base-100 text-base-content min-h-full p-4' style={{ width: '25%' }}>
+        <div className={`menu bg-base-100 text-base-content min-h-full p-4 ${screenSize === ScreenSize.SM ? 'w-full' : screenSize === ScreenSize.MD ? 'w-[66%]' : 'w-[25%]'}`}>
           <FormProvider {...methods}>
             <form className='prose max-w-none' onSubmit={methods.handleSubmit(onSubmit)} style={{ paddingBottom: '50px' }}>
               <div className='grid grid-cols-12 mb-6'>
