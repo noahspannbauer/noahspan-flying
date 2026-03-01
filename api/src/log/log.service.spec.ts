@@ -1,0 +1,288 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { LogService } from './log.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { LogEntity } from './log.entity';
+import { LogDto } from './log.dto';
+import { FileService } from '../file/file.service';
+import { ConfigService } from '@nestjs/config';
+import { PilotService } from '../pilot/pilot.service';
+import { PilotEntity } from '../pilot/pilot.entity';
+
+describe('LogService', () => {
+  let service: LogService;
+
+  const mockFileService = {
+    deleteFolder: jest.fn()
+  }
+
+  const mockLogRepository = {
+    delete: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+    findOneBy: jest.fn(),
+    save: jest.fn(),
+  }
+
+  const mockPilotRepository = {
+    create: jest.fn(),
+    delete: jest.fn(),
+    find: jest.fn(),
+    findAll: jest.fn(),
+    update: jest.fn()
+  }
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ConfigService,
+        LogService,
+        PilotService,
+        {
+          provide: FileService,
+          useValue: mockFileService
+        },
+        {
+          provide: getRepositoryToken(LogEntity),
+          useValue: mockLogRepository
+        },
+        {
+          provide: getRepositoryToken(PilotEntity),
+          useValue: mockPilotRepository
+        }
+      ]
+    }).compile();
+
+    service = module.get<LogService>(LogService);
+  })
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  })
+
+  it('create => shoule create a log entry', async () => {
+    const logDto = {
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test'
+    } as LogDto
+
+    jest.spyOn(mockLogRepository, 'save').mockReturnValue(logDto);
+
+    const result = await service.create(logDto);
+
+    expect(mockLogRepository.save).toHaveBeenCalled();
+    expect(mockLogRepository.save).toHaveBeenCalledWith(logDto);
+  })
+
+  it('delete => should delete a log entry', async () => {
+    const id: string = '';
+    const log = {
+      id: 'd685f1ca-28e0-40b9-8713-74467db12965',
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test',
+      tracks: []
+    } as LogEntity;
+
+    jest.spyOn(mockFileService, 'deleteFolder').mockReturnValue(undefined);
+    jest.spyOn(mockLogRepository, 'delete').mockReturnValue(log);
+
+    const result = await service.delete(id);
+
+    expect(result).toEqual(log);
+    expect(mockLogRepository.delete).toHaveBeenCalled();
+    expect(mockLogRepository.delete).toHaveBeenCalledWith({ id: id })
+  })
+
+  it('find => should find a log entry by id', async () => {
+    const id: string = 'd685f1ca-28e0-40b9-8713-74467db12965';
+    const log = {
+      id: 'd685f1ca-28e0-40b9-8713-74467db12965',
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test',
+      tracks: []
+    } as LogEntity;
+
+    jest.spyOn(mockLogRepository, 'findOne').mockReturnValue(log);
+
+    const result = await service.find(id);
+
+    expect(result).toEqual(log);
+    expect(mockLogRepository.findOne).toHaveBeenCalled();
+    expect(mockLogRepository.findOne).toHaveBeenCalledWith({
+      relations: [
+        'pilot',
+        'tracks'
+      ],
+      where: {
+        id: id
+      }
+    })
+  })
+
+  it('findAll => should find all log entries', async () => {
+    const log = {
+      id: 'd685f1ca-28e0-40b9-8713-74467db12965',
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test',
+      tracks: []
+    } as LogEntity;
+    const logs = [log]
+
+    jest.spyOn(mockLogRepository, 'find').mockReturnValue(logs);
+
+    const result = await service.findAll();
+
+    expect(result).toEqual(logs);
+    expect(mockLogRepository.find).toHaveBeenCalled();
+  })
+
+  it('update => should update a log entry', async () => {
+    const id: string = 'd685f1ca-28e0-40b9-8713-74467db12965';
+    const logDto = {
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test'
+    } as LogDto
+    const log = {
+      id: 'd685f1ca-28e0-40b9-8713-74467db12965',
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test',
+      tracks: []
+    } as LogEntity;
+
+    jest.spyOn(mockLogRepository, 'findOneBy').mockReturnValue(log);
+    jest.spyOn(mockLogRepository, 'save').mockReturnValue(logDto);
+    
+    const result = await service.update(id, logDto);
+    
+    expect(result).toEqual(logDto);
+    expect(mockLogRepository.findOneBy).toHaveBeenCalled();
+    expect(mockLogRepository.findOneBy).toHaveBeenCalledWith({ id: id });
+    expect(mockLogRepository.save).toHaveBeenCalled();
+    expect(mockLogRepository.save).toHaveBeenCalledWith(logDto);
+  })
+})

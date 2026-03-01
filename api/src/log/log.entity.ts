@@ -1,6 +1,6 @@
-import { PilotEntity } from 'src/pilot/pilot.entity';
-import { TrackEntity } from 'src/track/track.entity';
-import { ColumnNumericTransformer } from 'src/transformers/columnNumeric.transformer';
+import { PilotEntity } from '../pilot/pilot.entity';
+import { TrackEntity } from '../track/track.entity';
+import { ColumnNumericTransformer } from '../transformers/columnNumeric.transformer';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity({ name: 'logs' })

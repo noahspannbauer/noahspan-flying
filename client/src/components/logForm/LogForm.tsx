@@ -33,7 +33,7 @@ const LogForm = () => {
           `api/logs/${logbookContext.state.selectedLogId}`
         );
         const log = response.data;
-        console.log(log)
+
         reset(log);
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -53,10 +53,15 @@ const LogForm = () => {
     if (pilots && FormMode.ADD) {
       const newPilotsOptions = pilots.map((pilot) => {
         return {
-          key: pilot.id,
           label: pilot.name,
+          value: pilot.id,
         };
       });
+
+      newPilotsOptions.unshift({
+        label: '',
+        value: '',
+      })
 
       dispatch({ type: 'SET_PILOT_OPTIONS', payload: newPilotsOptions });
     }
@@ -80,9 +85,9 @@ const LogForm = () => {
                 onChange={onChange}
                 value={[value]}
               >
-                {state.pilotOptions?.map((pilotOption: { key: string; label: string, }) => {
+                {state.pilotOptions?.map((pilotOption: { label: string, value: string; }) => {
                 return (
-                  <option key={pilotOption.key}>{pilotOption.label}</option>
+                  <option value={pilotOption.value}>{pilotOption.label}</option>
                 ) 
                 })}
               </select>

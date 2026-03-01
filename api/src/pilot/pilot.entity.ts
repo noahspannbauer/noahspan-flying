@@ -1,8 +1,8 @@
-import { LogEntity } from 'src/log/log.entity';
+import { LogEntity } from '../log/log.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { CertificateEntity } from '../certificate/certificate.entity';
-import { EndorsementEntity } from 'src/endorsement/endorsement.entity';
-import { MedicalEntity } from 'src/medical/medical.entity';
+import { EndorsementEntity } from '../endorsement/endorsement.entity';
+import { MedicalEntity } from '../medical/medical.entity';
 
 @Entity({ name: 'pilots' })
 export class PilotEntity {

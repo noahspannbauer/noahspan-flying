@@ -3,10 +3,10 @@ import { TrackDto } from "./track.dto";
 import { TrackEntity } from "./track.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
-import { LogService } from "src/log/log.service";
-import { LogEntity } from "src/log/log.entity";
-import { CustomError } from "src/error/customError";
-import { FileService } from "src/file/file.service";
+import { LogService } from "../log/log.service";
+import { LogEntity } from "../log/log.entity";
+import { CustomError } from "../error/customError";
+import { FileService } from "../file/file.service";
 
 @Injectable()
 export class TrackService {
@@ -19,11 +19,7 @@ export class TrackService {
   ) {}
 
   async find(id: string): Promise<TrackEntity> {
-    try {
-      return await this.trackRepository.findOneBy({ id });
-    } catch (error) {
-      throw new CustomError('Track not found', 'Not found', 404)
-    }
+    return await this.trackRepository.findOneBy({ id });
   }
 
   async findAll(logId: string): Promise<TrackEntity[]> {
@@ -40,10 +36,11 @@ export class TrackService {
         })
 
         return tracks;
+      } else {
+        throw new CustomError('Tracks not found', 'Not found', 404);
       }
     } catch (error) {
-      console.log(error)
-      throw new CustomError('Tracks not found', 'Not found', 404);
+      throw error
     }
   }
 
@@ -69,21 +66,11 @@ export class TrackService {
   }
 
   async update(id: string, track: TrackDto): Promise<UpdateResult> {
-    try {
-      return await this.trackRepository.update(id, track);
-    } catch(error) {
-      throw error
-    }
+    return await this.trackRepository.update(id, track);
   }
 
   async downloadTrackFile(logId: string, fileName: string): Promise<string> {
-    try {
-      const downloadedFile: string = await this.fileService.downloadFile(this.containerName, logId, fileName);
-
-      return downloadedFile;
-    } catch (error) {
-      throw error
-    }
+    return await this.fileService.downloadFile(this.containerName, logId, fileName);
   }
 
   async delete(id: string, logId: string, fileName: string): Promise<DeleteResult> {

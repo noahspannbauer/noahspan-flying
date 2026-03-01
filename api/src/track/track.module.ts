@@ -4,7 +4,7 @@ import { TrackEntity } from "./track.entity";
 import { TrackController } from "./track.controller";
 import { FileService } from "../file/file.service";
 import { TrackService } from './track.service';
-import { LogModule } from 'src/log/log.module';
+import { LogModule } from '../log/log.module';
 
 @Module({
   imports: [

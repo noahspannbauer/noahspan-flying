@@ -5,7 +5,7 @@ import { LogEntity } from './log.entity';
 import { ConfigService } from '@nestjs/config';
 import { FileService } from '../file/file.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PilotModule } from 'src/pilot/pilot.module';
+import { PilotModule } from '../pilot/pilot.module';
 
 @Module({
   imports: [

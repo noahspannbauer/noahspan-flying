@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LogEntity } from './log.entity';
 import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { LogDto } from './log.dto';
-import { PilotService } from 'src/pilot/pilot.service';
-import { PilotEntity } from 'src/pilot/pilot.entity';
-import { CustomError } from 'src/error/customError';
-import { FileService } from 'src/file/file.service';
+import { PilotService } from '../pilot/pilot.service';
+import { PilotEntity } from '../pilot/pilot.entity';
+import { CustomError } from '../error/customError';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class LogService {
@@ -31,32 +31,17 @@ export class LogService {
     });
   }
 
-  async create(logDto: LogDto): Promise<InsertResult> {
-    try{
-      const pilotEntity: PilotEntity = await this.pilotService.find(logDto.pilotId);
-
-      if (pilotEntity) {
-        const { pilotId, ...newLogDto } = logDto;
-        const log = this.logRepository.create({
-          ...newLogDto,
-          pilot: pilotEntity
-        })
-
-        return this.logRepository.insert(log);
-      } else {
-        throw new CustomError('Pilot not found', 'Not found', 404);
-      }
-    } catch (error) {
-      throw error
-    }
+  async create(logDto: LogDto): Promise<LogDto> {
+    return this.logRepository.save(logDto);
   }
 
-  async update(id: string, logDto: LogDto): Promise<UpdateResult> {
-    const log = logDto
+  async update(id: string, logDto: LogDto): Promise<LogDto> {
+    const logEntity: LogEntity = await this.logRepository.findOneBy({ id });
+    const logEntityUpdated = Object.assign(logEntity, logDto)
 
-    delete log.tracks;
+    delete logEntityUpdated.tracks;
 
-    return await this.logRepository.update(id, log);
+    return await this.logRepository.save(logEntityUpdated);
   }
 
   async delete(id: string): Promise<DeleteResult> {
