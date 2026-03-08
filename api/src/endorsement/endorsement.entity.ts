@@ -1,4 +1,4 @@
-import { PilotEntity } from 'src/pilot/pilot.entity';
+import { PilotEntity } from '../pilot/pilot.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'endorsements' })

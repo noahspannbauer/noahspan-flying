@@ -48,10 +48,10 @@ import { ConfigService } from '@nestjs/config';
     return fileUrl;
   }
 
-  async downloadFile(containerName: string, rowKey: string, fileName: string): Promise<string> {
+  async downloadFile(containerName: string, logId: string, fileName: string): Promise<string> {
     this.containerName = containerName;
 
-    const blockBlobClient = await this.getBlobClient(`${rowKey}/${fileName}`);
+    const blockBlobClient = await this.getBlobClient(`${logId}/${fileName}`);
     const downloadBlockBlobResponse = await blockBlobClient.download();
     const downloaded: string = (await this.streamToBuffer(downloadBlockBlobResponse.readableStreamBody)).toString()
     

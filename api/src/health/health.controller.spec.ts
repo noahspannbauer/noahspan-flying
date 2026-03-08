@@ -1,42 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HealthController } from './health.controller';
-import { HealthService } from './health.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { HealthController } from "./health.controller"
+import { HttpStatus } from "@nestjs/common";
 
 describe('HealthController', () => {
-  let controller; HealthController;
-
-  const mockHealthService = {
-    isDatabaseConnected: jest.fn()
-  }
+  let controller: HealthController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [HealthController],
-      providers: [HealthService]
+      controllers: [HealthController]
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
   })
 
-  it('isHealthy => should return true', () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  it('should return database connected', async () => {
-    jest.spyOn(mockHealthService, 'isDatabaseConnected').mockReturnValue(true);
-
-    const result = await controller.isHealthy();
-
-    expect(mockHealthService.isDatabaseConnected).toHaveBeenCalled();
-    expect(result).toEqual(true);
   })
 
-  it('isHealthy => should return error', async () => {
-    jest.spyOn(mockHealthService, 'isDatabaseConnected').mockReturnValue(false);
-
+  it('isHealth => should return status ok', async () => {
     const result = await controller.isHealthy();
 
-    expect(mockHealthService.isDatabaseConnected).toHaveBeenCalled();
-    expect(result).toEqual(false);
+    expect(result).toEqual(HttpStatus.OK);
   })
 })

@@ -60,7 +60,7 @@ resource "azurerm_container_app" "container_app" {
 
     container {
       cpu = 0.25
-      image = "noahspan/flying:20588458616"
+      image = "noahspan/flying:20589367895"
       memory = "0.5Gi"
       name = "flying"
 
@@ -100,6 +100,11 @@ resource "azurerm_container_app" "container_app" {
       }
 
       env {
+        name = "NODE_ENV"
+        value = "test"
+      }
+
+      env {
         name = "SESSION_SECRET"
         secret_name = "session-secret"
       }
@@ -116,13 +121,13 @@ resource "azurerm_container_app" "container_app" {
 
       env {
         name = "DB_SYNC"
-        value = "false"
+        value = "true"
       }
 
       startup_probe {
-        failure_count_threshold = 10
-        initial_delay = 1
-        interval_seconds = 2
+        failure_count_threshold = 3
+        initial_delay = 15
+        interval_seconds = 30
         path = "/api/health"
         port = 3000
         transport = "HTTP"

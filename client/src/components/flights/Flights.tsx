@@ -3,11 +3,13 @@ import { useEffect, useReducer } from "react";
 import { useLogs } from "../../hooks/logs/UseLogs";
 import { LogbookEntry } from "../logbook/LogbookEntry.interface";
 import { initialState, reducer } from "./reducer";
+import { useOidc } from "../../auth/oidcConfig";
 import Alert from "../alert/Alert";
 
 const Flights = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { logs, logsLoading } = useLogs();
+  const { isUserLoggedIn } = useOidc();
 
   useEffect(() => {
 
@@ -19,7 +21,12 @@ const Flights = () => {
 
     if (flights && flights.length > 0) {
       dispatch({ type: 'SET_FLIGHTS', payload: flights})
-      dispatch({ type: 'SET_ALERT', payload: undefined })
+
+      if (!isUserLoggedIn && flights.length >= 5) {
+        dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'A limited number of flights displayed. Sign in to view all flights.'}})
+      } else {
+        dispatch({ type: 'SET_ALERT', payload: undefined })
+      }
     } else {
       dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'No flights found' }})
     }

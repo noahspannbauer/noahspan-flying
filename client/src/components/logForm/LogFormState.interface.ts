@@ -4,6 +4,6 @@ export interface LogFormState {
   alert: Alert | undefined;
   isDisabled: boolean;
   isLoading: boolean;
-  pilotOptions: { key: string; label: string; }[];
+  pilotOptions: { label: string; value: string;  }[];
   selectedPilotName: string;
 }

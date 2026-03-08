@@ -1,5 +1,3 @@
-import { PilotEntity } from "src/pilot/pilot.entity";
-
 export class LogDto {
   pilotId: string;
   date: Date;

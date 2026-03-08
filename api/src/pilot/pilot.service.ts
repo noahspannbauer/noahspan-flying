@@ -3,7 +3,7 @@ import { PilotEntity } from './pilot.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { PilotDto } from './pilot.dto';
-import { CustomError } from 'src/error/customError';
+import { CustomError } from '../error/customError';
 
 @Injectable()
 export class PilotService {
@@ -13,7 +13,7 @@ export class PilotService {
 
   async find(id: string): Promise<PilotEntity> {
     try {
-      const pilotEntity = await this.pilotRepository.findOneBy({ id });
+      const pilotEntity: PilotEntity = await this.pilotRepository.findOneBy({ id });
 
       if (pilotEntity) {
         return pilotEntity
@@ -29,15 +29,18 @@ export class PilotService {
     return await this.pilotRepository.find();
   }
 
-  async create(pilot: PilotDto): Promise<InsertResult> {
-    return await this.pilotRepository.insert(pilot);
+  async create(pilot: PilotDto): Promise<PilotDto> {
+    return await this.pilotRepository.save(pilot);
   }
 
   async update(
     id: string,
-    pilot: PilotDto
-  ): Promise<UpdateResult> {
-    return await this.pilotRepository.update(id, pilot);
+    pilotDto: PilotDto
+  ): Promise<PilotDto> {
+    const pilotEntity: PilotEntity = await this.pilotRepository.findOneBy({ id })
+    const pilotEntityUpdated = Object.assign(pilotEntity, pilotDto)
+
+    return await this.pilotRepository.save(pilotEntityUpdated);
   }
 
   async delete(id: string): Promise<DeleteResult> {

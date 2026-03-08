@@ -1,4 +1,4 @@
-import { LogEntity } from 'src/log/log.entity';
+import { LogEntity } from '../log/log.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'tracks' })

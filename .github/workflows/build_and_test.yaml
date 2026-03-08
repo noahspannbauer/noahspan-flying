@@ -10,7 +10,7 @@ on:
         type: string
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment_name }}
     steps:
@@ -37,6 +37,10 @@ jobs:
       - name: Build API
         run: |
           npm run build -w api
+
+      - name: Test API
+        run: |
+          npm run test -w api
 
       - name: Build Client
         env:

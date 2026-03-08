@@ -50,9 +50,8 @@ export class PilotController {
 
   @Post()
   @UseGuards(AuthGuard)
-  async create(@Body() pilotDto: PilotDto) {
+  async create(@Body() pilotDto: PilotDto): Promise<PilotDto> {
     try {
-      
       return await this.pilotService.create(pilotDto);
     } catch (error) {
       const customError = error as CustomError;

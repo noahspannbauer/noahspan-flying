@@ -5,7 +5,7 @@ type Action =
   | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_IS_DISABLED'; payload: boolean }
   | { type: 'SET_IS_LOADING'; payload: boolean }
-  | { type: 'SET_PILOT_OPTIONS'; payload: { key: string, label: string; }[] }
+  | { type: 'SET_PILOT_OPTIONS'; payload: { label: string; value: string }[] }
   | { type: 'SET_SELECTED_PILOT_NAME'; payload: string };
 
 export const initialState: LogFormState = {

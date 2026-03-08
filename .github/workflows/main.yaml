@@ -13,7 +13,7 @@ jobs:
     name: build
     needs:
       - changes
-    uses: ./.github/workflows/build.yaml
+    uses: ./.github/workflows/build_and_test.yaml
     with:
       environment_name: test
       version_number: ${{ github.run_id }}
