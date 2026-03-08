@@ -377,7 +377,9 @@ const Logbook: React.FC<unknown> = () => {
         setColumnVisibility(columnVisibility)
         dispatch({ type: 'SET_ENTRIES', payload: entries });
 
-        if (state.alert) {
+        if (!isUserLoggedIn && response.data.length >= 5) {
+          dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'A limited number of log entries displayed. Sign in to view all log entries.'}})
+        } else {
           dispatch({ type: 'SET_ALERT', payload: undefined})
         }
       } else {
