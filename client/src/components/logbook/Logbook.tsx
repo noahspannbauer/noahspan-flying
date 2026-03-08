@@ -345,6 +345,7 @@ const Logbook: React.FC<unknown> = () => {
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
+        pageIndex: 0,
         pageSize: 100
       }
     },
