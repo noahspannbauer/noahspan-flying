@@ -343,9 +343,14 @@ const Logbook: React.FC<unknown> = () => {
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 100
+      }
+    },
     onColumnVisibilityChange: setColumnVisibility,
     state: {
-      columnVisibility: columnVisibility
+      columnVisibility: columnVisibility,
     }
   });
 
