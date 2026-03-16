@@ -12,16 +12,16 @@ import { UserRole } from '../../enums/userRole';
 import { useBreakpoints } from '../../hooks/useBreakpoints/UseBreakpoints';
 import { ScreenSize } from '../../enums/screenSize';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAdd, faEllipsisVertical, faPen, faEye, faTrash, faMapLocationDot } from '@fortawesome/free-solid-svg-icons'
-import { CellContext, ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, HeaderContext, useReactTable } from '@tanstack/react-table';
+import { faAdd, faEllipsisVertical, faPen, faEye, faTrash, faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons'
+import { CellContext, ColumnDef, flexRender, getCoreRowModel, HeaderContext, PaginationState, useReactTable } from '@tanstack/react-table';
 import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 import LogbookDrawer from '../logbookDrawer/LogbookDrawer';
 import Alert from '../alert/Alert';
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [columnVisibility, setColumnVisibility] = useState({})
-  const logbookContext = useLogbookContext()
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const logbookContext = useLogbookContext();
   const { isUserLoggedIn } = useOidc();
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints();
@@ -338,31 +338,51 @@ const Logbook: React.FC<unknown> = () => {
     actions
   ];
 
+  const onPaginationChange = (updater: any) => {
+    const newPaginationState: PaginationState = typeof updater === 'function' ? updater(state.pagination) : updater;
+
+    dispatch({ type: 'SET_PAGINATION', payload: newPaginationState })
+  }
+
   const table = useReactTable({
     data: state.entries,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 100
-      }
-    },
+    manualPagination: true,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: onPaginationChange,
+    rowCount: state.totalEntries,
     state: {
       columnVisibility: columnVisibility,
+      pagination: state.pagination
     }
   });
 
-  const getLogbookEntries = async () => {
+  const {
+    firstPage,
+    getCanNextPage,
+    getCanPreviousPage,
+    getPageCount,
+    getState,
+    lastPage,
+    nextPage,
+    previousPage,
+    setPageIndex
+  } = table;
+
+  const getLogbookEntries = async (pageIndex?: number, pageSize?: number) => {
     try {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
-      const response: AxiosResponse = await httpClient.get(`api/logs`);
+      const response: AxiosResponse = await httpClient.get(`api/logs`, {
+        params: {
+          skip: pageIndex,
+          take: pageSize
+        }
+      });
 
-      if (response.data.length > 0) {
-        const entries: LogbookEntry[] = response.data;
+      if (response.data.entities.length > 0) {
+        const entries: LogbookEntry[] = response.data.entities;
         const entryColumns: string[] = Object.keys(entries[0]);
         const columnVisibility: {[key: string]: boolean} = {}
 
@@ -381,7 +401,7 @@ const Logbook: React.FC<unknown> = () => {
 
         entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         setColumnVisibility(columnVisibility)
-        dispatch({ type: 'SET_ENTRIES', payload: entries });
+        dispatch({ type: 'SET_ENTRIES', payload: { entries: entries, totalEntries: response.data.total }});
 
         if (!isUserLoggedIn && response.data.length >= 5) {
           dispatch({ type: 'SET_ALERT', payload: { severity: 'info', message: 'A limited number of log entries displayed. Sign in to view all log entries.'}})
@@ -448,7 +468,7 @@ const Logbook: React.FC<unknown> = () => {
         payload: false
       });
       logbookContext.dispatch({ type: 'SET_SELECTED_LOG_ID', payload: '' })
-      await getLogbookEntries();
+      await getLogbookEntries(state.pagination?.pageIndex, state.pagination?.pageSize);
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -468,11 +488,35 @@ const Logbook: React.FC<unknown> = () => {
     });
   };
 
+  const onRowsPerPageChanged = (event: any) => {
+    console.log(event.target.value)
+    const newPaginationState: PaginationState = {
+      pageIndex: 0,
+      pageSize: event.target.value !== 'All' ? Number(event.target.value) : state.totalEntries
+    };
+    console.log(newPaginationState)
+    dispatch({ type: 'SET_PAGINATION', payload: newPaginationState })
+  }
+
   useEffect(() => {
     if (!logbookContext.state.isDrawerOpen) {
-      getLogbookEntries();
+      getLogbookEntries(state.pagination.pageIndex, state.pagination.pageSize);
     }
-  }, [logbookContext.state.isDrawerOpen]);
+  }, [logbookContext.state.isDrawerOpen, state.pagination.pageIndex, state.pagination.pageSize]);
+
+  useEffect(() => {
+    const pages: number[] = [];
+
+    if (state.pagination?.pageSize) {
+      const totalPages = getPageCount();
+
+      for(let i = 0; i < totalPages; i++) {
+        pages.push(i + 1)
+      }
+    }
+
+    dispatch({ type: 'SET_PAGES', payload: pages })
+  }, [state.totalEntries, state.pagination?.pageSize])
 
   return (
     <>
@@ -504,8 +548,24 @@ const Logbook: React.FC<unknown> = () => {
           </div>
         )}
         {!state.isLoading && state.entries.length > 0 && screenSize !== ScreenSize.SM && (
-          <div className='col-span-12 p-5 bg-base-100 border border-base-100 rounded-lg'>
-            <div className='overflow-x-auto'>
+          <div className='col-span-12 pr-5 pb-5 pl-5 bg-base-100 border border-base-100 rounded-lg '>
+            <div className='overflow-x-auto mb-5'>
+              <div className='col-span-12 justify-self-end self-center mt-1 mr-1 mb-2'>
+                <label className='select select-sm select-ghost'>
+                  <span className='label'>Rows per page</span>
+                  <select
+                    defaultValue={1}
+                    onChange={onRowsPerPageChanged}
+                    value={state.pagination?.pageSize}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={3}>50</option>
+                    <option value={state.totalEntries}>All</option>
+                  </select>
+                </label>
+                
+              </div>
               <table className='table min-w-full h-auto table-auto w-full'>
                 <thead className='bg-base-200'>
                   {table.getHeaderGroups().map((headerGroup, headerGroupIndex) => (
@@ -591,6 +651,48 @@ const Logbook: React.FC<unknown> = () => {
                 </thead>
               </table>
             </div>
+            {state.pagination.pageSize !== state.totalEntries &&
+              <div className='col-span-12 justify-self-center self-center'>
+                <div className='join'>
+                  <button
+                    className='join-item btn btn-sm'
+                    onClick={firstPage}
+                  >
+                    <FontAwesomeIcon icon={faAnglesLeft} />
+                  </button>
+                  <button
+                    className='join-item btn btn-sm'
+                    onClick={previousPage}
+                    disabled={!getCanPreviousPage()}
+                  >
+                    <FontAwesomeIcon icon={faAngleLeft} />
+                  </button>
+                  {state.pages.map((page, index) => {
+                    return (
+                      <button
+                        className={`join-item btn btn-sm ${getState().pagination.pageIndex === index ? 'btn-active' : ''}`}
+                        onClick={() => setPageIndex(index)}
+                      >
+                        {page}
+                      </button>
+                    )
+                  })}
+                  <button
+                    className='join-item btn btn-sm'
+                    onClick={() => nextPage()}
+                    disabled={!getCanNextPage()}
+                  >
+                    <FontAwesomeIcon icon={faAngleRight} />
+                  </button>
+                  <button
+                    className='join-item btn btn-sm'
+                    onClick={lastPage}
+                  >
+                    <FontAwesomeIcon icon={faAnglesRight} />
+                  </button>
+                </div>
+              </div>
+            }
           </div>
         )}
         {state.entries.length > 0 && screenSize === ScreenSize.SM &&

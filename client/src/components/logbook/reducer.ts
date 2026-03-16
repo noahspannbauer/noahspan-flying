@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, PaginationState } from '@tanstack/react-table';
 import { FormMode } from '../../enums/formMode';
 import { Alert } from '../../interfaces/Alert.interface';
 import { LogbookEntry } from './LogbookEntry.interface';
@@ -7,11 +7,12 @@ import { LogbookState } from './LogbookState.interface';
 type Action =
   | { type: 'SET_COLUMNS'; payload: ColumnDef<LogbookEntry>[] }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_OPEN'; payload: boolean }
-  | { type: 'SET_ENTRIES'; payload: LogbookEntry[] }
+  | { type: 'SET_ENTRIES'; payload: { entries: LogbookEntry[], totalEntries: number } }
   | { type: 'SET_ALERT'; payload: Alert | undefined }
   | { type: 'SET_IS_CONFIRMATION_DIALOG_LOADING'; payload: boolean }
-  | { type: 'SET_IS_LOADING'; payload: boolean };
-
+  | { type: 'SET_IS_LOADING'; payload: boolean }
+  | { type: 'SET_PAGES'; payload: number[] }
+  | { type: 'SET_PAGINATION'; payload: PaginationState };
 
 export const initialState: LogbookState = {
   alert: undefined,
@@ -19,7 +20,13 @@ export const initialState: LogbookState = {
   entries: [],
   isConfirmDialogLoading: false,
   isConfirmDialogOpen: false,
-  isLoading: false
+  isLoading: false,
+  pages: [],
+  pagination: {
+    pageIndex: 0,
+    pageSize: 10
+  },
+  totalEntries: 0
 };
 
 export const reducer = (
@@ -42,7 +49,8 @@ export const reducer = (
     case 'SET_ENTRIES': {
       return {
         ...state,
-        entries: action.payload
+        entries: action.payload.entries,
+        totalEntries: action.payload.totalEntries
       };
     }
     case 'SET_ALERT': {
@@ -62,6 +70,18 @@ export const reducer = (
         ...state,
         isLoading: action.payload
       };
+    }
+    case 'SET_PAGES': {
+      return {
+        ...state,
+        pages: action.payload
+      }
+    }
+    case 'SET_PAGINATION': {
+      return {
+        ...state,
+        pagination: action.payload
+      }
     }
     default: {
       return state;

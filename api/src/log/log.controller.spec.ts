@@ -13,7 +13,7 @@ describe('LogController', () => {
     create: jest.fn(),
     delete: jest.fn(),
     find: jest.fn(),
-    findAll: jest.fn(),
+    findLogsWithCount: jest.fn(),
     update: jest.fn()
   }
 
@@ -69,32 +69,32 @@ describe('LogController', () => {
     }
   })
 
-  it('findAll => should find all logs', async () => {
+  it('findLogsWithCount => should find all logs', async () => {
     const id: string = '95834f84-0a02-44d3-884e-a20237adeca0';
     const log = {
 
     } as LogEntity;
     const logs = [log]
 
-    jest.spyOn(mockLogService, 'findAll').mockReturnValue(logs);
+    jest.spyOn(mockLogService, 'findLogsWithCount').mockReturnValue(logs);
 
-    const result = await controller.findAll();
+    const result = await controller.findLogsWithCount();
 
     expect(result).toEqual(logs);
-    expect(mockLogService.findAll).toHaveBeenCalled();
+    expect(mockLogService.findLogsWithCount).toHaveBeenCalled();
   })
 
-  it('findAll => should fail to find all logs', async () => {
-    jest.spyOn(mockLogService, 'findAll').mockRejectedValue(new Error('Logs not found'))
+  it('findLogsWithCount => should fail to find logs with count', async () => {
+    jest.spyOn(mockLogService, 'findLogsWithCount').mockRejectedValue(new Error('Logs not found'))
 
     try {
-      await controller.findAll();
+      await controller.findLogsWithCount();
 
-      fail('findAll did not throw error');
+      fail('findLogsWithCount did not throw error');
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
-      expect(mockLogService.findAll).toHaveBeenCalled();
-      expect(mockLogService.findAll).rejects.toThrow('Logs not found')
+      expect(mockLogService.findLogsWithCount).toHaveBeenCalled();
+      expect(mockLogService.findLogsWithCount).rejects.toThrow('Logs not found')
     }
   })
 

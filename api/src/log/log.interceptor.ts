@@ -15,10 +15,10 @@ export class LogInterceptor implements NestInterceptor {
     ]);
 
     return handler.handle().pipe(
-      map((data: LogEntity[]) => {
+      map((data: { entities: LogEntity[], total: number, hasNextPage: boolean }) => {
         const req = context.switchToHttp().getRequest();
-        const limitData = (data) => {
-          return data.map((log: LogEntity) => {
+        const limitData = (entities: LogEntity[]) => {
+          return entities.map((log: LogEntity) => {
             return {
               id: log.id,
               pilot: {
@@ -41,17 +41,25 @@ export class LogInterceptor implements NestInterceptor {
           const rolesKeyName = Object.keys(jwtPayload).find((key) => key.includes('roles'));
 
           if (jwtPayload[rolesKeyName].includes('Flying.Read')) {
-            const logs = limitData(data);
+            const logs = limitData(data.entities);
 
-            return logs;
+            return {
+              entities: logs,
+              total: data.total,
+              hasNextPage: data.hasNextPage
+            };
           } else {
             return data;
           }
         } else if (!req.headers.authorization && isPublic) {
-          const publicData = limitData(data)
+          const publicData = limitData(data.entities)
           const logs = publicData.slice(0, 5)
 
-          return logs;
+          return {
+            entities: logs,
+            total: data.total,
+            hasNextPage: data.hasNextPage
+          };
         }
       })
     );
