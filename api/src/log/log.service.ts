@@ -25,10 +25,18 @@ export class LogService {
     return logEntity;
   }
 
-  async findAll(): Promise<LogEntity[]> {
-    return await this.logRepository.find({
+  async findLogsWithCount(skip?: number, take?: number): Promise<{entities: LogEntity[], total: number, hasNextPage: boolean}> {
+    const [entities, total] = await this.logRepository.findAndCount({ 
+      take, 
+      skip,
       relations: ['pilot', 'tracks']
-    });
+     })
+
+    return {
+      entities,
+      total,
+      hasNextPage: skip + take < total
+    }
   }
 
   async create(logDto: LogDto): Promise<LogDto> {

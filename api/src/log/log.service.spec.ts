@@ -17,7 +17,7 @@ describe('LogService', () => {
 
   const mockLogRepository = {
     delete: jest.fn(),
-    find: jest.fn(),
+    findAndCount: jest.fn(),
     findOne: jest.fn(),
     findOneBy: jest.fn(),
     save: jest.fn(),
@@ -181,7 +181,7 @@ describe('LogService', () => {
     })
   })
 
-  it('findAll => should find all log entries', async () => {
+  it('findLogsWithCount => should find log entries with count', async () => {
     const log = {
       id: 'd685f1ca-28e0-40b9-8713-74467db12965',
       pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
@@ -209,14 +209,18 @@ describe('LogService', () => {
       notes: 'This is a test',
       tracks: []
     } as LogEntity;
-    const logs = [log]
+    const logs = [log];
+    const count = 1
+    const morePages = false
+    
+    jest.spyOn(mockLogRepository, 'findAndCount').mockReturnValue([logs, count, morePages]);
 
-    jest.spyOn(mockLogRepository, 'find').mockReturnValue(logs);
+    const {entities, total, hasNextPage} = await service.findLogsWithCount();
 
-    const result = await service.findAll();
-
-    expect(result).toEqual(logs);
-    expect(mockLogRepository.find).toHaveBeenCalled();
+    expect(entities).toEqual(logs);
+    expect(count).toEqual(total);
+    expect(hasNextPage).toEqual(morePages);
+    expect(mockLogRepository.findAndCount).toHaveBeenCalled();
   })
 
   it('update => should update a log entry', async () => {

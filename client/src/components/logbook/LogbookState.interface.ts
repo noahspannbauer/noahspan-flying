@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, PaginationState } from '@tanstack/react-table';
 import { FormMode } from '../../enums/formMode';
 import { Alert } from '../../interfaces/Alert.interface';
 import { LogbookEntry } from './LogbookEntry.interface';
@@ -10,4 +10,7 @@ export interface LogbookState {
   isConfirmDialogLoading: boolean;
   isConfirmDialogOpen: boolean;
   isLoading: boolean;
+  pages: number[];
+  pagination: PaginationState;
+  totalEntries: number;
 }

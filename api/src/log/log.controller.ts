@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors
 } from '@nestjs/common';
@@ -47,13 +48,13 @@ export class LogController {
 
   @Get()
   @Public()
-  async findAll(): Promise<LogEntity[]> {
+  async findLogsWithCount(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
     try {
-      return await this.logService.findAll();
+      return await this.logService.findLogsWithCount(skip, take)
     } catch (error) {
       const customError = error as CustomError;
 
-      throw new HttpException(customError.message, customError.statusCode);
+      throw new HttpException(customError.message, customError.statusCode)
     }
   }
 
