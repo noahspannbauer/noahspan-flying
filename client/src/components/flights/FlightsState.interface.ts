@@ -5,4 +5,8 @@ export interface FlightsState {
   alert: Alert | undefined;
   flights: LogbookEntry[];
   isLoading: boolean;
+  hasMoreFlights: boolean;
+  pageIndex: number;
+  pageSize: number
+  totalFlights: number;
 }

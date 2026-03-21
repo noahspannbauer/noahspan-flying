@@ -30,8 +30,23 @@ export class LogService {
       take, 
       skip,
       relations: ['pilot', 'tracks']
-     })
+    })
 
+    return {
+      entities,
+      total,
+      hasNextPage: skip + take < total
+    }
+  }
+
+  async findLogsWithTracks(skip?: number, take?: number): Promise<{entities: LogEntity[], total: number, hasNextPage: boolean}> {
+    const [entities, total] = await this.logRepository
+      .createQueryBuilder('logs')
+      .innerJoinAndSelect('logs.tracks', 'track')
+      .innerJoinAndSelect('logs.pilot', 'pilot')
+      .orderBy('date')
+      .getManyAndCount();
+      
     return {
       entities,
       total,
