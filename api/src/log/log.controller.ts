@@ -31,7 +31,32 @@ export class LogController {
     private readonly logService: LogService
   ) {}
 
- 
+   @Get()
+  @Public()
+  async findLogsWithCount(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
+    try {
+      return await this.logService.findLogsWithCount(skip, take)
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode)
+    }
+  }
+
+  @Get('tracks')
+  @Public()
+  async findLogsWithTracks(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
+    try {
+      const result = await this.logService.findLogsWithTracks(skip, take)
+      console.log(result);
+      return result
+    } catch (error) {
+      const customError = error as CustomError;
+
+      throw new HttpException(customError.message, customError.statusCode);
+    }
+  }
+
   @Get(':id')
   @Public()
   async find(
@@ -45,19 +70,6 @@ export class LogController {
       throw new HttpException(customError.message, customError.statusCode);
     }
   }
-
-  @Get()
-  @Public()
-  async findLogsWithCount(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
-    try {
-      return await this.logService.findLogsWithCount(skip, take)
-    } catch (error) {
-      const customError = error as CustomError;
-
-      throw new HttpException(customError.message, customError.statusCode)
-    }
-  }
-
   
   @Post()
   @UseGuards(AuthGuard)

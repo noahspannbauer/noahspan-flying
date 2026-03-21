@@ -15,7 +15,15 @@ describe('LogService', () => {
     deleteFolder: jest.fn()
   }
 
+  const mockQueryBuilder = {
+    createQueryBuilder: jest.fn().mockReturnThis(),
+    innerJoinAndSelect: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getManyAndCount: jest.fn()
+  }
+
   const mockLogRepository = {
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
     delete: jest.fn(),
     findAndCount: jest.fn(),
     findOne: jest.fn(),
@@ -59,7 +67,7 @@ describe('LogService', () => {
     expect(service).toBeDefined();
   })
 
-  it('create => shoule create a log entry', async () => {
+  it('create => should create a log entry', async () => {
     const logDto = {
       pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
       date: new Date('2026-02-21'),
@@ -207,7 +215,18 @@ describe('LogService', () => {
       instrumentHolds: null,
       instrumentNavTrack: null,
       notes: 'This is a test',
-      tracks: []
+      tracks: [
+        {
+            "id": "4645ce0c-6fd7-432c-8089-777a7139cf7e",
+            "url": "http://127.0.0.1:10000/devstoreaccount1/tracks/0e7a641a-0264-47f0-88bf-7c296c842d8b/FlightAware_N70392_KANE_KONA_20250628.kml",
+            "order": 1
+        },
+        {
+            "id": "5ce26898-a18b-46f4-b989-3fb7acdace08",
+            "url": "http://127.0.0.1:10000/devstoreaccount1/tracks/0e7a641a-0264-47f0-88bf-7c296c842d8b/FlightAware_N70392_KONA_KANE_20250628.kml",
+            "order": 2
+        }
+      ]
     } as LogEntity;
     const logs = [log];
     const count = 1
@@ -216,6 +235,59 @@ describe('LogService', () => {
     jest.spyOn(mockLogRepository, 'findAndCount').mockReturnValue([logs, count, morePages]);
 
     const {entities, total, hasNextPage} = await service.findLogsWithCount();
+
+    expect(entities).toEqual(logs);
+    expect(count).toEqual(total);
+    expect(hasNextPage).toEqual(morePages);
+    expect(mockLogRepository.findAndCount).toHaveBeenCalled();
+  })
+
+    it('findLogsWithTracks => should find log entries with tracks', async () => {
+    const log = {
+      id: 'd685f1ca-28e0-40b9-8713-74467db12965',
+      pilotId: '7c4bae6b-9ec4-469e-8e16-fcbf0b940936',
+      date: new Date('2026-02-21'),
+      aircraftMakeModel: 'Cessna 172M',
+      aircraftIdentity: 'N12345',
+      routeFrom: 'KMSP',
+      routeTo: 'KMSP',
+      durationOfFlight: 1,
+      singleEngineLand: 1,
+      simulatorAtd: null,
+      landingsDay: 1,
+      landingsNight: null,
+      groundTrainingReceived: null,
+      flightTrainingReceived: null,
+      crossCountry: 1,
+      night: null,
+      solo: 1,
+      pilotInCommand: 1,
+      instrumentActual: null,
+      instrumentSimulated: null,
+      instrumentApproaches: null,
+      instrumentHolds: null,
+      instrumentNavTrack: null,
+      notes: 'This is a test',
+      tracks: [
+        {
+            "id": "4645ce0c-6fd7-432c-8089-777a7139cf7e",
+            "url": "http://127.0.0.1:10000/devstoreaccount1/tracks/0e7a641a-0264-47f0-88bf-7c296c842d8b/FlightAware_N70392_KANE_KONA_20250628.kml",
+            "order": 1
+        },
+        {
+            "id": "5ce26898-a18b-46f4-b989-3fb7acdace08",
+            "url": "http://127.0.0.1:10000/devstoreaccount1/tracks/0e7a641a-0264-47f0-88bf-7c296c842d8b/FlightAware_N70392_KONA_KANE_20250628.kml",
+            "order": 2
+        }
+      ]
+    } as LogEntity;
+    const logs = [log];
+    const count = 1
+    const morePages = false
+    
+    jest.spyOn(mockQueryBuilder, 'getManyAndCount').mockResolvedValue([logs, count, morePages])
+
+    const {entities, total, hasNextPage} = await service.findLogsWithTracks();
 
     expect(entities).toEqual(logs);
     expect(count).toEqual(total);

@@ -5,13 +5,17 @@ import { FlightsState } from "./FlightsState.interface";
 
 type Action = 
   | { type: 'SET_ALERT'; payload: Alert | undefined }
-  | { type: 'SET_FLIGHTS'; payload: LogbookEntry[] }
+  | { type: 'SET_FLIGHTS'; payload: { flights: LogbookEntry[], hasMoreFlights: boolean, pageIndex: number, totalFlights: number } }
   | { type: 'SET_IS_LOADING'; payload: boolean }
 
 export const initialState: FlightsState = {
   alert: undefined,
   flights: [],
-  isLoading: true
+  isLoading: true,
+  hasMoreFlights: true,
+  pageIndex: 0,
+  pageSize: 5,
+  totalFlights: 0
 }
 
 export const reducer = (
@@ -28,7 +32,10 @@ export const reducer = (
     case 'SET_FLIGHTS': {
       return {
         ...state,
-        flights: action.payload
+        flights: action.payload.flights,
+        hasMoreFlights: action.payload.hasMoreFlights,
+        pageIndex: action.payload.pageIndex,
+        totalFlights: action.payload.totalFlights
       }
     }
     case 'SET_IS_LOADING': {
