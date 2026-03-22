@@ -20,6 +20,7 @@ import { LogInterceptor } from './log.interceptor';
 import { FileService } from '../file/file.service';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { Reflector } from '@nestjs/core';
+import { Logs } from './logs.interface';
 
 const reflector = new Reflector();
 
@@ -31,9 +32,9 @@ export class LogController {
     private readonly logService: LogService
   ) {}
 
-   @Get()
+  @Get()
   @Public()
-  async findLogsWithCount(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
+  async findLogsWithCount(@Query('skip') skip?, @Query('take') take?: number,): Promise<Logs> {
     try {
       return await this.logService.findLogsWithCount(skip, take)
     } catch (error) {
@@ -43,13 +44,11 @@ export class LogController {
     }
   }
 
-  @Get('tracks')
+  @Get('flights')
   @Public()
-  async findLogsWithTracks(@Query('skip') skip?, @Query('take') take?: number,): Promise<{ entities: LogEntity[], total: number, hasNextPage: boolean }> {
+  async findLogsWithTracks(@Query('skip') skip?, @Query('take') take?: number,): Promise<Logs> {
     try {
-      const result = await this.logService.findLogsWithTracks(skip, take)
-      console.log(result);
-      return result
+      return await this.logService.findLogsWithTracks(skip, take)
     } catch (error) {
       const customError = error as CustomError;
 

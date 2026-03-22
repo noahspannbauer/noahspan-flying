@@ -7,6 +7,7 @@ import { LogService } from "../log/log.service";
 import { LogEntity } from "../log/log.entity";
 import { CustomError } from "../error/customError";
 import { FileService } from "../file/file.service";
+import { Logs } from "src/log/logs.interface";
 
 @Injectable()
 export class TrackService {

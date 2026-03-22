@@ -7,6 +7,7 @@ import { PilotService } from '../pilot/pilot.service';
 import { PilotEntity } from '../pilot/pilot.entity';
 import { CustomError } from '../error/customError';
 import { FileService } from '../file/file.service';
+import { Logs } from './logs.interface';
 
 @Injectable()
 export class LogService {
@@ -17,15 +18,13 @@ export class LogService {
   ) {}
 
   async find(id: string): Promise<LogEntity> {
-    const logEntity: LogEntity = await this.logRepository.findOne({
+    return await this.logRepository.findOne({
       where: { id: id },
       relations: ['pilot', 'tracks']
     });
-
-    return logEntity;
   }
 
-  async findLogsWithCount(skip?: number, take?: number): Promise<{entities: LogEntity[], total: number, hasNextPage: boolean}> {
+  async findLogsWithCount(skip?: number, take?: number): Promise<Logs> {
     const [entities, total] = await this.logRepository.findAndCount({ 
       take, 
       skip,
@@ -39,14 +38,14 @@ export class LogService {
     }
   }
 
-  async findLogsWithTracks(skip?: number, take?: number): Promise<{entities: LogEntity[], total: number, hasNextPage: boolean}> {
+  async findLogsWithTracks(skip?: number, take?: number): Promise<Logs> {
     const [entities, total] = await this.logRepository
       .createQueryBuilder('logs')
       .innerJoinAndSelect('logs.tracks', 'track')
       .innerJoinAndSelect('logs.pilot', 'pilot')
       .orderBy('date')
       .getManyAndCount();
-      
+
     return {
       entities,
       total,

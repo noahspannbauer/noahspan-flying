@@ -32,7 +32,7 @@ const LogForm = () => {
         const response: AxiosResponse = await httpClient.get(
           `api/logs/${logbookContext.state.selectedLogId}`
         );
-        const log = response.data;
+        const log = response.data.entities[0];
 
         reset(log);
       } catch (error) {

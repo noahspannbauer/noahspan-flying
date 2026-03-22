@@ -15,23 +15,21 @@ export class LogInterceptor implements NestInterceptor {
     ]);
 
     return handler.handle().pipe(
-      map((data: { entities: LogEntity[], total: number, hasNextPage: boolean }) => {
+      map((data: any) => {
         const req = context.switchToHttp().getRequest();
-        const limitData = (entities: LogEntity[]) => {
-          return entities.map((log: LogEntity) => {
-            return {
-              id: log.id,
-              pilot: {
-                name: log.pilot.name
-              },
-              date: log.date,
-              aircraftMakeModel: log.aircraftMakeModel,
-              routeFrom: log.routeFrom,
-              routeTo: log.routeTo,
-              durationOfFlight: log.durationOfFlight,
-              tracks: log.tracks,
-            };
-          });
+        const limitData = (log: LogEntity) => {
+          return {
+            id: log.id,
+            pilot: {
+              name: log.pilot.name
+            },
+            date: log.date,
+            aircraftMakeModel: log.aircraftMakeModel,
+            routeFrom: log.routeFrom,
+            routeTo: log.routeTo,
+            durationOfFlight: log.durationOfFlight,
+            tracks: log.tracks,
+          };
         }
 
         if (req.headers.authorization) {
@@ -41,25 +39,39 @@ export class LogInterceptor implements NestInterceptor {
           const rolesKeyName = Object.keys(jwtPayload).find((key) => key.includes('roles'));
 
           if (jwtPayload[rolesKeyName].includes('Flying.Read')) {
-            const logs = limitData(data.entities);
+            if (data.entities) {
+              const logs = data.entities.map((entity) => limitData(data.entities));
 
-            return {
-              entities: logs,
-              total: data.total,
-              hasNextPage: data.hasNextPage
-            };
+              return {
+                entities: logs,
+                total: data.total,
+                hasNextPage: data.hasNextPage
+              };
+            } else {
+              const log = limitData(data);
+
+              return log;
+            }
+            
           } else {
             return data;
           }
         } else if (!req.headers.authorization && isPublic) {
-          const publicData = limitData(data.entities)
-          const logs = publicData.slice(0, 5)
+          if (data.entities) {
+            const publicData = data.entities.map((entity) => limitData(entity))
+            const logs = publicData.slice(0, 5)
 
-          return {
-            entities: logs,
-            total: data.total,
-            hasNextPage: data.hasNextPage
-          };
+            return {
+              entities: publicData,
+              total: data.total,
+              hasNextPage: false
+            };
+          } else {
+            const publicData = limitData(data);
+
+            return publicData
+          }
+          
         }
       })
     );
