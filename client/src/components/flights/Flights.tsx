@@ -60,11 +60,7 @@ const Flights = () => {
   useEffect(() => {
     getFlights(state.pageIndex, state.pageSize);
   }, [])
-
-  useEffect(() => {
-    console.log(screenSize)
-  }, [screenSize])
-  
+ 
   return (
     <div className={`max-w-screen-lg mx-auto ${screenSize === ScreenSize.SM || screenSize === ScreenSize.MD? 'mr-4 ml-4' : ''}`}>
       <div className='prose mt-5 mb-5'>

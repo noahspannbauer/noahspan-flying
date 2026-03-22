@@ -17,6 +17,11 @@ import { CellContext, ColumnDef, flexRender, getCoreRowModel, HeaderContext, Pag
 import { useLogbookContext } from '../../hooks/logbookContext/UseLogbookContext';
 import LogbookDrawer from '../logbookDrawer/LogbookDrawer';
 import Alert from '../alert/Alert';
+import TrackMap from '../trackMap/TrackMap';
+
+interface ActionsProps {
+  id: string;
+}
 
 const Logbook: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -25,6 +30,22 @@ const Logbook: React.FC<unknown> = () => {
   const { isUserLoggedIn } = useOidc();
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints();
+  const Actions = ({ id }: ActionsProps) => {
+    return (
+      <div className='dropdown dropdown-end'>
+        <div tabIndex={0} role='button' className='btn btn-ghost p-0'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+        <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm border border-base-300 !z-[100]">
+          {isUserLoggedIn && userRole === UserRole.WRITE &&
+            <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+          }
+          <li><a onClick={() => onOpenCloseDrawer(FormMode.VIEW, id)}><FontAwesomeIcon icon={faEye} />View</a></li>
+          {isUserLoggedIn && userRole === UserRole.WRITE &&
+            <li><a onClick={() => onDeleteLog(id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+          }
+        </ul>
+      </div>
+    )
+  }
   const columnTotal = (info: HeaderContext<LogbookEntry, unknown>): number => {
     const values: number[] = info.table.getPaginationRowModel().rows.map((row: any) => Number(row.getValue(info.column.id))).filter((value: any) => !Number.isNaN(value));
     let total: number = 0;
@@ -116,18 +137,7 @@ const Logbook: React.FC<unknown> = () => {
     },
     cell: (info: CellContext<LogbookEntry, unknown>) => {
       return (
-        <div className='dropdown dropdown-end'>
-          <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
-          <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow-sm border border-base-300 !z-[100]">
-            {isUserLoggedIn && userRole === UserRole.WRITE &&
-              <li><a onClick={() => onOpenCloseDrawer(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
-            }
-            <li><a onClick={() => onOpenCloseDrawer(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
-            {isUserLoggedIn && userRole === UserRole.WRITE &&
-              <li><a onClick={() => onDeleteLog(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
-            }
-          </ul>
-        </div>
+        <Actions id={info.row.original.id} />
       )
     }
   }
@@ -489,12 +499,11 @@ const Logbook: React.FC<unknown> = () => {
   };
 
   const onRowsPerPageChanged = (event: any) => {
-    console.log(event.target.value)
     const newPaginationState: PaginationState = {
       pageIndex: 0,
       pageSize: event.target.value !== 'All' ? Number(event.target.value) : state.totalEntries
     };
-    console.log(newPaginationState)
+
     dispatch({ type: 'SET_PAGINATION', payload: newPaginationState })
   }
 
@@ -520,7 +529,7 @@ const Logbook: React.FC<unknown> = () => {
 
   return (
     <>
-      <div className='mr-10 ml-10 grid grid-cols-12'>
+      <div className={`${screenSize === ScreenSize.SM ? 'mr-4 ml-4' : 'mr-10 ml-10'} grid grid-cols-12`}>
         <div className='prose max-w-none col-span-10 mt-5 mb-5'>
           <h1>Logbook</h1>
         </div>
@@ -547,7 +556,7 @@ const Logbook: React.FC<unknown> = () => {
             </Alert>
           </div>
         )}
-        {!state.isLoading && state.entries.length > 0 && screenSize !== ScreenSize.SM && (
+        {!state.isLoading && state.entries.length > 0 && screenSize !== ScreenSize.SM && screenSize !== ScreenSize.MD && (
           <div className='col-span-12 pr-5 pb-5 pl-5 bg-base-100 border border-base-100 rounded-lg '>
             <div className='overflow-x-auto mb-5'>
               <div className='col-span-12 justify-self-end self-center mt-1 mr-1 mb-2'>
@@ -696,7 +705,47 @@ const Logbook: React.FC<unknown> = () => {
           </div>
         )}
         {state.entries.length > 0 && screenSize === ScreenSize.SM &&
-          <LogbookCard logs={state.entries} onDelete={onDeleteLog} mode='logbook' onOpenCloseForm={onOpenCloseDrawer} />
+          <div className='col-span-12'>
+            <>
+              {table.getRowModel().rows.map((row) => {
+                const date = new Date(row.original.date.replace('Z', ''));
+                const formattedDate: string = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+
+                return (
+                  <div className='card bg-base-100 border border-base-300 mb-5'>
+                    <div className={`card-body ${screenSize === ScreenSize.SM || screenSize === ScreenSize.MD ? 'p-4' : ''}`} key={row.id}>
+                      <div className={`grid grid-cols-12 gap-3`}>
+                        <>
+                          <div className='col-span-8'>
+                            <h2 className='card-title font-bold text-2xl'>{formattedDate}</h2>
+                          </div>
+                          <div className='col-span-4 justify-self-end self-center'>
+                            <Actions id={row.original.id} />
+                          </div>
+                          {row.getVisibleCells().map((cell) => {
+                            return (
+                              <>
+                                {cell.column.columnDef.header !== 'Actions' && cell.column.columnDef.header !== 'Date' && cell.column.columnDef.header !== 'Pilot' &&
+                                  <>
+                                    <div className='col-span-8 font-bold'>
+                                      <span>{cell.getContext().column.columnDef.header?.toString()}</span>
+                                    </div>
+                                    <div className='col-span-4'>
+                                      <span>{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                                    </div>
+                                  </>
+                                }
+                              </>
+                            )
+                          })}
+                        </>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </>
+          </div>
         }
         {state.isLoading && !state.alert && (
           <div className='col-span-12 p-5 bg-base-100 border border-base-100 rounded-lg'>
