@@ -17,7 +17,7 @@ const Flights = () => {
 
   const getFlights = async (pageIndex: number, pageSize: number) => {
     try {
-      const response: AxiosResponse = await httpClient.get(`api/logs/tracks`, {
+      const response: AxiosResponse = await httpClient.get(`api/logs/flights`, {
         params: {
           skip: pageIndex,
           take: pageSize
