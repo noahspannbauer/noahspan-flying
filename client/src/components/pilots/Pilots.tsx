@@ -17,11 +17,31 @@ import { Pilot } from './Pilot.interface';
 import Alert from '../alert/Alert';
 import { useOidc } from '../../auth/oidcConfig';
 
+interface ActionsProps {
+  id: string;
+}
+
 const Pilots: React.FC<unknown> = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { userRole } = useUserRole();
   const { screenSize } = useBreakpoints();
   const { isUserLoggedIn } = useOidc();
+  const Actions = ({ id }: ActionsProps) => {
+    return (
+      <div className='dropdown dropdown-end'>
+        <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
+        <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
+          {isUserLoggedIn && userRole === UserRole.WRITE &&
+            <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
+          }
+          <li><a onClick={() => onOpenClosePilotForm(FormMode.VIEW, id)}><FontAwesomeIcon icon={faEye} />View</a></li>
+          {isUserLoggedIn && userRole === UserRole.WRITE &&
+            <li><a onClick={() => onDeletePilot(id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
+          }
+        </ul>
+      </div>
+    )
+  }
 
   const getPilots = async () => {
     try {
@@ -134,18 +154,7 @@ const Pilots: React.FC<unknown> = () => {
       },
       cell: (info: CellContext<Pilot, unknown>) => {
         return (
-          <div className='dropdown dropdown-end'>
-            <div tabIndex={0} role='button' className='btn btn-ghost'><FontAwesomeIcon icon={faEllipsisVertical} /></div>
-            <ul tabIndex={-1} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm border border-base-300">
-              {isUserLoggedIn && userRole === UserRole.WRITE &&
-                <li><a onClick={() => onOpenClosePilotForm(FormMode.EDIT, info.row.original.id)}><FontAwesomeIcon icon={faPen} />Edit</a></li>
-              }
-              <li><a onClick={() => onOpenClosePilotForm(FormMode.VIEW, info.row.original.id)}><FontAwesomeIcon icon={faEye} />View</a></li>
-              {isUserLoggedIn && userRole === UserRole.WRITE &&
-                <li><a onClick={() => onDeletePilot(info.row.original.id)}><FontAwesomeIcon icon={faTrash} />Delete</a></li>
-              }
-            </ul>
-          </div>
+          <Actions id={info.row.original.id} />
         )
       }
     }
@@ -172,7 +181,7 @@ const Pilots: React.FC<unknown> = () => {
 
   return (
     <>
-    <div className='mr-10 ml-10 grid grid-cols-12'>
+    <div className={`${screenSize === ScreenSize.SM ? 'mr-4 ml-4' : 'mr-10 ml-10'} grid grid-cols-12`}>
       <div className='prose max-w-none col-span-10 mt-5 mb-5' >
         <h1>Pilots</h1>
       </div>
@@ -259,9 +268,40 @@ const Pilots: React.FC<unknown> = () => {
           </table>
         </div>
       }
-      {/* {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
-        <PilotCard pilots={state.pilots} onDelete={onDeletePilot} onOpenCloseForm={onOpenClosePilotForm} />
-      } */}
+      {state.pilots.length > 0 && screenSize === ScreenSize.SM &&
+        <div className='col-span-12'>
+          <>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <div className='card bg-base-100 border border-base-300 mb-5'>
+                  <div className={`card-body ${screenSize === ScreenSize.SM || screenSize === ScreenSize.MD ? 'p-4' : ''}`} key={row.id}>
+                    <div className={`grid grid-cols-12 gap-3`}>
+                      <>
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <>
+                              {cell.column.columnDef.header !== 'Actions' &&
+                                <>
+                                  <div className='col-span-10 self-center'>
+                                    <span>{flexRender(cell.column.columnDef.cell, cell.getContext())}</span>
+                                  </div>
+                                  <div className='col-span-2'>
+                                    <Actions id={row.original.id} />
+                                  </div>
+                                </>
+                              }
+                            </>
+                          )
+                        })}
+                      </>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </>
+        </div>
+      }
     </div>
       {state.isFormOpen && (
         <PilotForm
