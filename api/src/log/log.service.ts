@@ -43,7 +43,9 @@ export class LogService {
       .createQueryBuilder('logs')
       .innerJoinAndSelect('logs.tracks', 'track')
       .innerJoinAndSelect('logs.pilot', 'pilot')
-      .orderBy('date')
+      .orderBy('logs.date', 'DESC')
+      .skip(skip)
+      .take(take)
       .getManyAndCount();
 
     return {
