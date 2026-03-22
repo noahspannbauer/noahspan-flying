@@ -530,10 +530,10 @@ const Logbook: React.FC<unknown> = () => {
   return (
     <>
       <div className={`${screenSize === ScreenSize.SM ? 'mr-4 ml-4' : 'mr-10 ml-10'} grid grid-cols-12`}>
-        <div className='prose max-w-none col-span-10 mt-5 mb-5'>
+        <div className='prose max-w-none col-span-6 mt-5 mb-5'>
           <h1>Logbook</h1>
         </div>
-        <div className='col-span-2 justify-self-end self-center'>
+        <div className='col-span-6 justify-self-end self-center'>
           {userRole === UserRole.WRITE &&
             <button className='btn btn-primary'
               onClick={() => onOpenCloseDrawer(FormMode.ADD)}
