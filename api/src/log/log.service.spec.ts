@@ -19,6 +19,8 @@ describe('LogService', () => {
     createQueryBuilder: jest.fn().mockReturnThis(),
     innerJoinAndSelect: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
+    skip: jest.fn().mockReturnThis(),
+    take: jest.fn().mockReturnThis(),
     getManyAndCount: jest.fn()
   }
 
