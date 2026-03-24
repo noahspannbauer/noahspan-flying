@@ -234,14 +234,14 @@ describe('LogService', () => {
     const count = 1
     const morePages = false
     
-    jest.spyOn(mockLogRepository, 'findAndCount').mockReturnValue([logs, count, morePages]);
+    jest.spyOn(mockQueryBuilder, 'getManyAndCount').mockReturnValue([logs, count, morePages]);
 
     const {entities, total, hasNextPage} = await service.findLogsWithCount();
 
     expect(entities).toEqual(logs);
     expect(count).toEqual(total);
     expect(hasNextPage).toEqual(morePages);
-    expect(mockLogRepository.findAndCount).toHaveBeenCalled();
+    expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
   })
 
     it('findLogsWithTracks => should find log entries with tracks', async () => {
@@ -294,7 +294,7 @@ describe('LogService', () => {
     expect(entities).toEqual(logs);
     expect(count).toEqual(total);
     expect(hasNextPage).toEqual(morePages);
-    expect(mockLogRepository.findAndCount).toHaveBeenCalled();
+    expect(mockQueryBuilder.getManyAndCount).toHaveBeenCalled();
   })
 
   it('update => should update a log entry', async () => {
