@@ -25,11 +25,22 @@ export class LogService {
   }
 
   async findLogsWithCount(skip?: number, take?: number): Promise<Logs> {
-    const [entities, total] = await this.logRepository.findAndCount({ 
-      take, 
-      skip,
-      relations: ['pilot', 'tracks']
-    })
+    // const [entities, total] = await this.logRepository.findAndCount({ 
+    //   take, 
+    //   skip,
+    //   order: {
+    //     date: 'DESC'
+    //   },
+    //   relations: ['pilot', 'tracks']
+    // })
+
+    const [entities, total] = await this.logRepository
+      .createQueryBuilder('logs')
+      .innerJoinAndSelect('logs.pilot', 'pilot')
+      .orderBy('logs.date', 'DESC')
+      .skip(skip)
+      .take(take)
+      .getManyAndCount()
 
     return {
       entities,

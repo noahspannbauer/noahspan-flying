@@ -380,13 +380,13 @@ const Logbook: React.FC<unknown> = () => {
     setPageIndex
   } = table;
 
-  const getLogbookEntries = async (pageIndex?: number, pageSize?: number) => {
+  const getLogbookEntries = async (pageIndex: number, pageSize: number) => {
     try {
       dispatch({ type: 'SET_IS_LOADING', payload: true });
 
       const response: AxiosResponse = await httpClient.get(`api/logs`, {
         params: {
-          skip: pageIndex,
+          skip: pageIndex * pageSize,
           take: pageSize
         }
       });
@@ -527,6 +527,10 @@ const Logbook: React.FC<unknown> = () => {
     dispatch({ type: 'SET_PAGES', payload: pages })
   }, [state.totalEntries, state.pagination?.pageSize])
 
+  useEffect(() => {
+    console.log(state.pagination)
+  }, [state.pagination])
+
   return (
     <>
       <div className={`${screenSize === ScreenSize.SM ? 'mr-4 ml-4' : 'mr-10 ml-10'} grid grid-cols-12`}>
@@ -569,7 +573,7 @@ const Logbook: React.FC<unknown> = () => {
                   >
                     <option value={10}>10</option>
                     <option value={25}>25</option>
-                    <option value={3}>50</option>
+                    <option value={50}>50</option>
                     <option value={state.totalEntries}>All</option>
                   </select>
                 </label>
