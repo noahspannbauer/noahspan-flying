@@ -62,7 +62,7 @@ export class LogInterceptor implements NestInterceptor {
             const logs = publicData.slice(0, 5)
 
             return {
-              entities: publicData,
+              entities: logs,
               total: data.total,
               hasNextPage: false
             };
@@ -71,7 +71,6 @@ export class LogInterceptor implements NestInterceptor {
 
             return publicData
           }
-          
         }
       })
     );
