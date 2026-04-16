@@ -63,7 +63,7 @@ export class LogInterceptor implements NestInterceptor {
 
             return {
               entities: logs,
-              total: data.total,
+              total: logs.length,
               hasNextPage: false
             };
           } else {
