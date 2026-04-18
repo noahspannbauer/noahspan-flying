@@ -528,8 +528,8 @@ const Logbook: React.FC<unknown> = () => {
   }, [state.totalEntries, state.pagination?.pageSize])
 
   useEffect(() => {
-    console.log(state)
-  }, [state])
+    console.log(state.alert)
+  }, [state.alert])
 
   return (
     <>
