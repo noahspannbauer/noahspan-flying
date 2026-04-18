@@ -528,8 +528,8 @@ const Logbook: React.FC<unknown> = () => {
   }, [state.totalEntries, state.pagination?.pageSize])
 
   useEffect(() => {
-    console.log(state.pagination)
-  }, [state.pagination])
+    console.log(state)
+  }, [state])
 
   return (
     <>
@@ -554,7 +554,7 @@ const Logbook: React.FC<unknown> = () => {
               onClose={() =>
                 dispatch({ type: 'SET_ALERT', payload: undefined })
               }
-              severity={'info'}
+              severity={state.alert.severity}
             >
               {state.alert.message}
             </Alert>
