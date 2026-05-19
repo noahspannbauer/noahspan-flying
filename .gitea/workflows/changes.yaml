@@ -31,7 +31,7 @@ jobs:
       - name: Manual Git Clone
         run: |
           # Use GITEA_TOKEN for the current repo or a PAT for others
-          git clone http://gitea:8869/${{ gitea.repository }}.git .
+          git clone https://git.noahspan.me/noah/noahspan-flying.git .
 
       - name: List files in the repository
         run: |
