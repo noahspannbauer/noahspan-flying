@@ -25,21 +25,12 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
-
-      # - name: Manual Git Clone
-      #   run: |
-      #     # Use GITEA_TOKEN for the current repo or a PAT for others
-      #     git clone ${{ github.server_url }}/${{ gitea.repository }}.git .
-
-      - name: List files in the repository
-        run: |
-          ls ${{ gitea.workspace }}
       
-      # - uses: dorny/paths-filter@v3
-      #   id: filter
-      #   with:
-      #     filters: |
-      #       api:
-      #         - 'api/**'
-      #       client:
-      #         - 'client/**'
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'api/**'
+            client:
+              - 'client/**'
