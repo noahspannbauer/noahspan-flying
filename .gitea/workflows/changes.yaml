@@ -18,10 +18,10 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       client: ${{ steps.filter.outputs.client }}
     steps:
-      - name: 'Setup Node'
-        uses: actions/setup-node@v6
-        with:
-          node-version: '2.x'
+      # - name: 'Setup Node'
+      #   uses: actions/setup-node@v6
+      #   with:
+      #     node-version: '2.x'
 
       # - name: Checkout
       #   uses: actions/checkout@v4
