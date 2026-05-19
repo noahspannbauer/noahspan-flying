@@ -30,7 +30,6 @@ jobs:
 
       - name: Manual Git Clone
         run: |
-          # Use GITEA_TOKEN for the current repo or a PAT for others
           git clone ${{ gitea.server_url }}/${{ gitea.repository }}.git .
 
       - name: List files in the repository
