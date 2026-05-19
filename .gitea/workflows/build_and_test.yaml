@@ -15,7 +15,7 @@ jobs:
     environment: ${{ inputs.environment_name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: https://gitea.com/actions/checkout@v6
         with:
           sparse-checkout: |
             api

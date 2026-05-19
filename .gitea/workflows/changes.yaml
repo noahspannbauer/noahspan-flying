@@ -15,7 +15,7 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       client: ${{ steps.filter.outputs.client }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: https://gitea.com/actions/checkout@v6
       
       - uses: dorny/paths-filter@v3
         id: filter
