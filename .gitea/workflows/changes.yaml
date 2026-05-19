@@ -32,11 +32,11 @@ jobs:
         run: |
           ls ${{ gitea.workspace }}
       
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            api:
-              - 'api/**'
-            client:
-              - 'client/**'
+      # - uses: dorny/paths-filter@v3
+      #   id: filter
+      #   with:
+      #     filters: |
+      #       api:
+      #         - 'api/**'
+      #       client:
+      #         - 'client/**'
