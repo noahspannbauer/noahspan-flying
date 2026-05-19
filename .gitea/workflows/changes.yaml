@@ -23,10 +23,15 @@ jobs:
       #   with:
       #     node-version: '2.x'
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: noahspan-flying
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     path: noahspan-flying
+
+      - name: Manual Git Clone
+        run: |
+          # Use GITEA_TOKEN for the current repo or a PAT for others
+          git clone https://${{ gitea.actor }}:${{ secrets.GITEA_TOKEN }}@${{ gitea.server_url }}/${{ gitea.repository }}.git .
 
       - name: List files in the repository
         run: |
