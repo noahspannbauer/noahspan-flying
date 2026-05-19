@@ -5,14 +5,14 @@ on:
 
 jobs:
   changes:
-    uses: ./.github/workflows/changes.yaml
+    uses: ./.gitea/workflows/changes.yaml
 
   build:
     if: ${{ needs.changes.outputs.app == 'true' || needs.changes.outputs.client == 'true'}}
     name: build
     needs:
       - changes
-    uses: ./.github/workflows/build_and_test.yaml
+    uses: ./.gitea/workflows/build_and_test.yaml
     with:
       environment_name: pull_request
       version_number: ${{ github.run_id }}

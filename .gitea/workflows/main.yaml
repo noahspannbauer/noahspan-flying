@@ -6,14 +6,14 @@ on:
 
 jobs:
   changes:
-    uses: ./.github/workflows/changes.yaml
+    uses: ./.gitea/workflows/changes.yaml
 
   build:
     if: ${{ needs.changes.outputs.api == 'true' || needs.changes.outputs.client == 'true' }}
     name: build
     needs:
       - changes
-    uses: ./.github/workflows/build_and_test.yaml
+    uses: ./.gitea/workflows/build_and_test.yaml
     with:
       environment_name: test
       version_number: ${{ github.run_id }}
@@ -24,7 +24,7 @@ jobs:
     needs: 
       - changes
       - build
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.gitea/workflows/deploy.yaml
     with:
       app_name: flying
       environment_name: test
