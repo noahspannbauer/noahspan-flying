@@ -23,14 +23,14 @@ jobs:
         with:
           node-version: '2.x'
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          path: noahspan-flying
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     path: noahspan-flying
 
       - name: List files in the repository
         run: |
-          ls -R noahspan-flying
+          ls ${{ gitea.workspace }}
       
       - uses: dorny/paths-filter@v3
         id: filter
