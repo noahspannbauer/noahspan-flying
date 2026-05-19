@@ -18,19 +18,20 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
       client: ${{ steps.filter.outputs.client }}
     steps:
-      - name: 'Setup Node'
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22.x'
+      # - name: 'Setup Node'
+      #   uses: actions/setup-node@v6
+      #   with:
+      #     node-version: '2.x'
 
-      - name: Checkout
-        uses: actions/checkout@v4
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     path: noahspan-flying
 
-
-      # - name: Manual Git Clone
-      #   run: |
-      #     # Use GITEA_TOKEN for the current repo or a PAT for others
-      #     git clone https://git.noahspan.me/noah/noahspan-flying.git .
+      - name: Manual Git Clone
+        run: |
+          # Use GITEA_TOKEN for the current repo or a PAT for others
+          git clone ${{ gitea.server_url }}/${{ gitea.repository }}.git .
 
       - name: List files in the repository
         run: |
