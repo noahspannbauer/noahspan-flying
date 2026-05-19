@@ -18,12 +18,14 @@ jobs:
       - name: 'Setup Node'
         uses: actions/setup-node@v6
         with:
-          node-version: '24.x'
+          node-version: '2.x'
 
       - name: Checkout
-        uses: https://gitea.com/actions/checkout@v6
-        with:
-          repository: noah/noahspan-flying
+        uses: actions/checkout@v4
+
+      - name: List files in the repository
+        run: |
+          ls ${{ gitea.workspace }}
       
       - uses: dorny/paths-filter@v3
         id: filter
