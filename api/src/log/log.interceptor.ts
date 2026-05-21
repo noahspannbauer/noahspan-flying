@@ -40,7 +40,7 @@ export class LogInterceptor implements NestInterceptor {
 
           if (jwtPayload[rolesKeyName].includes('Flying.Read')) {
             if (data.entities) {
-              const logs = data.entities.map((entity) => limitData(data.entities));
+              const logs = data.entities.map((entity) => limitData(entity));
 
               return {
                 entities: logs,

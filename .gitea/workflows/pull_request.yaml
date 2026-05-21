@@ -8,8 +8,8 @@ jobs:
     uses: ./.gitea/workflows/changes.yaml
 
   build:
-    if: ${{ needs.changes.outputs.app == 'true' || needs.changes.outputs.client == 'true'}}
-    name: build
+    if: ${{ needs.changes.outputs.api == 'true' || needs.changes.outputs.client == 'true'}}
+    name: build-and-test
     needs:
       - changes
     uses: ./.gitea/workflows/build_and_test.yaml
