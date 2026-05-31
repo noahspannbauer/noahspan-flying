@@ -45,8 +45,8 @@ jobs:
       - name: Build Client
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_BASE_URL: ${{ case(inputs.environment_name === 'test', vars.VITE_BASE_URL_TEST, vars.VITE_BASE_URL_PROD) }}
-          VITE_CLIENT_ID: ${{ case(inputs.environment_name === 'test', vars.VITE_CLIENT_ID_TEST, vars.VITE_CLIENT_ID_PROD) }}
+          VITE_BASE_URL: ${{ case(inputs.environment_name == 'test', vars.VITE_BASE_URL_TEST, vars.VITE_BASE_URL_PROD) }}
+          VITE_CLIENT_ID: ${{ case(inputs.environment_name == 'test', vars.VITE_CLIENT_ID_TEST, vars.VITE_CLIENT_ID_PROD) }}
           VITE_ISSUER_URI: ${{ vars.VITE_ISSUER_URI }}
           VITE_TENANT_ID: ${{ vars.VITE_TENANT_ID }}
         run: |

@@ -13,6 +13,7 @@ export default defineConfig({
     strictPort: true
   },
   server: {
+    host: true,
     port: 8080,
     proxy: {
       '/api': {
