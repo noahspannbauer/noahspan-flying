@@ -3,14 +3,29 @@ version: '3.8'
 services:
   azurite:
     container_name: azurite-flying
-    image: mcr.microsoft.com/azure-storage/azurite
+    image: mcr.microsoft.com/azure-storage/azurite 
     ports:
       - '10000:10000'
       - '10001:10001'
       - '10002:10002'
     command: 'azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose --skipApiVersionCheck'
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "10000"]
     volumes: 
       - ./azurite-data:/data
+
+  seed:
+    image: mcr.microsoft.com/azure-cli
+    depends_on:
+      azurite:
+        condition: service_healthy
+    volumes:
+      - ./seed-data:/data
+    entrypoint: >
+      sh -c "
+      az storage container create --name mycontainer --connection-string 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;' &&
+      az storage blob upload-batch --destination mycontainer --source /data --connection-string 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;'
+      "
 
   restore:
     container_name: restore
@@ -51,6 +66,7 @@ services:
         condition: service_started
 
 volumes:
-  # azurite-data:
+  azurite-data:
   backup:
   data:
+  seed-data:

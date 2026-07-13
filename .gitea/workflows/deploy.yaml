@@ -21,14 +21,24 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment_name }}
     steps:
+      - name: Get Secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.16
+        with:
+          domain: ${{ secrets.INFISICAL_DOMAIN }}
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
+          env-slug: ${{ inputs.environment_name }}
+          secret-path: /flying
+
       - name: Install Azure CLI
         run: |
           curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
       - name: Log in to Azure
         run: |
-          az login --service-principal --username ${{ vars.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ vars.AZURE_TENANT_ID }}
+          az login --service-principal --username ${{ env.AZURE_CLIENT_ID }} --password ${{ env.AZURE_CLIENT_SECRET }} --tenant ${{ env.AZURE_TENANT_ID }}
 
       - name: Update Container App
         run: |
-          az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --container-name ${{ inputs.app_name }} --resource-group ${{ vars.RESOURCE_GROUP }} --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
+          az containerapp update --name ${{ inputs.app_name }}-${{ inputs.environment_name }} --container-name ${{ inputs.app_name }} --resource-group ${{ env.RESOURCE_GROUP }} --image docker.io/noahspan/${{ inputs.app_name }}:${{ inputs.version_number }}
