@@ -17,13 +17,3 @@ jobs:
       environment_name: test
       version_number: ${{ github.run_id }}
     secrets: inherit
-
-  terraform:
-    if: ${{ needs.changes.outputs.infrastructure == 'true' }}
-    name: terraform-plan
-    needs: 
-      - changes
-    uses: ./.gitea/workflows/infrastructure.yaml
-    with:
-      environment_name: test
-    secrets: inherit

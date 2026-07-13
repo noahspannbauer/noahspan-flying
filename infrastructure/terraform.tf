@@ -16,12 +16,9 @@ terraform {
     }
   }
 
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "noahspan"
-
-    workspaces {
-      prefix = "noahspan-"
-    }
+  backend "azurerm" {
+    resource_group_name = "noahspan"
+    storage_account_name = "noahspanterraform"
+    key = "terraform.tfstate"
   }
 }
