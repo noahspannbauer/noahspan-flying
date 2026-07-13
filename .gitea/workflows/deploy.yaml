@@ -24,10 +24,10 @@ jobs:
       - name: Get Secrets from Infisical
         uses: Infisical/secrets-action@v1.0.16
         with:
-          domain: http://infisical 
+          domain: ${{ secrets.INFISICAL_DOMAIN }}
           client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
           client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
-          project-slug: noahspan-8t6-z
+          project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
           env-slug: ${{ inputs.environment_name }}
           secret-path: /flying
 
