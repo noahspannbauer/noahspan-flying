@@ -23,7 +23,7 @@ jobs:
     name: deploy
     needs: 
       - changes
-      - build
+      - build-and-test
     uses: ./.gitea/workflows/deploy.yaml
     with:
       app_name: flying
