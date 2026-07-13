@@ -5,8 +5,8 @@ on:
       - '**'
 
 jobs:
-  build:
-    name: build
+  build-and-test:
+    name: build-and-test
     uses: ./.gitea/workflows/build_and_test.yaml
     with:
       environment_name: prod
@@ -16,7 +16,7 @@ jobs:
   deploy:
     name: deploy
     needs: 
-      - build
+      - build-and-test
     uses: ./.gitea/workflows/deploy.yaml
     with:
       app_name: flying
