@@ -19,7 +19,6 @@ terraform {
   backend "azurerm" {
     resource_group_name = "noahspan"
     storage_account_name = "noahspanterraform"
-    container_name = "tfstate-flying-test"
     key = "terraform.tfstate"
   }
 }
