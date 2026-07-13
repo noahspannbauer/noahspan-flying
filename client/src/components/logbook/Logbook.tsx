@@ -561,7 +561,7 @@ const Logbook: React.FC<unknown> = () => {
           </div>
         )}
         {!state.isLoading && state.entries.length > 0 && screenSize !== ScreenSize.SM && screenSize !== ScreenSize.MD && (
-          <div className='col-span-12 pr-5 pb-5 pl-5 bg-base-100 border border-base-100 rounded-lg '>
+          <div className='col-span-12 pr-5 pb-5 pl-5 bg-base-100 border border-base-100 rounded-lg'>
             <div className='overflow-x-auto mb-5'>
               <div className='col-span-12 justify-self-end self-center mt-1 mr-1 mb-2'>
                 <label className='select select-sm select-ghost'>

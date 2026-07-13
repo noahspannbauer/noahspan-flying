@@ -1,0 +1,43 @@
+name: 'Infrastructure'
+on:
+  workflow_dispatch:
+    inputs:
+      environment_name:
+        type: string
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    environment:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            infrastructure
+
+      - name: Get secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.16
+        with:
+          domain: "https://secrets.noahspan.me" 
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          project-slug: noahspan-8t6-z
+          env-slug: ${{ inputs.environment_name }}
+          secret-path: /flying/terraform
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Terraform init
+        uses: |
+          terraform init -input=false
+
+      - name: Terraform plan
+        uses: |
+          terraform plan -no-color -input=false
+
+      - name: Terraform apply
+        uses: |
+          terraform apply -no-color -
+          
