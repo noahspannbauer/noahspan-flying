@@ -30,14 +30,14 @@ jobs:
         uses: hashicorp/setup-terraform@v4
 
       - name: Terraform init
-        uses: |
+        run: |
           terraform init -input=false
 
       - name: Terraform plan
-        uses: |
+        run: |
           terraform plan -no-color -input=false
 
       - name: Terraform apply
-        uses: |
+        run: |
           terraform apply -no-color -
           
