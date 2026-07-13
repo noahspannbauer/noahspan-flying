@@ -23,7 +23,7 @@ jobs:
     name: terraform-plan
     needs: 
       - changes
-    uses: ./.gitea/workflows/infrastructure.yaml
+    uses: ./.gitea/workflows/terraform.yaml
     with:
       environment_name: test
     secrets: inherit

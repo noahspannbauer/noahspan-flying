@@ -1,6 +1,6 @@
 name: 'Terraform'
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       environment_name:
         type: string
@@ -31,7 +31,7 @@ jobs:
 
       - name: Terraform init
         run: |
-          terraform -chdir=./infrastructure init -input=false
+          terraform -chdir=./infrastructure init -reconfigure -backend-config="${{ inputs.environment_name }}.backend.tfvars" -input=false
 
       - name: Terraform plan
         if: ${{ github.event_name == 'pull_request' }}
