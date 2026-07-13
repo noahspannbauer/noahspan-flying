@@ -35,7 +35,7 @@ jobs:
 
       - name: Terraform plan
         run: |
-          terraform plan -no-color -input=false
+          terraform -chdir=/infrastructure plan -no-color -input=false
 
       - name: Terraform apply
         run: |
