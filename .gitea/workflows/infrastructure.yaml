@@ -37,7 +37,7 @@ jobs:
         run: |
           terraform -chdir=/infrastructure plan -no-color -input=false
 
-      - name: Terraform apply
-        run: |
-          terraform apply -no-color -
+      # - name: Terraform apply
+      #   run: |
+      #     terraform apply -no-color -
           
