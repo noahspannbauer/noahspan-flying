@@ -22,7 +22,7 @@ jobs:
             client
 
       - name: Ping
-        uses: |
+        run: |
           ping infisical
 
       - name: Get Secrets from Infisical
