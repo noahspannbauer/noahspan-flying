@@ -16,6 +16,10 @@ jobs:
           sparse-checkout: |
             infrastructure
 
+      - name: Ping
+        uses: |
+          ping infisical
+
       - name: Get secrets from Infisical
         uses: Infisical/secrets-action@v1.0.16
         with:

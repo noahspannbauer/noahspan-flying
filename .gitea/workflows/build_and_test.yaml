@@ -21,6 +21,10 @@ jobs:
             api
             client
 
+      - name: Ping
+        uses: |
+          ping infisical
+
       - name: Get Secrets from Infisical
         uses: Infisical/secrets-action@v1.0.16
         with:
